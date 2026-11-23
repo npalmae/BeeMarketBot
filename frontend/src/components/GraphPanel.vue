@@ -238,6 +238,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
 import * as d3 from 'd3'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   graphData: Object,
@@ -247,6 +248,10 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['refresh', 'toggle-maximize'])
+
+const { locale } = useI18n()
+// Month names follow the UI language; other locales keep the existing format
+const dateLocale = computed(() => (locale.value === 'es' ? 'es' : 'en-US'))
 
 const graphContainer = ref(null)
 const graphSvg = ref(null)
@@ -303,7 +308,7 @@ const formatDateTime = (dateStr) => {
   if (!dateStr) return ''
   try {
     const date = new Date(dateStr)
-    return date.toLocaleString('en-US', { 
+    return date.toLocaleString(dateLocale.value, {
       month: 'short', 
       day: 'numeric', 
       year: 'numeric',

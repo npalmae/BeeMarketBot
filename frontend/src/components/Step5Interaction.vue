@@ -2577,8 +2577,8 @@ watch(() => props.simulationId, (newId) => {
 </style>
 
 <style>
-/* English locale: smaller report title */
-html[lang="en"] .report-header-block .main-title {
+/* English / Spanish locale: smaller report title */
+html:is([lang="en"], [lang="es"]) .report-header-block .main-title {
   font-size: 28px;
 }
 </style>
