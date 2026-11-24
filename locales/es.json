@@ -26,8 +26,8 @@
     "files": "archivos"
   },
   "meta": {
-    "title": "MiroFish - Predice todo",
-    "description": "MiroFish - Sistema de simulación de opinión en redes sociales"
+    "title": "BeeMarketBot - Predice todo",
+    "description": "BeeMarketBot - Sistema de simulación de opinión en redes sociales"
   },
   "nav": {
     "visitGithub": "Visita nuestra página de GitHub"
@@ -38,7 +38,7 @@
     "heroTitle1": "Sube tus informes,",
     "heroTitle2": "predice el futuro",
     "heroDesc": "A partir de un solo documento, {brand} extrae semillas de realidad y genera automáticamente un mundo paralelo con hasta {agentScale}. Inyecta variables desde la vista de Dios para encontrar {optimalSolution} en la dinámica compleja de los grupos.",
-    "heroDescBrand": "MiroFish",
+    "heroDescBrand": "BeeMarketBot",
     "heroDescAgentScale": "millones de agentes",
     "heroDescOptimalSolution": "el \"óptimo local\"",
     "slogan": "Que los agentes ensayen el futuro; que tus decisiones prevalezcan",
@@ -67,7 +67,7 @@
     "inputParams": "Parámetros de entrada",
     "simulationPrompt": ">_ 02 / Instrucción de simulación",
     "promptPlaceholder": "// Describe en lenguaje natural tu requisito de simulación o predicción",
-    "engineBadge": "Motor: MiroFish-V1.0",
+    "engineBadge": "Motor: BeeMarketBot-V1.0",
     "startEngine": "Iniciar motor",
     "initializing": "Inicializando..."
   },
@@ -145,7 +145,7 @@
     "setupComplete": "Configuración completa",
     "setupCompleteDesc": "El entorno de simulación está listo. Ya puedes iniciar la simulación.",
     "roundsConfig": "Configuración de las rondas de simulación",
-    "roundsConfigDesc": "MiroFish planifica automáticamente simular {hours} horas del mundo real; cada ronda representa {minutesPerRound} minutos de tiempo transcurrido",
+    "roundsConfigDesc": "BeeMarketBot planifica automáticamente simular {hours} horas del mundo real; cada ronda representa {minutesPerRound} minutos de tiempo transcurrido",
     "customToggle": "Personalizado",
     "roundsUnit": "rondas",
     "estimatedDuration": "Para 100 agentes: aprox. ~{minutes} minutos",
@@ -257,7 +257,7 @@
     "selectChatTarget": "Selecciona el destino del chat",
     "sendSurvey": "Enviar encuesta al mundo",
     "reportAgentChat": "Report Agent - Chat",
-    "reportAgentDesc": "Una versión conversacional del agente de generación de informes, con acceso a 4 herramientas profesionales y a la memoria completa de MiroFish",
+    "reportAgentDesc": "Una versión conversacional del agente de generación de informes, con acceso a 4 herramientas profesionales y a la memoria completa de BeeMarketBot",
     "toolInsightForge": "Atribución profunda de InsightForge",
     "toolInsightForgeDesc": "Alinea los datos de las semillas del mundo real con el estado de la simulación, combinando la memoria global y local para un análisis de atribución profunda entre distintos momentos",
     "toolPanoramaSearch": "Seguimiento completo de PanoramaSearch",

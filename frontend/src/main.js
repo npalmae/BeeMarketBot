@@ -2,6 +2,14 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import i18n from './i18n'
+// Estilo visual Web2 neobrutalista (desde SIXMANAGER)
+import './styles/web2.css'
+import './styles/web2-pages.css'
+// Interfaz de la app adaptada a ese estilo (solo aplica con la clase "web2")
+import './styles/web2-theme.generated.css'
+import './styles/web2-theme.css'
+
+document.documentElement.classList.add('web2')
 
 const app = createApp(App)
 

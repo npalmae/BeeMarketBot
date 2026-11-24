@@ -49,6 +49,9 @@ htmlcov/
 mydoc/
 mytest/
 
+# Capturas locales de la interfaz (no se suben)
+capturas/
+
 # 日志文件
 backend/logs/
 *.log

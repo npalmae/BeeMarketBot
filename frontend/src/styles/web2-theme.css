@@ -1,0 +1,604 @@
+/* ============================================================================
+   web2-theme.css — BeeMarketBot con el estilo Web2 de SIXMANAGER
+   ----------------------------------------------------------------------------
+   Complementa a web2-theme.generated.css, que traduce los colores de cada
+   componente. Aquí va lo que la traducción automática no puede decidir:
+   tipografía de títulos, botones y tarjetas con sombra dura, variables de la
+   portada y las superficies que deben seguir oscuras.
+
+   Solo aplica cuando <html> tiene la clase "web2". Las reglas usan
+   `html.web2 #app …`, que gana a los estilos scoped de los componentes y a la
+   capa generada. Cada regla incluye la clase raíz de su pantalla, porque
+   nombres como .step-num, .section-title o .brand se repiten entre vistas:
+     .home-container · .main-view · .graph-panel · .history-database
+     .language-switcher · .workbench-panel · .env-setup-panel
+     .simulation-panel · .report-panel · .interaction-panel
+   ============================================================================ */
+
+/* ------------------------------------------------------------- 1. Base */
+html.web2 {
+  /* Home.vue declara estas variables dentro de un bloque scoped, donde Vue las
+     compila como `[data-v-…]:root` y nunca se aplican. Aquí sí funcionan. */
+  --black: #F5F7FA;
+  --white: #F5F7FA;
+  --orange: #7FC4FF;
+  --gray-light: #111936;
+  --gray-text: rgba(245, 247, 250, .72);
+  --border: rgba(70, 137, 200, .62);
+  --font-mono: 'DM Mono', monospace;
+  --font-sans: 'DM Mono', monospace;
+  --font-cn: 'DM Mono', monospace;
+
+  --w2-text-dim: rgba(245, 247, 250, .72);
+  --w2-text-mute: rgba(245, 247, 250, .55);
+
+  background: var(--ink);
+  color: #F5F7FA;
+}
+
+html.web2 body { background: var(--ink); }
+
+html.web2 #app {
+  background: var(--ink);
+  color: #F5F7FA;
+  /* La hoja original desactiva la negrita sintética; la interfaz de la app se
+     apoya en pesos 600-700 que DM Mono no trae, así que se vuelve a permitir. */
+  font-synthesis: weight;
+}
+
+html.web2 #app ::selection { background: var(--lime); color: #fff; }
+
+html.web2 #app ::-webkit-scrollbar { width: 8px; height: 8px; }
+html.web2 #app ::-webkit-scrollbar-track { background: transparent; }
+html.web2 #app ::-webkit-scrollbar-thumb { background: rgba(70, 137, 200, .45); }
+html.web2 #app ::-webkit-scrollbar-thumb:hover { background: #7FC4FF; }
+
+/* ------------------------------------------------------- 2. Titulares */
+html.web2 #app .home-container .main-title,
+html.web2 #app .home-container .section-title,
+html.web2 #app .home-container .nav-brand,
+html.web2 #app .main-view .brand,
+html.web2 #app .report-panel .main-title,
+html.web2 #app .interaction-panel .main-title,
+html.web2 #app .report-panel .section-title,
+html.web2 #app .interaction-panel .section-title,
+html.web2 #app .workbench-panel .stat-value,
+html.web2 #app .env-setup-panel .stat-value,
+html.web2 #app .env-setup-panel .val-num,
+html.web2 #app .report-panel .stat-box .stat-num,
+html.web2 #app .interaction-panel .stat-box .stat-num {
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: 400;
+  line-height: .92;
+  letter-spacing: -.05em;
+  text-transform: uppercase;
+}
+
+/* Rótulos de sección: DM Mono pequeño, mayúsculas y tracking amplio */
+html.web2 #app .home-container .panel-header,
+html.web2 #app .home-container .steps-header,
+html.web2 #app .home-container .console-header,
+html.web2 #app .graph-panel .panel-title,
+html.web2 #app .history-database .section-title {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #7FC4FF;
+}
+
+/* La portada pinta su propio fondo con var(--white); aquí manda el fondo de la página */
+html.web2 #app .home-container { background: transparent; }
+
+/* ------------------------------------------------- 3. Portada: barra */
+html.web2 #app .home-container .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 72px;
+  padding: 0 3vw;
+  background: rgba(5, 7, 19, .84);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  border-bottom: var(--line);
+}
+
+html.web2 #app .home-container .nav-brand { font-size: 20px; letter-spacing: -.02em; }
+
+/* Sílaba final del nombre, en el verde de la marca (como en el logo) */
+html.web2 #app .home-container .nav-brand .brand-accent,
+html.web2 #app .main-view .brand .brand-accent { color: #76FA0A; }
+
+html.web2 #app .home-container .nav-links { gap: 14px; }
+
+html.web2 #app .home-container .github-link {
+  padding-bottom: 2px;
+  border-bottom: 1px solid transparent;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+html.web2 #app .home-container .github-link:hover { opacity: 1; border-color: #fff; }
+
+html.web2 #app .home-container .main-content { max-width: 1600px; padding: 64px 3vw 90px; }
+
+/* ------------------------------------------------- 4. Portada: héroe */
+html.web2 #app .home-container .hero-section { gap: 4vw; margin-bottom: 96px; }
+
+html.web2 #app .home-container .hero-left { padding-right: 0; }
+
+html.web2 #app .home-container .tag-row { gap: 12px; margin-bottom: 28px; text-transform: uppercase; }
+
+html.web2 #app .home-container .orange-tag {
+  padding: 6px 10px;
+  border: 1px solid #7FC4FF;
+  background: var(--lime);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .12em;
+}
+
+html.web2 #app .home-container .version-text {
+  color: var(--w2-text-mute);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: .12em;
+}
+
+html.web2 #app .home-container .main-title {
+  margin: 0 0 34px;
+  color: #F5F7FA;
+  font-size: clamp(46px, 5.3vw, 88px);
+}
+
+/* Segunda línea del titular: cursiva serif y color de acento, sin el degradado */
+html.web2 #app .home-container .gradient-text {
+  display: inline-block;
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: #7FC4FF;
+  color: #7FC4FF;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.1em;
+  line-height: 1;
+  letter-spacing: -.03em;
+  text-transform: none;
+}
+
+html.web2 #app .home-container .hero-desc {
+  max-width: 600px;
+  margin-bottom: 40px;
+  font-size: clamp(14px, 1.05vw, 17px);
+  font-weight: 400;
+  line-height: 1.7;
+  text-align: left;
+  color: rgba(245, 247, 250, .86);
+}
+
+html.web2 #app .home-container .highlight-bold { color: #F5F7FA; font-weight: 500; }
+html.web2 #app .home-container .highlight-orange { color: #7FC4FF; font-weight: 500; white-space: nowrap; }
+
+html.web2 #app .home-container .highlight-code {
+  padding: 1px 7px;
+  border: 1px solid rgba(127, 196, 255, .35);
+  border-radius: 0;
+  background: rgba(127, 196, 255, .12);
+  color: #F5F7FA;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+html.web2 #app .home-container .slogan-text {
+  padding-left: 14px;
+  border-left: 2px solid var(--lime);
+  color: #F5F7FA;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .02em;
+  line-height: 1.6;
+}
+
+html.web2 #app .home-container .decoration-square {
+  width: 18px;
+  height: 18px;
+  margin-top: 28px;
+  background: var(--lime);
+  box-shadow: 4px 4px 0 var(--purple);
+}
+
+/* Logo: la imagen trae fondo negro, así que va como placa negra con borde y
+   sombra dura en el verde de la marca */
+html.web2 #app .home-container .hero-right { gap: 28px; }
+
+html.web2 #app .home-container .logo-container { flex: 1; align-items: center; justify-content: center; padding-right: 0; }
+
+html.web2 #app .home-container .hero-logo {
+  max-width: 400px;
+  border: 1px solid #76FA0A;
+  background: #000;
+  box-shadow: 14px 14px 0 #76FA0A;
+  transform: rotate(-2deg);
+  transition: transform .25s cubic-bezier(.16, 1, .3, 1), box-shadow .25s;
+  animation: w2-sticker-in .7s cubic-bezier(.16, 1, .3, 1) .35s backwards;
+}
+
+html.web2 #app .home-container .hero-logo:hover {
+  box-shadow: 7px 7px 0 #76FA0A;
+  transform: rotate(0deg) translateY(-6px);
+}
+
+html.web2 #app .home-container .scroll-down-btn { border: 1px solid rgba(255, 255, 255, .5); color: #fff; }
+
+html.web2 #app .home-container .scroll-down-btn:hover { border-color: #fff; background: #fff; color: var(--ink); }
+
+/* ------------------------------------- 5. Portada: estado y métricas */
+html.web2 #app .home-container .panel-header,
+html.web2 #app .home-container .steps-header { margin-bottom: 22px; }
+
+html.web2 #app .home-container .panel-header::before { content: '[ '; }
+html.web2 #app .home-container .panel-header::after { content: ' ]'; }
+
+html.web2 #app .home-container .steps-header::before { content: '[ '; }
+html.web2 #app .home-container .steps-header::after { content: ' ]'; }
+
+html.web2 #app .home-container .status-dot,
+html.web2 #app .home-container .diamond-icon { color: #7FC4FF; font-size: 10px; }
+
+html.web2 #app .home-container .section-title { margin: 0 0 14px; font-size: clamp(34px, 3.2vw, 52px); }
+
+html.web2 #app .home-container .section-desc { max-width: 460px; margin-bottom: 28px; line-height: 1.65; }
+
+/* Métricas: retícula de bordes compartidos, sombra dura y un bloque invertido */
+html.web2 #app .home-container .metrics-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin-bottom: 28px;
+  border: var(--line);
+  box-shadow: 10px 10px 0 var(--purple);
+}
+
+html.web2 #app .home-container .metric-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: 124px;
+  padding: 18px 20px;
+  border: 0;
+  border-right: var(--line);
+  transition: transform .25s, background-color .25s, border-color .25s;
+}
+
+html.web2 #app .home-container .metric-card:last-child { border-right: 0; background: #F5F7FA; color: var(--ink); }
+
+html.web2 #app .home-container .metric-card:hover { border-color: #7FC4FF; background-color: #111936; }
+
+html.web2 #app .home-container .metric-card:last-child:hover { background-color: #fff; }
+
+html.web2 #app .home-container .metric-value {
+  margin-bottom: 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  text-transform: uppercase;
+}
+
+html.web2 #app .home-container .metric-label { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--w2-text-dim); }
+
+html.web2 #app .home-container .metric-card:last-child .metric-value,
+html.web2 #app .home-container .metric-card:last-child .metric-label { color: rgba(5, 7, 19, .78); }
+
+/* Pasos del flujo: filas con borde compartido */
+html.web2 #app .home-container .steps-container { padding: 0; background: var(--paper); border: var(--line); }
+
+html.web2 #app .home-container .steps-header { margin: 0; padding: 16px 20px; border-bottom: var(--line); }
+
+html.web2 #app .home-container .workflow-list { gap: 0; }
+
+html.web2 #app .home-container .workflow-item {
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: var(--line);
+  transition: background-color .2s;
+}
+
+html.web2 #app .home-container .workflow-item:last-child { border-bottom: 0; }
+
+html.web2 #app .home-container .workflow-item:hover { background: #111936; }
+
+html.web2 #app .home-container .step-num { min-width: 26px; padding-top: 2px; color: #7FC4FF; font-size: 11px; font-weight: 500; letter-spacing: .08em; opacity: 1; }
+
+html.web2 #app .home-container .step-title { margin-bottom: 4px; font-size: 13px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
+
+html.web2 #app .home-container .step-desc { font-size: 12px !important; line-height: 1.6 !important; color: rgba(245, 247, 250, .66); }
+
+/* ------------------------------------------ 6. Portada: consola */
+html.web2 #app .home-container .console-box { padding: 0; border: var(--line); background: var(--paper); }
+
+html.web2 #app .home-container .console-section { padding: 22px 24px; }
+
+html.web2 #app .home-container .console-section.btn-section { padding-top: 0; }
+
+html.web2 #app .home-container .console-header { margin-bottom: 14px; }
+
+html.web2 #app .home-container .console-meta { color: var(--w2-text-mute); letter-spacing: .08em; }
+
+html.web2 #app .home-container .upload-zone { border: 1px dashed rgba(127, 196, 255, .45); background: var(--ink); }
+
+html.web2 #app .home-container .upload-zone:hover,
+html.web2 #app .home-container .upload-zone.drag-over { border-color: #7FC4FF; background: #111936; }
+
+html.web2 #app .home-container .upload-icon { border-color: rgba(127, 196, 255, .6); color: #7FC4FF; }
+
+html.web2 #app .home-container .upload-title { font-size: 13px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
+
+html.web2 #app .home-container .upload-hint { font-size: 11px; color: var(--w2-text-mute); }
+
+html.web2 #app .home-container .file-item { border: var(--w2-line-soft, 1px solid rgba(70, 137, 200, .38)); background: #111936; }
+
+html.web2 #app .home-container .console-divider::before,
+html.web2 #app .home-container .console-divider::after { background: rgba(70, 137, 200, .62); }
+
+html.web2 #app .home-container .console-divider span { color: #7FC4FF; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; }
+
+html.web2 #app .home-container .input-wrapper { border: var(--line); background: var(--ink); transition: border-color .2s, box-shadow .2s; }
+
+html.web2 #app .home-container .input-wrapper:focus-within { border-color: #7FC4FF; box-shadow: 4px 4px 0 var(--lime); }
+
+html.web2 #app .home-container .code-input { color: #F5F7FA; caret-color: #7FC4FF; font-size: 14px; }
+
+html.web2 #app .home-container .code-input::placeholder { color: rgba(245, 247, 250, .4); }
+
+html.web2 #app .home-container .model-badge { color: rgba(245, 247, 250, .45); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+
+/* Botón principal: fondo de acento, borde claro y sombra dura */
+html.web2 #app .home-container .start-engine-btn {
+  padding: 18px 22px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: transform .2s, box-shadow .2s, background-color .2s, border-color .2s;
+}
+
+html.web2 #app .home-container .start-engine-btn:not(:disabled) {
+  background: var(--lime);
+  border: 1px solid #7FC4FF;
+  box-shadow: 6px 6px 0 var(--purple);
+  animation: none;
+}
+
+html.web2 #app .home-container .start-engine-btn:hover:not(:disabled) {
+  background: var(--purple);
+  border-color: #fff;
+  transform: translate(4px, 4px);
+}
+
+html.web2 #app .home-container .start-engine-btn:not(:disabled):hover { box-shadow: 0 0 0 var(--purple); }
+
+html.web2 #app .home-container .start-engine-btn:active:not(:disabled) { transform: translate(6px, 6px); }
+
+html.web2 #app .home-container .start-engine-btn:disabled {
+  border: 1px solid rgba(245, 247, 250, .18);
+  background: rgba(245, 247, 250, .06);
+  color: rgba(245, 247, 250, .4);
+}
+
+/* ------------------------------------------ 7. Portada: historial */
+html.web2 #app .history-database .section-title { padding: 0 18px; font-size: 11px; letter-spacing: .2em; }
+
+html.web2 #app .history-database .section-line { height: 1px; background: rgba(70, 137, 200, .62); }
+
+html.web2 #app .history-database .project-card { transition: box-shadow .25s, border-color .25s; }
+
+html.web2 #app .history-database .project-card.hovering { border-color: #7FC4FF; box-shadow: 8px 8px 0 var(--lime); }
+
+/* Modal de historial: se monta fuera de #app (Teleport) */
+html.web2 body .modal-content { border: 1px solid #7FC4FF; box-shadow: 12px 12px 0 var(--lime); }
+
+html.web2 body .modal-btn { border-radius: 0; text-transform: uppercase; letter-spacing: .04em; transition: transform .2s, box-shadow .2s, border-color .2s; }
+
+html.web2 body .modal-btn:not(:disabled) { box-shadow: 4px 4px 0 var(--purple); border-color: #7FC4FF; }
+
+html.web2 body .modal-btn:hover:not(:disabled) { border-color: #fff; box-shadow: 0 0 0 var(--purple); transform: translate(3px, 3px); }
+
+/* ------------------------------------------ 8. Selector de idioma */
+html.web2 #app .language-switcher .switcher-trigger {
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, .5);
+  color: #F5F7FA;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+html.web2 #app .language-switcher .switcher-trigger:hover { border-color: #fff; background: #fff; color: var(--ink); }
+
+html.web2 #app .language-switcher .switcher-dropdown { border: 1px solid var(--ink); background: #F5F7FA; box-shadow: 6px 6px 0 var(--lime); }
+
+html.web2 #app .language-switcher .switcher-option { padding: 8px 12px; color: var(--ink); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+
+html.web2 #app .language-switcher .switcher-option:hover { background: rgba(70, 137, 200, .18); }
+
+html.web2 #app .language-switcher .switcher-option.active { color: var(--purple); }
+
+/* ------------------------------------------ 9. Vistas interiores */
+html.web2 #app .main-view { background: var(--ink); font-family: 'DM Mono', monospace; }
+
+html.web2 #app .main-view .app-header { background: rgba(5, 7, 19, .9); border-bottom: var(--line); }
+
+html.web2 #app .main-view .brand { font-size: 18px; letter-spacing: -.02em; }
+
+html.web2 #app .main-view .view-switcher { gap: 0; padding: 0; border: var(--line); border-radius: 0; background: transparent; }
+
+html.web2 #app .main-view .switch-btn {
+  padding: 8px 14px;
+  border-right: var(--line);
+  border-radius: 0;
+  color: var(--w2-text-dim);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+html.web2 #app .main-view .switch-btn:last-child { border-right: 0; }
+
+html.web2 #app .main-view .switch-btn:not(.active):hover { background: #111936; color: #F5F7FA; }
+
+html.web2 #app .main-view .switch-btn.active { background: #F5F7FA; color: var(--ink); box-shadow: none; }
+
+html.web2 #app .main-view .status-indicator { color: var(--w2-text-dim); font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
+
+html.web2 #app .main-view .workflow-step { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+
+html.web2 #app .main-view .step-num { color: #7FC4FF; letter-spacing: .08em; }
+
+html.web2 #app .main-view .step-name { font-weight: 500; }
+
+html.web2 #app .main-view .step-divider { background: rgba(70, 137, 200, .62); }
+
+html.web2 #app .main-view .panel-wrapper.left { border-right: var(--line); }
+
+html.web2 #app .workbench-panel .step-num,
+html.web2 #app .env-setup-panel .step-num {
+  color: #7FC4FF;
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: 400;
+  letter-spacing: -.04em;
+}
+
+html.web2 #app .report-panel .main-title,
+html.web2 #app .interaction-panel .main-title { font-size: 32px !important; }
+
+html.web2 #app .report-panel .section-title,
+html.web2 #app .interaction-panel .section-title { font-size: 20px; letter-spacing: -.04em; }
+
+/* Grafo: los colores son atributos SVG, que una regla CSS sí puede sobreescribir */
+html.web2 #app .graph-panel .links path:not(:hover) { stroke: rgba(70, 137, 200, .5); }
+
+html.web2 #app .graph-panel .links rect { fill: var(--paper); stroke: rgba(70, 137, 200, .38); }
+
+html.web2 #app .graph-panel .links text,
+html.web2 #app .graph-panel .nodes text { font-family: 'DM Mono', monospace !important; }
+
+html.web2 #app .graph-panel .links text { fill: var(--w2-text-dim); }
+
+html.web2 #app .graph-panel .nodes text { fill: #F5F7FA; }
+
+/* ------------------------------------------ 10. Botones de acción */
+html.web2 #app .workbench-panel .action-btn,
+html.web2 #app .env-setup-panel .action-btn,
+html.web2 #app .simulation-panel .action-btn,
+html.web2 #app .report-panel .next-step-btn,
+html.web2 #app .interaction-panel .next-step-btn,
+html.web2 #app .interaction-panel .send-btn,
+html.web2 #app .interaction-panel .survey-submit-btn {
+  border-radius: 0;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  transition: transform .2s, box-shadow .2s, background-color .2s, border-color .2s;
+}
+
+html.web2 #app .workbench-panel .action-btn:not(:disabled),
+html.web2 #app .env-setup-panel .action-btn.primary:not(:disabled),
+html.web2 #app .simulation-panel .action-btn.primary:not(:disabled),
+html.web2 #app .report-panel .next-step-btn,
+html.web2 #app .interaction-panel .next-step-btn,
+html.web2 #app .interaction-panel .send-btn:not(:disabled),
+html.web2 #app .interaction-panel .survey-submit-btn:not(:disabled) {
+  border: 1px solid #7FC4FF;
+  box-shadow: 4px 4px 0 var(--purple);
+}
+
+html.web2 #app .workbench-panel .action-btn:hover:not(:disabled),
+html.web2 #app .env-setup-panel .action-btn.primary:hover:not(:disabled),
+html.web2 #app .simulation-panel .action-btn.primary:hover:not(:disabled),
+html.web2 #app .report-panel .next-step-btn:hover,
+html.web2 #app .interaction-panel .next-step-btn:hover,
+html.web2 #app .interaction-panel .send-btn:hover:not(:disabled),
+html.web2 #app .interaction-panel .survey-submit-btn:hover:not(:disabled) {
+  border-color: #fff;
+  background: var(--purple);
+  box-shadow: 0 0 0 var(--purple);
+  transform: translate(3px, 3px);
+}
+
+html.web2 #app .env-setup-panel .action-btn.secondary:not(:disabled) { border: 1px solid rgba(245, 247, 250, .45); }
+
+html.web2 #app .env-setup-panel .action-btn.secondary:hover:not(:disabled) { border-color: #fff; background: #F5F7FA; color: var(--ink); }
+
+/* --------------------------- 11. Superficies que deben seguir oscuras */
+/* La traducción automática vuelve azules los fondos oscuros; estas no son
+   botones sino consolas, código y avisos. */
+html.web2 #app .system-logs,
+html.web2 #app .console-logs,
+html.web2 #app .code-block { background-color: var(--ink); }
+
+html.web2 #app .system-logs ::-webkit-scrollbar-thumb,
+html.web2 #app .console-logs ::-webkit-scrollbar-thumb { background: rgba(245, 247, 250, .25); }
+
+html.web2 #app .actions-tooltip { border: 1px solid #7FC4FF; background-color: var(--ink); box-shadow: 4px 4px 0 var(--lime); }
+
+/* Burbuja del usuario en el chat: acento con texto claro no da contraste suficiente */
+html.web2 #app .interaction-panel .chat-message.user .message-text { background-color: #252E5A; }
+
+/* Campos de texto: el del chat no define fondo y usa el blanco del navegador */
+html.web2 #app .interaction-panel .chat-input {
+  border-radius: 0;
+  background: var(--ink);
+  color: #F5F7FA;
+  caret-color: #7FC4FF;
+}
+
+html.web2 #app .interaction-panel .chat-input::placeholder { color: rgba(245, 247, 250, .45); }
+
+html.web2 #app .interaction-panel .chat-input:focus { border-color: #7FC4FF; box-shadow: 4px 4px 0 var(--lime); }
+
+/* ------------------------------------------------- 12. Movimiento */
+html.web2 #app .home-container .tag-row { animation: detail-in .5s .05s backwards; }
+
+html.web2 #app .home-container .main-title { animation: title-in .8s cubic-bezier(.16, 1, .3, 1) .1s backwards; }
+
+html.web2 #app .home-container .hero-desc { animation: detail-in .7s .4s backwards; }
+
+html.web2 #app .home-container .metric-card { animation: metric-in .5s cubic-bezier(.16, 1, .3, 1) backwards; }
+
+html.web2 #app .home-container .metric-card:nth-child(1) { animation-delay: .5s; }
+
+html.web2 #app .home-container .metric-card:nth-child(2) { animation-delay: .58s; }
+
+html.web2 #app .home-container .steps-container,
+html.web2 #app .home-container .console-box { animation: card-in .6s cubic-bezier(.16, 1, .3, 1) .3s backwards; }
+
+@keyframes w2-sticker-in {
+  from { opacity: 0; transform: rotate(-6deg) translateY(24px) scale(.96); }
+  to { opacity: 1; transform: rotate(-2deg) translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.web2 #app *,
+  html.web2 #app *::before,
+  html.web2 #app *::after { animation: none !important; transition: none !important; }
+}
+
+/* Pantallas angostas: el titular se reduce antes que desbordar */
+@media (max-width: 640px) {
+  html.web2 #app .home-container .main-title { font-size: clamp(34px, 10vw, 46px); }
+}
+
+/* Al apilarse las columnas (ancho de tableta), los paneles ocupan todo el ancho.
+   El original los deja con el ancho de su contenido y la consola queda estrecha. */
+@media (max-width: 1024px) {
+  html.web2 #app .home-container .dashboard-section { align-items: stretch; }
+}

@@ -1,0 +1,54 @@
+  .service-hero { padding: 28px 3vw 60px; background: #050713; color: white; border-bottom: 1px solid rgba(255,255,255,.12); }
+  .service-topline { min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; font: 8px DM Mono, monospace; letter-spacing: .1em; border-bottom: 1px solid rgba(255,255,255,.12); padding-bottom: 10px; opacity: .85; }
+  .service-back { border: 1px solid rgba(255,255,255,.6); padding: 5px 9px; font: 8px DM Mono, monospace; letter-spacing: .08em; opacity: .9; text-decoration:none; color:white; }
+  .service-back:hover { background: white; color: #050713; }
+  .service-brand { display: flex; align-items: center; gap: 12px; margin: 24px 0; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,.12); }
+  .service-brand img { width: 56px; height: 56px; filter: brightness(0) invert(1); }
+  .service-brand span { font: 18px DM Mono, monospace; letter-spacing: .14em; color: rgba(255,255,255,.7); }
+  .service-intro { padding: 40px 0 30px; display: grid; grid-template-columns: .28fr 1fr; column-gap: 4vw; }
+  .service-intro .eyebrow { grid-row: 1 / 3; font: 10px DM Mono, monospace; letter-spacing:.12em; color:#7FC4FF; }
+  .service-intro h1 { margin: 0; font: clamp(52px, 8vw, 110px)/.9 'Archivo Black'; letter-spacing: -.07em; text-transform: uppercase; }
+  .service-intro h1 em { color: #7FC4FF; font-family: 'Instrument Serif', serif; font-weight: 400; letter-spacing: -.03em; text-transform: none; }
+  .service-intro p { max-width: 620px; margin: 24px 0 0; font-size: clamp(14px, 1.3vw, 17px); line-height: 1.6; opacity: .9; }
+  .service-metrics { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(255,255,255,.65); border-left: 1px solid rgba(255,255,255,.65); margin-top: 20px; }
+  .service-metrics > div { min-height: 160px; padding: 18px; border-right: 1px solid rgba(255,255,255,.65); border-bottom: 1px solid rgba(255,255,255,.65); display: flex; flex-direction: column; justify-content: space-between; }
+  .service-metrics strong { font: clamp(28px, 4vw, 48px)/1 'Archivo Black'; }
+  .service-metrics span { font: 9px DM Mono, monospace; text-transform: uppercase; letter-spacing: .08em; }
+  .metric-accent { background: white; color: #050713; }
+  .service-detail { padding: 60px 3vw 80px; }
+  .service-detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid rgba(255,255,255,.12); border-left: 1px solid rgba(255,255,255,.12); }
+  .service-detail-card { min-height: 380px; padding: 24px; background: #0D1228; color: white; border-right: 1px solid rgba(255,255,255,.12); border-bottom: 1px solid rgba(255,255,255,.12); display: flex; flex-direction: column; }
+  .detail-top { display: flex; justify-content: space-between; font: 9px DM Mono, monospace; opacity: .7; }
+  .service-detail-card h3 { margin: 18px 0 16px; font: 26px/1 'Archivo Black'; letter-spacing: -.05em; text-transform: uppercase; }
+  .service-detail-card p { font-size: 13px; line-height: 1.7; opacity: .9; }
+  .service-detail-card .tag-list { margin-top: auto; padding-top: 16px; display:flex; gap:8px; flex-wrap:wrap; }
+  .service-detail-card .tag-list span { border:1px solid rgba(255,255,255,.25); padding:4px 8px; font:8px DM Mono, monospace; letter-spacing:.08em; }
+  .service-cta { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+  .primary-button { background:white; color:#050713; padding:10px 14px; font:10px DM Mono, monospace; letter-spacing:.08em; text-decoration:none; border:1px solid white; transition: transform .2s, background .2s; }
+  .primary-button:hover { background:#7FC4FF; border-color:#7FC4FF; transform: translateY(-2px); }
+  .secondary-button { border:1px solid rgba(255,255,255,.5); color:white; padding:10px 14px; font:10px DM Mono, monospace; letter-spacing:.08em; text-decoration:none; transition: transform .2s, background .2s; }
+  .secondary-button:hover { background:white; color:#050713; transform: translateY(-2px); }
+  .service-intro h1 { animation: title-in .8s cubic-bezier(.16,1,.3,1) .2s backwards; }
+  .service-intro p { animation: detail-in .6s .5s backwards; }
+  .service-brand { animation: detail-in .5s .1s backwards; }
+  .service-metrics { animation: detail-in .6s .4s backwards; }
+  .service-metrics > div { animation: metric-in .5s cubic-bezier(.16,1,.3,1) backwards; }
+  .service-metrics > div:nth-child(1) { animation-delay: .45s; }
+  .service-metrics > div:nth-child(2) { animation-delay: .52s; }
+  .service-metrics > div:nth-child(3) { animation-delay: .59s; }
+  .service-metrics > div:nth-child(4) { animation-delay: .66s; }
+  .service-detail-card { animation: card-in .6s cubic-bezier(.16,1,.3,1) backwards; }
+  .service-detail-card:nth-child(1) { animation-delay: .2s; }
+  .service-detail-card:nth-child(2) { animation-delay: .32s; }
+  .service-detail-card:nth-child(3) { animation-delay: .44s; }
+  @keyframes title-in { from { opacity: 0; transform: translateY(30px) rotate(1deg); } to { opacity: 1; transform: translateY(0) rotate(0); } }
+  @keyframes detail-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes metric-in { from { opacity: 0; transform: translateY(16px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes card-in { from { opacity: 0; transform: translateY(20px) rotate(-.5deg); } to { opacity: 1; transform: translateY(0) rotate(0); } }
+  .service-metrics strong.metric-animate { color: #7FC4FF; text-shadow: 0 0 14px rgba(127,196,255,.45); transition: color .3s, text-shadow .3s; }
+  .service-detail-card { transition: transform .25s, border-color .25s, box-shadow .25s, background .25s; }
+  .service-detail-card:hover { transform: translateY(-6px) scale(1.01); border-color: #7FC4FF; box-shadow: 8px 8px 0 #4689C8; }
+  .service-metrics > div { transition: transform .25s, background .25s, border-color .25s; }
+  .service-metrics > div:hover { transform: translateY(-4px) scale(1.02); border-color: #7FC4FF; background: rgba(127,196,255,.08); }
+  .service-metrics > div.metric-accent:hover { background: #F5F7FA; }
+  @media (max-width: 900px) { .service-intro { grid-template-columns: 1fr; } .service-metrics { grid-template-columns: 1fr 1fr; } .service-detail-grid { grid-template-columns: 1fr; } }
