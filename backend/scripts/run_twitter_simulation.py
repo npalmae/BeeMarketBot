@@ -46,6 +46,11 @@ else:
     if os.path.exists(_backend_env):
         load_dotenv(_backend_env)
 
+# Proveedores como Kimi rechazan respuestas vacías del asistente en el historial
+# de un agente; sin esto, ese agente deja de actuar.
+from app.utils.agent_model_compat import install
+
+install()
 
 import re
 

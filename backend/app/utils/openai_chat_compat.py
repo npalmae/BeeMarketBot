@@ -48,6 +48,25 @@ def configured_extra_body() -> Dict[str, Any]:
     return value
 
 
+def without_empty_assistant_replies(messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Omit assistant replies that have neither text nor tool calls.
+
+    camel-ai keeps such replies in each agent's memory. OpenAI accepts them;
+    Kimi rejects the whole request and, while the empty reply stays in the
+    history, every later turn of that agent.
+    """
+
+    return [message for message in messages if not _is_empty_assistant_reply(message)]
+
+
+def _is_empty_assistant_reply(message: Any) -> bool:
+    if not isinstance(message, dict) or message.get("role") != "assistant":
+        return False
+    if message.get("tool_calls") or message.get("function_call"):
+        return False
+    return not str(message.get("content") or "").strip()
+
+
 def is_gpt5_family(model: Optional[str]) -> bool:
     """Return True when model belongs to GPT-5 family aliases/snapshots."""
     if not model:
@@ -82,7 +101,7 @@ def create_chat_completion(
 
     kwargs: Dict[str, Any] = {
         "model": model,
-        "messages": messages,
+        "messages": without_empty_assistant_replies(messages),
     }
 
     if response_format is not None:

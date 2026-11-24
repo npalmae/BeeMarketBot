@@ -91,6 +91,7 @@ sys.path.insert(0, _backend_dir)
 
 # 加载项目根目录的 .env 文件（包含 LLM_API_KEY 等配置）
 from dotenv import load_dotenv
+
 _env_file = os.path.join(_project_root, '.env')
 if os.path.exists(_env_file):
     load_dotenv(_env_file)
@@ -101,6 +102,12 @@ else:
     if os.path.exists(_backend_env):
         load_dotenv(_backend_env)
         print(f"已加载环境配置: {_backend_env}")
+
+# Proveedores como Kimi rechazan respuestas vacías del asistente en el historial
+# de un agente; sin esto, ese agente deja de actuar.
+from app.utils.agent_model_compat import install
+
+install()
 
 
 class MaxTokensWarningFilter(logging.Filter):
