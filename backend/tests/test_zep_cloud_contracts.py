@@ -1,11 +1,15 @@
+"""Contratos entre los servicios y el motor de memoria en grafos.
+
+Los servicios trabajan con dobles del cliente; el último caso los une con el
+cliente real y un motor falso, sin red.
+"""
+
+import hashlib
 from types import SimpleNamespace
-import json
 
-import httpx
 import pytest
-from zep_cloud import Zep
-from zep_cloud.core.api_error import ApiError as ZepApiError
 
+from app.graph_memory.errors import AuthError, GraphMemoryError, ServerError
 from app.services import graph_builder as graph_builder_module
 from app.services.graph_builder import BatchSubmission, GraphBuilderService
 from app.services.oasis_profile_generator import OasisProfileGenerator
@@ -13,7 +17,7 @@ from app.services.zep_entity_reader import EntityNode, ZepEntityReader
 from app.services.zep_tools import ZepToolsService
 
 
-def test_report_search_caps_the_query_sent_to_zep():
+def test_report_search_caps_the_query_sent_to_the_graph_engine():
     calls = []
 
     class GraphApi:
@@ -31,7 +35,7 @@ def test_report_search_caps_the_query_sent_to_zep():
     assert result.query == original_query
 
 
-def test_profile_context_search_caps_both_queries_sent_to_zep():
+def test_profile_context_search_caps_both_queries_sent_to_the_graph_engine():
     calls = []
 
     class GraphApi:
@@ -122,14 +126,14 @@ def test_entity_context_includes_incoming_edges_from_the_full_graph():
 
 def test_entity_reader_does_not_turn_auth_failure_into_missing_entity():
     def unauthorized(**_kwargs):
-        raise ZepApiError(status_code=401, body={"message": "unauthorized"})
+        raise AuthError("unauthorized", status_code=401)
 
     reader = object.__new__(ZepEntityReader)
     reader.client = SimpleNamespace(
         graph=SimpleNamespace(node=SimpleNamespace(get=unauthorized))
     )
 
-    with pytest.raises(ZepApiError) as error:
+    with pytest.raises(GraphMemoryError) as error:
         reader.get_entity_with_context("graph-id", "node-id")
 
     assert error.value.status_code == 401
@@ -137,7 +141,7 @@ def test_entity_reader_does_not_turn_auth_failure_into_missing_entity():
 
 def test_entity_reader_does_not_turn_edge_failure_into_empty_data():
     def forbidden(**_kwargs):
-        raise ZepApiError(status_code=403, body={"message": "forbidden"})
+        raise GraphMemoryError("forbidden", status_code=403)
 
     reader = object.__new__(ZepEntityReader)
     reader.client = SimpleNamespace(
@@ -146,28 +150,28 @@ def test_entity_reader_does_not_turn_edge_failure_into_empty_data():
         )
     )
 
-    with pytest.raises(ZepApiError) as error:
+    with pytest.raises(GraphMemoryError) as error:
         reader.get_node_edges("node-id")
 
     assert error.value.status_code == 403
 
 
-def test_report_tools_do_not_turn_zep_read_failures_into_empty_data():
+def test_report_tools_do_not_turn_read_failures_into_empty_data():
     def unauthorized(**_kwargs):
-        raise ZepApiError(status_code=401, body={"message": "unauthorized"})
+        raise AuthError("unauthorized", status_code=401)
 
     service = object.__new__(ZepToolsService)
     service.client = SimpleNamespace(
         graph=SimpleNamespace(node=SimpleNamespace(get=unauthorized))
     )
 
-    with pytest.raises(ZepApiError):
+    with pytest.raises(GraphMemoryError):
         service.get_node_detail("node-id")
 
     service.get_all_edges = lambda _graph_id: (_ for _ in ()).throw(
-        ZepApiError(status_code=503, body={"message": "unavailable"})
+        ServerError("unavailable", status_code=503)
     )
-    with pytest.raises(ZepApiError):
+    with pytest.raises(GraphMemoryError):
         service.get_node_edges("graph-id", "node-id")
 
 
@@ -433,69 +437,36 @@ def test_batch_wait_times_out_while_status_remains_nonterminal(monkeypatch):
         )
 
 
-def test_installed_sdk_serializes_the_batch_325_contract():
-    requests = []
+def test_real_client_serves_the_builder_batch_flow(make_graph_client, monkeypatch):
+    """Constructor → cliente real → motor falso: identidad y detalle de cada fragmento."""
 
-    def handler(request):
-        requests.append((request.method, request.url.path, request.content))
-        path = request.url.path
-        if path.endswith("/batches") and request.method == "POST":
-            return httpx.Response(
-                200,
-                json={"batch_id": "batch-1", "status": "draft", "item_count": 0},
-            )
-        if path.endswith("/batches/batch-1/items") and request.method == "POST":
-            return httpx.Response(200, json=[{
-                "item_id": "item-1",
-                "sequence_index": 0,
-                "status": "pending",
-                "episode_uuid": "episode-1",
-                "source_uuid": "episode-1",
-            }])
-        if path.endswith("/batches/batch-1/process"):
-            return httpx.Response(
-                200,
-                json={"batch_id": "batch-1", "status": "queued", "item_count": 1},
-            )
-        if path.endswith("/batches/batch-1"):
-            return httpx.Response(200, json={
-                "batch_id": "batch-1",
-                "status": "succeeded",
-                "item_count": 1,
-                "progress": {"percent_complete": 100, "succeeded_items": 1},
-            })
-        if path.endswith("/batches/batch-1/items") and request.method == "GET":
-            return httpx.Response(200, json={
-                "items": [{
-                    "item_id": "item-1",
-                    "sequence_index": 0,
-                    "status": "succeeded",
-                    "episode_uuid": "episode-1",
-                    "source_uuid": "episode-1",
-                }],
-                "next_cursor": None,
-            })
-        raise AssertionError(f"Unexpected request: {request.method} {path}")
+    client, engine = make_graph_client()
+    monkeypatch.setattr(graph_builder_module.time, "sleep", lambda _seconds: None)
+    builder = object.__new__(GraphBuilderService)
+    builder.client = client
+    builder.graph = client.graph
 
-    with httpx.Client(transport=httpx.MockTransport(handler)) as transport_client:
-        builder = object.__new__(GraphBuilderService)
-        builder.client = Zep(api_key="test-key", httpx_client=transport_client)
-        submission = builder.add_text_batches("graph-id", ["source chunk"])
-        assert builder._wait_for_batch(submission, timeout=1) == ["episode-1"]
+    assert builder.create_graph("Grafo", graph_id="graph-id") == "graph-id"
+    submission = builder.add_text_batches("graph-id", ["source chunk", "second chunk"])
 
-    assert [(method, path) for method, path, _body in requests] == [
-        ("POST", "/api/v2/batches"),
-        ("POST", "/api/v2/batches/batch-1/items"),
-        ("POST", "/api/v2/batches/batch-1/process"),
-        ("GET", "/api/v2/batches/batch-1"),
-        ("GET", "/api/v2/batches/batch-1/items"),
-    ]
-    add_payload = json.loads(requests[1][2])
-    assert add_payload["items"][0] == {
-        "data": "source chunk",
-        "data_type": "text",
+    assert builder._wait_for_batch(submission, timeout=5) == submission.episode_uuids
+    assert sorted(engine.ingested) == sorted(submission.episode_uuids)
+
+    record = client._batches.require(submission.batch_id)
+    assert record.metadata == {
+        "mirofish_operation_id": submission.operation_id,
         "graph_id": "graph-id",
-        "metadata": add_payload["items"][0]["metadata"],
-        "source_description": "MiroFish source document chunk",
-        "type": "graph_episode",
+        "chunk_count": 2,
     }
+    assert [item.episode_uuid for item in record.items] == submission.episode_uuids
+    assert [item.status for item in record.items] == ["succeeded", "succeeded"]
+    assert record.items[0].source_description == "MiroFish source document chunk"
+    assert record.items[1].metadata == {
+        "mirofish_operation_id": submission.operation_id,
+        "chunk_index": 1,
+        "chunk_sha256": hashlib.sha256(b"second chunk").hexdigest(),
+    }
+
+    # Lo que ven los episodios ingeridos: procesados, y registrados por uuid.
+    stored = client.graph.episode.get(uuid_=submission.episode_uuids[0])
+    assert stored.processed is True

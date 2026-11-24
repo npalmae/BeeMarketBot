@@ -1,16 +1,19 @@
-"""Complete Zep Graph node/edge pagination using opaque response cursors."""
+"""Paginación completa de nodos y relaciones de un grafo mediante cursores opacos.
+
+Nombre histórico por el cliente anterior (Zep). La lógica no cambia: el cliente del
+motor de grafos expone el mismo listado ``with_raw_response.get_by_graph_id`` y la misma
+cabecera de cursor.
+"""
 
 from __future__ import annotations
 
 from collections.abc import Callable
 from typing import Any
 
-from zep_cloud.client import Zep
-
 from .logger import get_logger
 from .zep import call_zep_read_with_retry
 
-logger = get_logger("mirofish.zep_paging")
+logger = get_logger("mirofish.graph_paging")
 
 _DEFAULT_PAGE_SIZE = 100
 _DEFAULT_MAX_RETRIES = 3
@@ -95,7 +98,7 @@ def _fetch_all(
             if len(all_items) > max_items:
                 all_items = all_items[:max_items]
             logger.warning(
-                "Zep %s pagination reached explicit max_items=%s for graph %s",
+                "Graph %s pagination reached explicit max_items=%s for graph %s",
                 item_name,
                 max_items,
                 graph_id,
@@ -110,7 +113,7 @@ def _fetch_all(
             break
         if next_cursor in seen_cursors or next_cursor == cursor:
             raise RuntimeError(
-                f"Zep {item_name} pagination cursor did not advance for graph {graph_id}"
+                f"Graph {item_name} pagination cursor did not advance for graph {graph_id}"
             )
         seen_cursors.add(next_cursor)
         cursor = next_cursor
@@ -119,7 +122,7 @@ def _fetch_all(
 
 
 def fetch_all_nodes(
-    client: Zep,
+    client: Any,
     graph_id: str,
     page_size: int = _DEFAULT_PAGE_SIZE,
     max_items: int | None = None,
@@ -140,7 +143,7 @@ def fetch_all_nodes(
 
 
 def fetch_all_edges(
-    client: Zep,
+    client: Any,
     graph_id: str,
     page_size: int = _DEFAULT_PAGE_SIZE,
     max_retries: int = _DEFAULT_MAX_RETRIES,

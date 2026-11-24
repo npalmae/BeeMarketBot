@@ -29,9 +29,9 @@ class Config:
     LLM_BASE_URL = os.environ.get('LLM_BASE_URL', 'https://api.openai.com/v1')
     LLM_MODEL_NAME = os.environ.get('LLM_MODEL_NAME', 'gpt-4o-mini')
     
-    # Zep配置
-    ZEP_API_KEY = os.environ.get('ZEP_API_KEY')
-    
+    # Motor de memoria en grafos: se configura con GRAPH_LLM_*, EMBEDDING_*
+    # y GRAPH_DB_* (ver app/graph_memory/settings.py). Hereda del LLM por defecto.
+
     # 文件上传配置
     MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 50MB
     UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), '../uploads')
@@ -61,15 +61,40 @@ class Config:
     REPORT_AGENT_TEMPERATURE = float(os.environ.get('REPORT_AGENT_TEMPERATURE', '0.5'))
     
     @classmethod
+    def graph_memory_errors(cls) -> list[str]:
+        """Problemas de configuración del motor de memoria en grafos; vacío si sirve."""
+
+        from .graph_memory.errors import GraphMemoryError
+        from .graph_memory.settings import GraphMemorySettings
+
+        try:
+            return GraphMemorySettings.from_env().validate()
+        except GraphMemoryError as error:
+            return [str(error)]
+        except (TypeError, ValueError) as error:
+            return [f"Configuración del motor de grafos inválida: {error}"]
+
+    @classmethod
+    def llm_compatibility_errors(cls) -> list[str]:
+        """Problemas de LLM_TEMPERATURE o LLM_EXTRA_BODY."""
+
+        from .utils.openai_chat_compat import configured_extra_body, configured_temperature
+
+        try:
+            configured_extra_body()
+            configured_temperature()
+        except ValueError as error:
+            return [str(error)]
+        return []
+
+    @classmethod
     def validate(cls) -> list[str]:
         """验证必要配置"""
         errors: list[str] = []
         if not cls.LLM_API_KEY:
             errors.append("LLM_API_KEY 未配置")
-        if not cls.ZEP_API_KEY:
-            errors.append("ZEP_API_KEY 未配置")
-        if os.environ.get("ZEP_API_URL"):
-            errors.append("ZEP_API_URL 不受支持；MiroFish 仅连接 Zep Cloud")
+        errors.extend(cls.graph_memory_errors())
+        errors.extend(cls.llm_compatibility_errors())
         if cls.DEBUG:
             import warnings
             warnings.warn("Flask DEBUG mode is enabled. Do not use in production.", RuntimeWarning)

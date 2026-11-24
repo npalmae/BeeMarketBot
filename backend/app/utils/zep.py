@@ -1,102 +1,80 @@
-"""Shared Zep Cloud client, request limits, and retry policy."""
+"""Cliente compartido del motor de memoria en grafos y política de reintentos.
+
+Nombre histórico: este módulo se llamaba así cuando el proyecto usaba Zep
+Cloud. Conserva sus nombres para no reescribir los servicios que lo importan,
+pero ahora entrega el cliente de ``app.graph_memory`` (motor propio sobre
+Graphiti) y ya no requiere ``ZEP_API_KEY`` ni habla con ningún servicio externo
+de memoria. La conexión con el modelo y los embeddings se configura con las
+variables ``GRAPH_LLM_*`` y ``EMBEDDING_*``.
+"""
 
 from __future__ import annotations
 
-import os
 import time
-from functools import lru_cache
-from typing import Any, Callable, TypeVar
+from typing import Callable, TypeVar
 
-import httpx
-from zep_cloud.client import Zep
-from zep_cloud.core.api_error import ApiError as ZepApiError
-
-from ..config import Config
+from ..graph_memory.client import get_shared_client, reset_shared_client
+from ..graph_memory.errors import GraphMemoryError
 from .logger import get_logger
 
-logger = get_logger("mirofish.zep")
+logger = get_logger("mirofish.graph_client")
 
 T = TypeVar("T")
 
-ZEP_CLOUD_BASE_URL = "https://api.getzep.com/api/v2"
-# Keep request behavior aligned with the zep-cloud 3.25.0 SDK default that
-# MiroFish used before introducing the shared client. This is an internal
-# integration policy, not a deployment setting users need to tune.
-ZEP_HTTP_REQUEST_TIMEOUT_SECONDS = 60.0
-# Zep ingestion is asynchronous and may take several minutes. Preserve the
-# original GraphBuilder deadline while keeping it separate from HTTP timeout.
+# Espera máxima, en segundos, de una ingesta (un documento grande puede tardar).
 ZEP_INGESTION_WAIT_TIMEOUT_SECONDS = 600
 MAX_ZEP_SEARCH_QUERY_CHARS = 400
 MAX_ZEP_SEARCH_RESULTS = 50
+# Se conserva por compatibilidad: el cliente ya no fija un tiempo por petición HTTP.
+ZEP_HTTP_REQUEST_TIMEOUT_SECONDS = 60.0
 
 
-def normalize_zep_search_query(query: Any) -> str:
-    """Return a non-empty query within Zep Cloud's endpoint limit."""
+def normalize_zep_search_query(query) -> str:
+    """Devuelve una consulta no vacía dentro del límite de longitud del motor."""
 
     if not isinstance(query, str):
-        raise ValueError("Zep search query must be a string")
+        raise ValueError("La consulta de búsqueda debe ser texto")
     normalized = query.strip()
     if not normalized:
-        raise ValueError("Zep search query must not be empty")
+        raise ValueError("La consulta de búsqueda no puede estar vacía")
     return normalized[:MAX_ZEP_SEARCH_QUERY_CHARS]
 
 
-def normalize_zep_search_limit(limit: Any) -> int:
-    """Clamp a search result limit to the current Zep Cloud contract."""
+def normalize_zep_search_limit(limit) -> int:
+    """Ajusta el límite de resultados al rango que acepta el motor."""
 
     try:
         normalized = int(limit)
     except (TypeError, ValueError) as exc:
-        raise ValueError("Zep search limit must be an integer") from exc
+        raise ValueError("El límite de búsqueda debe ser un entero") from exc
     if normalized < 1:
-        raise ValueError("Zep search limit must be at least 1")
+        raise ValueError("El límite de búsqueda debe ser al menos 1")
     return min(normalized, MAX_ZEP_SEARCH_RESULTS)
 
 
-@lru_cache(maxsize=4)
-def _cached_zep_client(api_key: str, timeout: float) -> Zep:
-    return Zep(
-        api_key=api_key,
-        base_url=ZEP_CLOUD_BASE_URL,
-        timeout=timeout,
-    )
+def get_zep_client(api_key: str | None = None, timeout: float | None = None):
+    """Devuelve el cliente compartido del motor de grafos, creado la primera vez.
 
+    ``api_key`` y ``timeout`` se aceptan por compatibilidad con el código que
+    usaba Zep Cloud y se ignoran: la configuración viene del entorno.
+    """
 
-def get_zep_client(api_key: str | None = None, timeout: float | None = None) -> Zep:
-    """Return a process-shared, explicitly configured Zep Cloud client."""
-
-    # zep-cloud gives ZEP_API_URL precedence even when base_url is explicit.
-    # Reject it so this Cloud-only integration cannot silently target a
-    # self-hosted or compatibility endpoint.
-    if os.environ.get("ZEP_API_URL"):
-        raise ValueError("ZEP_API_URL is unsupported; unset it to use Zep Cloud")
-
-    normalized_key = (api_key or Config.ZEP_API_KEY or "").strip()
-    if not normalized_key:
-        raise ValueError("ZEP_API_KEY 未配置")
-
-    request_timeout = float(
-        timeout if timeout is not None else ZEP_HTTP_REQUEST_TIMEOUT_SECONDS
-    )
-    if request_timeout <= 0:
-        raise ValueError("Zep request timeout must be greater than 0")
-    return _cached_zep_client(normalized_key, request_timeout)
+    del api_key, timeout
+    return get_shared_client()
 
 
 def clear_zep_client_cache() -> None:
-    """Clear cached clients. Intended for tests and controlled reconfiguration."""
+    """Cierra y olvida el cliente compartido. Para pruebas y reconfiguración."""
 
-    _cached_zep_client.cache_clear()
+    reset_shared_client()
 
 
 def is_retryable_zep_error(error: BaseException) -> bool:
-    """Return whether a failed *read* is safe and useful to retry."""
+    """Indica si falló una lectura que vale la pena reintentar."""
 
-    if isinstance(error, (httpx.TimeoutException, httpx.TransportError)):
-        return True
     if isinstance(error, (ConnectionError, TimeoutError, OSError)):
         return True
-    if isinstance(error, ZepApiError):
+    if isinstance(error, GraphMemoryError):
         status_code = error.status_code
         return status_code in {408, 429} or (
             status_code is not None and 500 <= status_code <= 599
@@ -105,16 +83,7 @@ def is_retryable_zep_error(error: BaseException) -> bool:
 
 
 def _retry_after_seconds(error: BaseException) -> float | None:
-    if not isinstance(error, ZepApiError) or not error.headers:
-        return None
-    value = next(
-        (
-            header_value
-            for header_name, header_value in error.headers.items()
-            if header_name.lower() == "retry-after"
-        ),
-        None,
-    )
+    value = getattr(error, "retry_after", None)
     if value is None:
         return None
     try:
@@ -132,7 +101,11 @@ def call_zep_read_with_retry(
     max_delay: float = 60.0,
     sleep: Callable[[float], None] = time.sleep,
 ) -> T:
-    """Retry a safe Zep read only for transport, 408, 429, or 5xx errors."""
+    """Reintenta una lectura segura ante fallos de transporte, 408, 429 o 5xx.
+
+    Las escrituras no se reintentan aquí: repetir una ingesta puede duplicar
+    hechos en el grafo.
+    """
 
     if max_attempts < 1:
         raise ValueError("max_attempts must be at least 1")
@@ -150,7 +123,7 @@ def call_zep_read_with_retry(
                 max_delay,
             )
             logger.warning(
-                "Zep %s attempt %s/%s failed (%s); retrying in %.1fs",
+                "Graph memory %s attempt %s/%s failed (%s); retrying in %.1fs",
                 operation_name,
                 attempt,
                 max_attempts,

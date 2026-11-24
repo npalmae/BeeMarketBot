@@ -6,10 +6,7 @@ from app.utils.ontology import (
     normalize_ontology_attribute,
     normalize_ontology_attributes,
 )
-from zep_cloud.external_clients.ontology import (
-    edge_model_to_api_schema,
-    entity_model_to_api_schema,
-)
+from app.graph_memory.types import edge_definition, entity_definition, model_from_definition
 
 
 def test_normalize_string_attribute():
@@ -31,7 +28,7 @@ def test_reject_unusable_attribute_shapes():
         assert normalize_ontology_attribute(value) is None
 
 
-def test_attribute_list_is_non_empty_and_capped_for_zep():
+def test_attribute_list_is_non_empty_and_capped():
     assert normalize_ontology_attributes(None) == [{
         "name": "details",
         "type": "text",
@@ -99,7 +96,7 @@ def test_graph_builder_safety_net_accepts_strings_and_skips_invalid_values():
     assert set(speaker.__annotations__) == {"role", "entity_summary"}
 
 
-def test_graph_builder_emits_a_pinned_zep_sdk_compatible_schema():
+def test_graph_builder_emits_a_schema_the_graph_engine_accepts():
     captured = {}
 
     class GraphApi:
@@ -128,23 +125,19 @@ def test_graph_builder_emits_a_pinned_zep_sdk_compatible_schema():
     assert captured["graph_ids"] == ["graph-id"]
 
     speaker = captured["entities"]["Speaker"]
-    entity_schema = entity_model_to_api_schema(speaker, "Speaker")
-    assert len(entity_schema["properties"]) == MAX_ONTOLOGY_ATTRIBUTES
-    assert entity_schema["properties"][0] == {
-        "name": "entity_graph_id",
-        "type": "Text",
-        "description": "graph_id",
-    }
+    entity_schema = entity_definition("Speaker", speaker)
+    assert len(entity_schema["attributes"]) == MAX_ONTOLOGY_ATTRIBUTES
+    assert list(entity_schema["attributes"].items())[0] == ("entity_graph_id", "graph_id")
+    # La definición guardada tiene que reconstruirse como modelo sin perder atributos.
+    rebuilt = model_from_definition(entity_schema)
+    assert set(rebuilt.model_fields) == set(entity_schema["attributes"])
 
     mentions, source_targets = captured["edges"]["MENTIONS"]
-    edge_schema = edge_model_to_api_schema(mentions, "MENTIONS")
-    assert edge_schema["properties"] == [{
-        "name": "details",
-        "type": "Text",
-        "description": "Additional details about this ontology type.",
-    }]
-    assert source_targets[0].source == "Speaker"
-    assert source_targets[0].target == "Speaker"
+    edge_schema = edge_definition("MENTIONS", mentions, source_targets)
+    assert edge_schema["attributes"] == {
+        "details": "Additional details about this ontology type."
+    }
+    assert edge_schema["source_targets"] == [["Speaker", "Speaker"]]
 
 
 def test_graph_builder_passes_an_empty_entity_mapping_for_edge_only_ontology():
@@ -171,7 +164,7 @@ def test_graph_builder_passes_an_empty_entity_mapping_for_edge_only_ontology():
     assert captured["entities"] == {}
 
 
-def test_graph_builder_deduplicates_and_caps_edge_source_targets_for_zep():
+def test_graph_builder_deduplicates_and_caps_edge_source_targets():
     captured = {}
 
     class GraphApi:

@@ -121,3 +121,96 @@ def test_extracts_text_from_supported_content_shapes():
 
     assert extract_chat_completion_text(response) == "first second third"
     assert extract_chat_completion_text(SimpleNamespace(choices=[])) == ""
+
+
+# ---------------------------------------------------------------- provider compatibility settings
+
+MESSAGES = [{"role": "user", "content": "hello"}]
+JSON = {"type": "json_object"}
+
+
+def test_a_configured_temperature_replaces_every_requested_one(monkeypatch):
+    monkeypatch.setenv("LLM_TEMPERATURE", "0.6")
+    recorder = CompletionRecorder()
+    client = client_for(recorder)
+
+    create_chat_completion(client, model="kimi-for-coding", messages=MESSAGES, temperature=0.3)
+    create_chat_completion(client, model="kimi-for-coding", messages=MESSAGES, temperature=0.7, response_format=JSON)
+
+    assert [call["temperature"] for call in recorder.calls] == [0.6, 0.6]
+    assert all("extra_body" not in call for call in recorder.calls)
+
+
+def test_without_a_configured_temperature_each_call_keeps_its_own(monkeypatch):
+    recorder = CompletionRecorder()
+    client = client_for(recorder)
+
+    create_chat_completion(client, model="kimi-for-coding", messages=MESSAGES, temperature=0.7)
+    create_chat_completion(client, model="kimi-for-coding", messages=MESSAGES, response_format=JSON)
+
+    assert [call.get("temperature") for call in recorder.calls] == [0.7, None]
+
+
+def test_zero_is_a_valid_configured_temperature(monkeypatch):
+    monkeypatch.setenv("LLM_TEMPERATURE", "0")
+    recorder = CompletionRecorder()
+    client = client_for(recorder)
+
+    create_chat_completion(client, model="kimi-for-coding", messages=MESSAGES, temperature=0.7)
+
+    assert recorder.calls[0]["temperature"] == 0.0
+
+
+def test_gpt5_still_sends_no_temperature_even_when_one_is_configured(monkeypatch):
+    monkeypatch.setenv("LLM_TEMPERATURE", "0.6")
+    recorder = CompletionRecorder()
+    client = client_for(recorder)
+
+    create_chat_completion(client, model="gpt-5", messages=MESSAGES, temperature=0.3, response_format=JSON)
+
+    assert "temperature" not in recorder.calls[0]
+
+
+def test_extra_body_is_sent_with_every_request(monkeypatch):
+    monkeypatch.setenv("LLM_EXTRA_BODY", '{"thinking": {"type": "disabled"}, "top_k": 5}')
+    recorder = CompletionRecorder()
+    client = client_for(recorder)
+
+    create_chat_completion(client, model="kimi-for-coding", messages=MESSAGES, temperature=0.7)
+    create_chat_completion(client, model="kimi-for-coding", messages=MESSAGES, temperature=0.7, response_format=JSON)
+
+    assert [call["extra_body"] for call in recorder.calls] == [{"thinking": {"type": "disabled"}, "top_k": 5}] * 2
+    # Van dentro de extra_body, no sueltos en la petición.
+    assert "thinking" not in recorder.calls[0]
+
+
+@pytest.mark.parametrize(
+    "value, message",
+    [("{no json", "JSON object"), ("[1, 2]", "JSON object"), ('"texto"', "JSON object")],
+)
+def test_an_unreadable_extra_body_is_reported_clearly(monkeypatch, value, message):
+    monkeypatch.setenv("LLM_EXTRA_BODY", value)
+
+    with pytest.raises(ValueError, match=message):
+        create_chat_completion(client_for(CompletionRecorder()), model="m", messages=MESSAGES)
+
+
+def test_an_unreadable_temperature_is_reported_clearly(monkeypatch):
+    monkeypatch.setenv("LLM_TEMPERATURE", "tibia")
+
+    with pytest.raises(ValueError, match="LLM_TEMPERATURE must be a number"):
+        create_chat_completion(client_for(CompletionRecorder()), model="m", messages=MESSAGES)
+
+
+def test_startup_validation_reports_unreadable_compatibility_settings(monkeypatch):
+    from app.config import Config
+
+    monkeypatch.setenv("LLM_EXTRA_BODY", "{no")
+    assert any("LLM_EXTRA_BODY" in problem for problem in Config.validate())
+
+    monkeypatch.setenv("LLM_EXTRA_BODY", "")
+    monkeypatch.setenv("LLM_TEMPERATURE", "no")
+    assert [problem for problem in Config.llm_compatibility_errors() if "LLM_TEMPERATURE" in problem]
+
+    monkeypatch.setenv("LLM_TEMPERATURE", "")
+    assert Config.llm_compatibility_errors() == []

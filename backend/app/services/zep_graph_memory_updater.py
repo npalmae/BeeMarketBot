@@ -206,7 +206,7 @@ class AgentActivity:
 
 class _DrainDeadlineExceeded(TimeoutError):
     def __init__(self, processed_count: int):
-        super().__init__("Zep updater drain deadline elapsed")
+        super().__init__("Graph memory updater drain deadline elapsed")
         self.processed_count = processed_count
 
 
@@ -255,12 +255,10 @@ class ZepGraphMemoryUpdater:
         """
         self.graph_id = graph_id
         self.simulation_id = simulation_id or "unknown"
-        self.api_key = api_key or Config.ZEP_API_KEY
-        
-        if not self.api_key:
-            raise ValueError("ZEP_API_KEY未配置")
-        
-        self.client = get_zep_client(self.api_key)
+        # ``api_key`` se acepta por compatibilidad: el motor de grafos se configura
+        # con el entorno y no necesita una clave propia.
+        del api_key
+        self.client = get_zep_client()
         
         # 活动队列
         self._activity_queue: Queue = Queue()
@@ -324,7 +322,7 @@ class ZepGraphMemoryUpdater:
             self._worker_thread.join(timeout=join_timeout)
             if self._worker_thread.is_alive():
                 raise TimeoutError(
-                    f"Zep updater worker did not stop within {join_timeout:.0f}s"
+                    f"Graph memory updater worker did not stop within {join_timeout:.0f}s"
                 )
 
         # The worker has drained the queue. Only now is it safe to flush
@@ -334,7 +332,7 @@ class ZepGraphMemoryUpdater:
 
         if self._failed_batches:
             raise RuntimeError(
-                f"{len(self._failed_batches)} Zep activity batch(es) failed; "
+                f"{len(self._failed_batches)} graph memory activity batch(es) failed; "
                 "simulation graph ingestion is incomplete"
             )
 
@@ -375,7 +373,7 @@ class ZepGraphMemoryUpdater:
 
         with self._acceptance_lock:
             if not self._running:
-                raise RuntimeError("Zep graph updater is not running")
+                raise RuntimeError("Graph memory updater is not running")
             self._activity_queue.put(activity)
             self._total_activities += 1
         logger.debug(f"添加活动到Zep队列: {activity.agent_name} - {activity.action_type}")
@@ -521,7 +519,7 @@ class ZepGraphMemoryUpdater:
                     or getattr(episode, "uuid", None)
                 )
                 if not episode_uuid:
-                    raise RuntimeError("Zep graph.add returned no episode UUID")
+                    raise RuntimeError("Graph memory returned no episode UUID for the added activity")
                 self._pending_episode_uuids.append(str(episode_uuid))
                 self._total_sent += 1
                 self._total_items_sent += len(payload_activities)
@@ -580,7 +578,7 @@ class ZepGraphMemoryUpdater:
             logger.info(f"发送{display_name}平台剩余的 {len(buffer)} 条活动")
             if deadline is not None and time.time() >= deadline:
                 raise TimeoutError(
-                    "Zep updater drain deadline elapsed before flushing all activities"
+                    "Graph memory updater drain deadline elapsed before flushing all activities"
                 )
             try:
                 processed_count = self._send_batch_activities(
@@ -606,7 +604,7 @@ class ZepGraphMemoryUpdater:
         while pending:
             if time.time() >= deadline:
                 raise TimeoutError(
-                    f"Zep simulation ingestion timed out with {len(pending)} "
+                    f"Simulation graph ingestion timed out with {len(pending)} "
                     "episode(s) pending"
                 )
             for episode_uuid in list(pending):
@@ -614,6 +612,13 @@ class ZepGraphMemoryUpdater:
                     lambda: self.client.graph.episode.get(uuid_=episode_uuid),
                     operation_name=f"poll simulation episode {episode_uuid}",
                 )
+                # A failed episode never becomes `processed`; report the cause
+                # instead of polling until the deadline.
+                if getattr(episode, "failed", False):
+                    raise RuntimeError(
+                        "Graph memory activity batch failed to ingest: "
+                        f"{getattr(episode, 'error', None) or 'unknown error'}"
+                    )
                 if getattr(episode, "processed", False):
                     pending.remove(episode_uuid)
             if pending:
@@ -715,11 +720,11 @@ class ZepGraphMemoryManager:
             )
             if updater._running or worker_alive:
                 raise RuntimeError(
-                    f"Zep updater for {simulation_id} is still active"
+                    f"Graph memory updater for {simulation_id} is still active"
                 )
             cls._updaters.pop(simulation_id, None)
         logger.warning(
-            "Discarded incomplete Zep updater during explicit graph deletion: "
+            "Discarded incomplete graph memory updater during explicit graph deletion: "
             "simulation_id=%s, graph_id=%s",
             simulation_id,
             updater.graph_id,

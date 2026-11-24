@@ -260,16 +260,17 @@ class OasisProfileGenerator:
             base_url=self.base_url
         )
         
-        # Zep客户端用于检索丰富上下文
-        self.zep_api_key = zep_api_key or Config.ZEP_API_KEY
-        self.zep_client = None
+        # Cliente del motor de grafos para recuperar contexto enriquecido.
+        # ``zep_api_key`` se acepta por compatibilidad: el motor se configura con
+        # el entorno y no necesita una clave propia.
+        del zep_api_key
         self.graph_id = graph_id
-        
-        if self.zep_api_key:
-            try:
-                self.zep_client = get_zep_client(self.zep_api_key)
-            except Exception as e:
-                logger.warning(f"Zep客户端初始化失败: {e}")
+
+        try:
+            self.zep_client = get_zep_client()
+        except Exception as e:
+            self.zep_client = None
+            logger.warning(f"Cliente del motor de grafos no disponible: {e}")
     
     def generate_profile_from_entity(
         self, 

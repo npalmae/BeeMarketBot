@@ -6,13 +6,17 @@ from typing import Any, Dict, List, Optional
 MAX_ONTOLOGY_TYPES = 10
 MAX_ONTOLOGY_ATTRIBUTES = 10
 MAX_ONTOLOGY_SOURCE_TARGETS = 10
+# Campos internos de los nodos de la base de grafos: el motor rechaza un tipo de
+# ontología cuyos atributos los usen, así que se renombran con el prefijo "entity_".
 RESERVED_ONTOLOGY_ATTRIBUTE_NAMES = frozenset({
     "uuid",
     "name",
+    "labels",
     "group_id",
     "graph_id",
     "name_embedding",
     "summary",
+    "attributes",
     "created_at",
 })
 

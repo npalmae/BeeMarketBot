@@ -9,7 +9,7 @@ import traceback
 import threading
 from contextlib import ExitStack, nullcontext
 from flask import request, jsonify
-from zep_cloud import NotFoundError
+from ..graph_memory import NotFoundError
 
 from . import graph_bp
 from ..config import Config
@@ -89,9 +89,9 @@ def _delete_cloud_graph_if_present(graph_id: str | None) -> None:
                 f"{', '.join(active_simulations)}"
             )
         try:
-            GraphBuilderService(api_key=Config.ZEP_API_KEY).delete_graph(graph_id)
+            GraphBuilderService().delete_graph(graph_id)
         except NotFoundError:
-            logger.info("Zep Cloud graph already absent: %s", graph_id)
+            logger.info("Graph already absent from the graph memory: %s", graph_id)
 
 
 def _clear_project_graph_reference(project) -> None:
@@ -484,8 +484,10 @@ def _build_graph_impl():
         
         # 检查配置
         errors = []
-        if not Config.ZEP_API_KEY:
-            errors.append(t('api.zepApiKeyMissing'))
+        errors.extend(
+            t('api.graphMemoryConfigProblem', problem=problem)
+            for problem in Config.graph_memory_errors()
+        )
         if errors:
             logger.error(f"配置错误: {errors}")
             return jsonify({
@@ -546,7 +548,7 @@ def _build_graph_impl():
                 and project.zep_batch_id
                 and project.zep_batch_operation_id
             ):
-                builder = GraphBuilderService(api_key=Config.ZEP_API_KEY)
+                builder = GraphBuilderService()
                 batch_summary = builder.get_batch_summary(project.zep_batch_id)
                 if getattr(batch_summary, "status", None) in {
                     "queued",
@@ -558,7 +560,7 @@ def _build_graph_impl():
             if not resume_existing_batch:
                 project.status = ProjectStatus.FAILED
                 project.error = (
-                    "Graph build task is no longer present; the persisted Zep "
+                    "Graph build task is no longer present; the persisted graph memory "
                     "batch cannot be resumed automatically"
                 )
                 ProjectManager.save_project(project)
@@ -660,7 +662,7 @@ def _build_graph_impl():
                 )
                 
                 # 创建图谱构建服务
-                builder = GraphBuilderService(api_key=Config.ZEP_API_KEY)
+                builder = GraphBuilderService()
                 
                 # 分块
                 task_manager.update_task(
@@ -681,7 +683,7 @@ def _build_graph_impl():
                     operation_id = builder.build_operation_id(graph_id, chunks)
                     if operation_id != project.zep_batch_operation_id:
                         raise RuntimeError(
-                            "Persisted Zep batch does not match the current graph input"
+                            "Persisted graph batch does not match the current graph input"
                         )
                     submission = BatchSubmission(
                         batch_id=project.zep_batch_id,
@@ -882,13 +884,14 @@ def get_graph_data(graph_id: str):
     获取图谱数据（节点和边）
     """
     try:
-        if not Config.ZEP_API_KEY:
+        config_errors = Config.graph_memory_errors()
+        if config_errors:
             return jsonify({
                 "success": False,
-                "error": t('api.zepApiKeyMissing')
+                "error": t('api.graphMemoryConfigMissing', errors='; '.join(config_errors))
             }), 500
         
-        builder = GraphBuilderService(api_key=Config.ZEP_API_KEY)
+        builder = GraphBuilderService()
         graph_data = builder.get_graph_data(graph_id)
         
         return jsonify({
@@ -910,10 +913,11 @@ def delete_graph(graph_id: str):
     删除Zep图谱
     """
     try:
-        if not Config.ZEP_API_KEY:
+        config_errors = Config.graph_memory_errors()
+        if config_errors:
             return jsonify({
                 "success": False,
-                "error": t('api.zepApiKeyMissing')
+                "error": t('api.graphMemoryConfigMissing', errors='; '.join(config_errors))
             }), 500
         
         projects = ProjectManager.find_projects_by_graph_id(graph_id)

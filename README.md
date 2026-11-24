@@ -102,6 +102,7 @@ Click the image to watch MiroFish's deep prediction of the lost ending based on 
 | **Node.js** | 18+ | Frontend runtime, includes npm | `node -v` |
 | **Python** | ≥3.11, ≤3.12 | Backend runtime | `python --version` |
 | **uv** | Latest | Python package manager | `uv --version` |
+| **FalkorDB** | 6.0.x | Graph database for the memory graph (or Neo4j 5.26+) | `docker exec falkordb redis-cli PING` |
 
 #### 1. Configure Environment Variables
 
@@ -122,10 +123,19 @@ LLM_API_KEY=your_api_key
 LLM_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
 LLM_MODEL_NAME=qwen-plus
 
-# Zep Cloud Configuration
-# Free monthly quota is sufficient for simple usage: https://app.getzep.com/
-ZEP_API_KEY=your_zep_api_key
+# Graph memory: graph database (self-hosted, no external memory service)
+# FalkorDB (recommended) or Neo4j:
+#   falkordb://host:6379              neo4j://user:password@host:7687/database
+GRAPH_DB_URL=falkordb://localhost:6379
+
+# Graph memory: embeddings (any OpenAI-format embeddings API)
+# Use the model and vector size of your provider. The values below work with
+# the Alibaba endpoint above, using the same key.
+EMBEDDING_MODEL=text-embedding-v3
+EMBEDDING_DIMENSIONS=1024
 ```
+
+**Optional settings** (see `.env.example`): point the graph memory at a different model or embeddings provider (`GRAPH_LLM_*`, `EMBEDDING_API_KEY`, `EMBEDDING_BASE_URL`), and adapt providers that only accept a fixed temperature or need extra parameters (`LLM_TEMPERATURE`, `LLM_EXTRA_BODY`).
 
 #### 2. Install Dependencies
 
@@ -147,8 +157,17 @@ npm run setup:backend
 #### 3. Start Services
 
 ```bash
+# Start the graph database for the memory (first time only)
+docker run -d --name falkordb -p 127.0.0.1:6379:6379 -v falkordb-data:/data falkordb/falkordb:6.0.4
+
 # Start both frontend and backend (run from project root)
 npm run dev
+```
+
+To check the memory graph end to end against your real configuration (it makes a few model calls and removes its temporary graph):
+
+```bash
+cd backend && uv run python scripts/validate_graph_memory.py
 ```
 
 **Service URLs:**
@@ -168,13 +187,14 @@ npm run frontend  # Start frontend only
 # 1. Configure environment variables (same as source deployment)
 cp .env.example .env
 
-# 2. Pull image and start
-docker compose up -d
+# 2. Build the image and start (includes FalkorDB)
+docker compose up -d --build
+
+# Check the memory graph against your real configuration
+docker compose exec beemarketbot sh -c "cd backend && uv run --frozen python scripts/validate_graph_memory.py"
 ```
 
-Reads `.env` from root directory by default, maps ports `3000 (frontend) / 5001 (backend)`
-
-> Mirror address for faster pulling is provided as comments in `docker-compose.yml`, replace if needed.
+Reads `.env` from the root directory. Maps ports `3000` (frontend) and `5001` (backend); set `WEB_PORT`, `API_PORT` or `FALKORDB_PORT` in `.env` if they are taken. Project data is kept in `./backend/uploads` and the graph database in the `falkordb-data` volume.
 
 ## 📬 Join the Conversation
 

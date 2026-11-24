@@ -1,12 +1,12 @@
 from types import SimpleNamespace
 
+from app.graph_memory.client import _NodeNamespace
 from app.services.zep_entity_reader import ZepEntityReader
-from zep_cloud.graph.node.client import NodeClient
 
 
-def test_pinned_zep_sdk_exposes_get_edges_not_get_entity_edges():
-    assert hasattr(NodeClient, "get_edges")
-    assert not hasattr(NodeClient, "get_entity_edges")
+def test_graph_client_exposes_get_edges_not_get_entity_edges():
+    assert hasattr(_NodeNamespace, "get_edges")
+    assert not hasattr(_NodeNamespace, "get_entity_edges")
 
 
 def test_get_node_edges_uses_the_supported_sdk_method():

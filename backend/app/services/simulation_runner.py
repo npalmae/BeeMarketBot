@@ -450,7 +450,7 @@ class SimulationRunner:
                 logger.error(f"创建图谱记忆更新器失败: {e}")
                 cls._graph_memory_enabled[simulation_id] = False
                 state.runner_status = RunnerStatus.FAILED
-                state.error = f"Zep图谱更新器初始化失败: {e}"
+                state.error = f"图谱记忆更新器初始化失败: {e}"
                 with cls._finalization_lock(simulation_id):
                     cls._save_run_state(state)
                     cls._sync_simulation_status(
@@ -489,7 +489,7 @@ class SimulationRunner:
             state.reddit_running = False
             state.error = f"脚本不存在: {script_path}"
             if cleanup_error is not None:
-                state.error += f"; Zep图谱写入清理失败: {cleanup_error}"
+                state.error += f"; 图谱记忆写入清理失败: {cleanup_error}"
             with cls._finalization_lock(simulation_id):
                 cls._save_run_state(state)
                 cls._sync_simulation_status(
@@ -598,7 +598,7 @@ class SimulationRunner:
                     ZepGraphMemoryManager.stop_updater(simulation_id)
                     cls._graph_memory_enabled.pop(simulation_id, None)
                 except Exception as error:
-                    cleanup_errors.append(f"Zep图谱写入清理失败: {error}")
+                    cleanup_errors.append(f"图谱记忆写入清理失败: {error}")
             state.runner_status = RunnerStatus.FAILED
             state.twitter_running = False
             state.reddit_running = False
@@ -727,7 +727,7 @@ class SimulationRunner:
                         except Exception as error:
                             logger.error(f"停止图谱记忆更新器失败: {error}")
                             desired_status = RunnerStatus.FAILED
-                            error_message = f"Zep图谱写入未完整完成: {error}"
+                            error_message = f"图谱记忆写入未完整完成: {error}"
 
                     state.runner_status = desired_status
                     state.error = error_message
@@ -1052,7 +1052,7 @@ class SimulationRunner:
                         state.twitter_running = False
                         state.reddit_running = False
                         state.completed_at = datetime.now().isoformat()
-                        state.error = f"Zep图谱写入未完整完成: {error}"
+                        state.error = f"图谱记忆写入未完整完成: {error}"
                         cls._save_run_state(state)
                         cls._sync_simulation_status(
                             simulation_id,

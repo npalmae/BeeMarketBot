@@ -1,14 +1,43 @@
+name: beemarketbot
+
 services:
-  mirofish:
-    image: ghcr.io/666ghj/mirofish:latest
-    # 加速镜像（如拉取缓慢可替换上方地址）
-    # image: ghcr.nju.edu.cn/666ghj/mirofish:latest
-    container_name: mirofish
+  beemarketbot:
+    build: .
+    image: beemarketbot:local
+    container_name: beemarketbot
     env_file:
       - .env
+    environment:
+      # FalkorDB corre en este mismo archivo de Compose. Para usar otra base
+      # (p. ej. neo4j://usuario:clave@host:7687), define GRAPH_DB_URL en .env:
+      # ese valor tiene prioridad sobre el predeterminado de aquí.
+      GRAPH_DB_URL: ${GRAPH_DB_URL:-falkordb://falkordb:6379}
     ports:
-      - "3000:3000"
-      - "5001:5001"
+      - "${WEB_PORT:-3000}:3000"
+      - "${API_PORT:-5001}:5001"
     restart: unless-stopped
+    depends_on:
+      falkordb:
+        condition: service_healthy
     volumes:
       - ./backend/uploads:/app/backend/uploads
+
+  # Base de grafos de la memoria. Versión fijada: las versiones nuevas pueden
+  # cambiar comportamiento que el motor de grafos ya tiene probado.
+  falkordb:
+    image: falkordb/falkordb:6.0.4
+    container_name: falkordb
+    ports:
+      # Accesible solo desde el equipo, por si se quiere inspeccionar.
+      - "127.0.0.1:${FALKORDB_PORT:-6379}:6379"
+    restart: unless-stopped
+    volumes:
+      - falkordb-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "PING"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  falkordb-data:

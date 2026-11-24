@@ -3,11 +3,49 @@ OpenAI Chat Completions compatibility helpers.
 
 This module keeps existing behavior for legacy models/providers while
 gracefully adapting request parameters for GPT-5 family models.
+
+Providers that only accept certain temperatures, or that expect extra
+parameters, are handled through two optional settings, read from the environment
+on every call:
+
+- ``LLM_TEMPERATURE``: replaces the temperature requested by each call.
+- ``LLM_EXTRA_BODY``: a JSON object merged into every request.
+
+Unset, they change nothing.
 """
 
 from __future__ import annotations
 
+import json
+import os
 from typing import Any, Dict, List, Optional
+
+
+def configured_temperature() -> Optional[float]:
+    """Return the temperature fixed by configuration, if the provider needs one."""
+
+    raw = os.environ.get("LLM_TEMPERATURE", "").strip()
+    if not raw:
+        return None
+    try:
+        return float(raw)
+    except ValueError:
+        raise ValueError("LLM_TEMPERATURE must be a number") from None
+
+
+def configured_extra_body() -> Dict[str, Any]:
+    """Return the extra parameters the provider expects in every request."""
+
+    raw = os.environ.get("LLM_EXTRA_BODY", "").strip()
+    if not raw:
+        return {}
+    try:
+        value = json.loads(raw)
+    except ValueError as error:
+        raise ValueError("LLM_EXTRA_BODY must be a valid JSON object") from error
+    if not isinstance(value, dict):
+        raise ValueError("LLM_EXTRA_BODY must be a JSON object, not a list or a single value")
+    return value
 
 
 def is_gpt5_family(model: Optional[str]) -> bool:
@@ -32,9 +70,16 @@ def create_chat_completion(
     Compatibility strategy:
     - For GPT-5 family, avoid sending temperature by default.
     - For token limit, use `max_completion_tokens` on GPT-5, `max_tokens` otherwise.
-    - Preserve the legacy request shape for every non-GPT-5 model/provider.
+    - Let configuration replace the temperature, and add provider-specific
+      parameters, when those settings are present.
+    - Preserve the legacy request shape for every other model/provider.
     - Propagate provider errors unchanged instead of guessing from message text.
     """
+    requested = temperature
+    temperature = configured_temperature()
+    if temperature is None:
+        temperature = requested
+
     kwargs: Dict[str, Any] = {
         "model": model,
         "messages": messages,
@@ -53,6 +98,10 @@ def create_chat_completion(
             kwargs["max_completion_tokens"] = max_tokens
         else:
             kwargs["max_tokens"] = max_tokens
+
+    extra = configured_extra_body()
+    if extra:
+        kwargs["extra_body"] = extra
 
     return client.chat.completions.create(**kwargs)
 

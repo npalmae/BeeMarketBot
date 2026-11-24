@@ -10,7 +10,7 @@ import threading
 from typing import Dict, Any, List, Optional, Callable
 from dataclasses import dataclass
 
-from zep_cloud import BatchAddItem, EntityEdgeSourceTarget, NotFoundError
+from ..graph_memory import BatchAddItem, EntityEdgeSourceTarget, NotFoundError
 
 from ..config import Config
 from ..models.task import TaskManager, TaskStatus
@@ -50,7 +50,7 @@ class GraphInfo:
 
 @dataclass(frozen=True)
 class BatchSubmission:
-    """Durable identity for one Zep Batch API ingestion operation."""
+    """Durable identity for one Graph memory batch API ingestion operation."""
 
     batch_id: str
     operation_id: str
@@ -65,11 +65,10 @@ class GraphBuilderService:
     """
     
     def __init__(self, api_key: Optional[str] = None):
-        self.api_key = api_key or Config.ZEP_API_KEY
-        if not self.api_key:
-            raise ValueError("ZEP_API_KEY 未配置")
-        
-        self.client = get_zep_client(self.api_key)
+        # ``api_key`` se acepta por compatibilidad: el motor de grafos se configura
+        # con el entorno y no necesita una clave propia.
+        del api_key
+        self.client = get_zep_client()
         self.task_manager = TaskManager()
     
     def build_graph_async(
@@ -296,13 +295,13 @@ class GraphBuilderService:
                 if next_cursor is None:
                     break
                 if next_cursor == cursor or next_cursor in seen_cursors:
-                    raise RuntimeError("Zep batch list cursor did not advance")
+                    raise RuntimeError("Graph memory batch list cursor did not advance")
                 seen_cursors.add(next_cursor)
                 cursor = next_cursor
 
             if len(matches) > 1:
                 raise RuntimeError(
-                    f"Multiple Zep batches match operation {operation_id}; refusing ambiguity"
+                    f"Multiple graph memory batches match operation {operation_id}; refusing ambiguity"
                 )
             if matches:
                 return matches[0]
@@ -315,7 +314,7 @@ class GraphBuilderService:
         import warnings
         from typing import Optional
         from pydantic import Field
-        from zep_cloud.external_clients.ontology import EntityModel, EntityText, EdgeModel
+        from ..graph_memory import EdgeModel, EntityModel, EntityText
         
         # 抑制 Pydantic v2 关于 Field(default=None) 的警告
         # 这是 Zep SDK 要求的用法，警告来自动态类创建，可以安全忽略
@@ -446,11 +445,11 @@ class GraphBuilderService:
             batch = self._find_batch_by_operation_id(graph_id, operation_id)
             if batch is None:
                 raise RuntimeError(
-                    "Zep batch creation is unconfirmed and no matching operation was found"
+                    "Graph memory batch creation is unconfirmed and no matching operation was found"
                 ) from error
         batch_id = getattr(batch, "batch_id", None)
         if not batch_id:
-            raise RuntimeError("Zep Batch API returned no batch_id")
+            raise RuntimeError("Graph memory batch API returned no batch_id")
         if batch_created_callback:
             batch_created_callback(batch_id, operation_id)
 
@@ -510,12 +509,12 @@ class GraphBuilderService:
                         item_details = recovered_items[i:expected_item_count]
                     else:
                         raise RuntimeError(
-                            f"Zep batch {batch_id} item submission is unconfirmed; "
+                            f"Graph memory batch {batch_id} item submission is unconfirmed; "
                             "the draft was not processed or replayed"
                         ) from e
                 else:
                     raise RuntimeError(
-                        f"Zep batch {batch_id} item submission failed"
+                        f"Graph memory batch {batch_id} item submission failed"
                     ) from e
 
             if len(item_details or []) != len(items):
@@ -534,7 +533,7 @@ class GraphBuilderService:
                     item_details = recovered_items[i:expected_item_count]
                 else:
                     raise RuntimeError(
-                        f"Zep batch {batch_id} acknowledged {len(item_details or [])} "
+                        f"Graph memory batch {batch_id} acknowledged {len(item_details or [])} "
                         f"of {len(items)} items"
                     )
             for item in item_details:
@@ -553,7 +552,7 @@ class GraphBuilderService:
             )
             if getattr(summary, "status", None) in {None, "draft"}:
                 raise RuntimeError(
-                    f"Zep batch {batch_id} processing is unconfirmed"
+                    f"Graph memory batch {batch_id} processing is unconfirmed"
                 ) from error
 
         return BatchSubmission(
@@ -572,11 +571,11 @@ class GraphBuilderService:
         if not 1 <= batch_size <= 350:
             raise ValueError("batch_size must be between 1 and 350")
         if len(chunks) > 50_000:
-            raise ValueError("A Zep batch cannot contain more than 50,000 items")
+            raise ValueError("A batch cannot contain more than 50,000 items")
         oversized = [index for index, chunk in enumerate(chunks) if len(chunk) > 10_000]
         if oversized:
             raise ValueError(
-                f"Zep batch item exceeds 10,000 characters at chunk {oversized[0]}"
+                f"A batch item exceeds 10,000 characters at chunk {oversized[0]}"
             )
 
     def _list_batch_items(self, batch_id: str) -> List[Any]:
@@ -597,7 +596,7 @@ class GraphBuilderService:
             if next_cursor is None:
                 break
             if next_cursor == cursor or next_cursor in seen_cursors:
-                raise RuntimeError(f"Zep batch {batch_id} item cursor did not advance")
+                raise RuntimeError(f"Graph memory batch {batch_id} item cursor did not advance")
             seen_cursors.add(next_cursor)
             cursor = next_cursor
         return items
@@ -643,7 +642,7 @@ class GraphBuilderService:
         while True:
             if time.time() - start_time > timeout:
                 raise TimeoutError(
-                    f"Zep batch {submission.batch_id} did not finish within {timeout}s"
+                    f"Graph memory batch {submission.batch_id} did not finish within {timeout}s"
                 )
 
             summary = call_zep_read_with_retry(
@@ -678,12 +677,12 @@ class GraphBuilderService:
             ]
             first_error = getattr(failed_items[0], "error", None) if failed_items else None
             raise RuntimeError(
-                f"Zep batch {submission.batch_id} ended as {status}; "
+                f"Graph memory batch {submission.batch_id} ended as {status}; "
                 f"failed_items={len(failed_items)}; first_error={first_error}"
             )
         if len(items) != submission.item_count:
             raise RuntimeError(
-                f"Zep batch {submission.batch_id} contains {len(items)} items, "
+                f"Graph memory batch {submission.batch_id} contains {len(items)} items, "
                 f"expected {submission.item_count}"
             )
 
@@ -698,11 +697,11 @@ class GraphBuilderService:
             source_uuid = getattr(item, "source_uuid", None)
             if item_status != "succeeded" or not episode_uuid:
                 raise RuntimeError(
-                    f"Zep batch {submission.batch_id} returned an incomplete item"
+                    f"Graph memory batch {submission.batch_id} returned an incomplete item"
                 )
             if source_uuid and source_uuid != episode_uuid:
                 raise RuntimeError(
-                    f"Zep batch {submission.batch_id} returned mismatched episode UUIDs"
+                    f"Graph memory batch {submission.batch_id} returned mismatched episode UUIDs"
                 )
             episode_uuids.append(episode_uuid)
 
@@ -745,7 +744,7 @@ class GraphBuilderService:
                         completed_count / total_episodes
                     )
                 raise TimeoutError(
-                    f"Zep episode processing timed out with "
+                    f"Graph episode processing timed out with "
                     f"{len(pending_episodes)} episode(s) still pending"
                 )
             
