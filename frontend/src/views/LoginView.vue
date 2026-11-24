@@ -1,13 +1,15 @@
 <template>
   <div class="login-page">
     <header class="login-header">
-      <div class="brand">BEEMARKET<span class="brand-accent">BOT</span></div>
+      <div class="brand">
+        <img class="brand-isotype" src="/beemarketbot-icon.png" alt="" width="30" height="30">
+        <span>BEEMARKET<span class="brand-accent">BOT</span></span>
+      </div>
       <LanguageSwitcher />
     </header>
 
     <main class="authkit-page full">
-      <section class="authkit-card login-card">
-        <img class="login-isotype" src="/beemarketbot-icon.png" alt="" width="112" height="112">
+      <section class="authkit-card">
         <p class="authkit-kicker">BeeMarketBot</p>
         <h1 class="authkit-title">{{ $t('auth.login.title') }}</h1>
         <p class="authkit-lead">{{ $t('auth.login.subtitle') }}</p>
@@ -100,27 +102,23 @@ const submit = async () => {
   background: rgba(5, 7, 19, .9);
 }
 
+/* La marca de la cabecera: el hexágono con la abeja (el mismo símbolo del icono de la
+   pestaña) junto al nombre. */
 .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-weight: 800;
   font-size: 18px;
   letter-spacing: -.02em;
 }
 
-.brand-accent { color: #76FA0A; }
-
-/* El isotipo (el hexágono con la abeja, el mismo símbolo del icono de la pestaña)
-   encabeza la tarjeta, con la sombra dura del estilo. */
-.login-isotype {
+.brand-isotype {
   display: block;
-  width: 112px;
-  height: 112px;
-  margin: 0 auto 10px;
-  filter: drop-shadow(5px 5px 0 #4689C8);
+  flex: none;
+  width: 30px;
+  height: 30px;
 }
 
-.login-card > .authkit-kicker,
-.login-card > .authkit-title,
-.login-card > .authkit-lead {
-  text-align: center;
-}
+.brand-accent { color: #76FA0A; }
 </style>
