@@ -88,6 +88,7 @@ import { generateOntology, getProject, buildGraph, getTaskStatus, getGraphData }
 import { getPendingUpload, clearPendingUpload } from '../store/pendingUpload'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import UserMenu from '../components/UserMenu.vue'
+import { canEdit } from '../auth'
 
 const route = useRoute()
 const router = useRouter()
@@ -187,6 +188,12 @@ const handleGoBack = () => {
 const initProject = async () => {
   addLog('Project view initialized.')
   if (currentProjectId.value === 'new') {
+    // La protección de rutas ya manda a la portada; por si se llega aquí igual, no se crea nada.
+    if (!canEdit()) {
+      error.value = t('auth.error.readOnly')
+      addLog(error.value)
+      return
+    }
     await handleNewProject()
   } else {
     await loadProject()
@@ -244,7 +251,10 @@ const loadProject = async () => {
       addLog(`Project loaded. Status: ${res.data.status}`)
       
       if (res.data.status === 'ontology_generated' && !res.data.graph_id) {
-        await startBuildGraph()
+        // Una cuenta de solo consulta no construye el grafo: ve el proyecto tal como está.
+        if (canEdit()) {
+          await startBuildGraph()
+        }
       } else if (res.data.status === 'graph_building' && res.data.graph_build_task_id) {
         currentPhase.value = 1
         startPollingTask(res.data.graph_build_task_id)

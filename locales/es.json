@@ -667,7 +667,8 @@
   },
   "auth": {
     "readOnly": {
-      "home": "Tu cuenta es de solo consulta: puedes abrir los proyectos de abajo y revisar sus grafos, simulaciones e informes, pero no iniciar simulaciones nuevas."
+      "home": "Tu cuenta es de solo consulta: puedes abrir los proyectos de abajo y revisar sus grafos, simulaciones e informes, pero no iniciar simulaciones nuevas.",
+      "observing": "Solo consulta: se muestra cómo está la simulación, sin iniciarla."
     },
     "error": {
       "usernameRules": "El nombre de usuario debe tener entre 3 y 32 caracteres: letras, dígitos, '.', '_' o '-', y empezar por letra o dígito.",

@@ -518,7 +518,8 @@
             </button>
             <button 
               class="action-btn primary"
-              :disabled="phase < 4"
+              :disabled="!canEdit() || phase < 4"
+              :title="writeHint"
               @click="handleStartSimulation"
             >
               {{ $t('step2.startDualWorldSim') }} ➝
@@ -641,6 +642,7 @@ import {
   getSimulationConfig,
   getSimulationConfigRealtime
 } from '../api/simulation'
+import { canEdit, writeHint } from '../auth'
 
 const { t } = useI18n()
 
@@ -1090,7 +1092,12 @@ onMounted(() => {
   // 自动开始准备流程
   if (props.simulationId) {
     addLog(t('log.step2Init'))
-    startPrepareSimulation()
+    // Una cuenta de solo consulta no prepara nada: carga lo que ya existe.
+    if (canEdit()) {
+      startPrepareSimulation()
+    } else {
+      loadPreparedData()
+    }
   }
 })
 

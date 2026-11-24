@@ -667,7 +667,8 @@
   },
   "auth": {
     "readOnly": {
-      "home": "Your account is read-only: you can open the projects below and review their graphs, simulations and reports, but not start new simulations."
+      "home": "Your account is read-only: you can open the projects below and review their graphs, simulations and reports, but not start new simulations.",
+      "observing": "Read-only account: the simulation is shown as it is; nothing is started."
     },
     "error": {
       "usernameRules": "The username must be 3 to 32 characters: letters, digits, '.', '_' or '-', starting with a letter or digit.",

@@ -160,7 +160,8 @@
           <p class="description">{{ $t('step1.buildCompleteDesc') }}</p>
           <button 
             class="action-btn" 
-            :disabled="currentPhase < 2 || creatingSimulation"
+            :disabled="!canEdit() || currentPhase < 2 || creatingSimulation"
+            :title="writeHint"
             @click="handleEnterEnvSetup"
           >
             <span v-if="creatingSimulation" class="spinner-sm"></span>
@@ -191,6 +192,7 @@ import { computed, ref, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { createSimulation } from '../api/simulation'
+import { canEdit, writeHint } from '../auth'
 
 const router = useRouter()
 const { t } = useI18n()

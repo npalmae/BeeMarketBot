@@ -8,7 +8,7 @@ import InteractionView from '../views/InteractionView.vue'
 import LoginView from '../views/LoginView.vue'
 import AccountView from '../views/AccountView.vue'
 import UsersView from '../views/UsersView.vue'
-import { auth, loadSession } from '../auth'
+import { auth, canEdit, loadSession } from '../auth'
 
 const routes = [
   {
@@ -90,6 +90,10 @@ router.beforeEach(async (to) => {
     return { name: 'Login', query: { redirect: to.fullPath } }
   }
   if (to.meta.roles && !to.meta.roles.includes(auth.user.role)) {
+    return { path: '/' }
+  }
+  // Crear un proyecto es un cambio: las cuentas de solo consulta no entran por ahí.
+  if (to.name === 'Process' && to.params.projectId === 'new' && !canEdit()) {
     return { path: '/' }
   }
   // Una contraseña asignada por un administrador se cambia antes de usar la aplicación.

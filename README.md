@@ -65,6 +65,10 @@ Esa contraseña se cambia en el primer ingreso. A partir de ahí, las cuentas se
 crean en **Usuarios**, dentro del menú del administrador, o con la
 [línea de comandos](#administración-de-cuentas).
 
+A las cuentas de solo consulta se les muestran apagados los controles que cambian algo
+(crear un proyecto, iniciar una simulación, generar un informe, conversar con los
+agentes). Abrir una pantalla tampoco dispara ninguna acción.
+
 ## Despliegue con Docker
 
 Necesitas Docker y Docker Compose v2. Se levantan dos contenedores: la

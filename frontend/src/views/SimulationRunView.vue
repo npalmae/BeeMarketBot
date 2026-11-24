@@ -79,6 +79,7 @@ import { getSimulation, getSimulationConfig, stopSimulation, closeSimulationEnv,
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import UserMenu from '../components/UserMenu.vue'
 import { useI18n } from 'vue-i18n'
+import { canEdit } from '../auth'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -157,6 +158,12 @@ const handleGoBack = async () => {
   
   // 停止轮询
   stopGraphRefresh()
+  
+  // Una cuenta de solo consulta no detiene la simulación: solo vuelve atrás.
+  if (!canEdit()) {
+    router.push({ name: 'Simulation', params: { simulationId: currentSimulationId.value } })
+    return
+  }
   
   try {
     // 先尝试优雅关闭模拟环境

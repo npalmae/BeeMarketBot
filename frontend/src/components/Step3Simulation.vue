@@ -93,7 +93,8 @@
       <div class="action-controls">
         <button 
           class="action-btn primary"
-          :disabled="phase !== 2 || isGeneratingReport"
+          :disabled="!canEdit() || phase !== 2 || isGeneratingReport"
+          :title="writeHint"
           @click="handleNextStep"
         >
           <span v-if="isGeneratingReport" class="loading-spinner-small"></span>
@@ -296,6 +297,7 @@ import {
   getRunStatusDetail
 } from '../api/simulation'
 import { generateReport } from '../api/report'
+import { canEdit, writeHint } from '../auth'
 
 const { t } = useI18n()
 
@@ -688,11 +690,21 @@ watch(() => props.systemLogs?.length, () => {
   })
 })
 
-onMounted(() => {
+onMounted(async () => {
   addLog(t('log.step3Init'))
-  if (props.simulationId) {
-    doStartSimulation()
+  if (!props.simulationId) return
+  // Una cuenta de solo consulta no inicia ni reinicia nada: mira cómo está la simulación.
+  if (!canEdit()) {
+    addLog(t('auth.readOnly.observing'))
+    await fetchRunStatus()
+    await fetchRunStatusDetail()
+    if (runStatus.value.runner_status === 'running') {
+      startStatusPolling()
+      startDetailPolling()
+    }
+    return
   }
+  doStartSimulation()
 })
 
 onUnmounted(() => {

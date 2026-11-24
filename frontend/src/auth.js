@@ -1,6 +1,7 @@
 // Quién está conectado, y las llamadas que inician y cierran la sesión.
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import api from './api'
+import i18n from './i18n'
 import router from './router'
 import { sessionToken } from './session'
 
@@ -16,6 +17,9 @@ export const auth = reactive({
 
 export const canEdit = () => auth.user && ['admin', 'editor'].includes(auth.user.role)
 export const isAdmin = () => auth.user && auth.user.role === 'admin'
+
+// Explicación para los controles apagados a una cuenta de solo consulta; vacía para el resto.
+export const writeHint = computed(() => (canEdit() ? '' : i18n.global.t('auth.error.readOnly')))
 
 function adopt(user, token, setupNeeded = false) {
   auth.user = user

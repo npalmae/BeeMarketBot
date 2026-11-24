@@ -294,14 +294,16 @@
               class="chat-input"
               :placeholder="$t('step5.chatInputPlaceholder')"
               @keydown.enter.exact.prevent="sendMessage"
-              :disabled="isSending || (!selectedAgent && chatTarget === 'agent')"
+              :disabled="!canEdit() || isSending || (!selectedAgent && chatTarget === 'agent')"
+              :title="writeHint"
               rows="1"
               ref="chatInputRef"
             ></textarea>
             <button 
               class="send-btn"
               @click="sendMessage"
-              :disabled="!chatInput.trim() || isSending || (!selectedAgent && chatTarget === 'agent')"
+              :disabled="!canEdit() || !chatInput.trim() || isSending || (!selectedAgent && chatTarget === 'agent')"
+              :title="writeHint"
             >
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -330,6 +332,7 @@
                   <input 
                     type="checkbox" 
                     :checked="selectedAgents.has(idx)"
+                    :disabled="!canEdit()"
                     @change="toggleAgentSelection(idx)"
                   >
                   <div class="checkbox-avatar">{{ (agent.username || 'A')[0] }}</div>
@@ -359,13 +362,16 @@
                 v-model="surveyQuestion"
                 class="survey-input"
                 :placeholder="$t('step5.surveyInputPlaceholder')"
+                :disabled="!canEdit()"
+                :title="writeHint"
                 rows="3"
               ></textarea>
             </div>
 
             <button 
               class="survey-submit-btn"
-              :disabled="selectedAgents.size === 0 || !surveyQuestion.trim() || isSurveying"
+              :disabled="!canEdit() || selectedAgents.size === 0 || !surveyQuestion.trim() || isSurveying"
+              :title="writeHint"
               @click="submitSurvey"
             >
               <span v-if="isSurveying" class="loading-spinner"></span>
@@ -415,6 +421,7 @@ import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { chatWithReport, getReport, getAgentLog } from '../api/report'
 import { interviewAgents, getSimulationProfilesRealtime } from '../api/simulation'
+import { canEdit, writeHint } from '../auth'
 
 const { t } = useI18n()
 

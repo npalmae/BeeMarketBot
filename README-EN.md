@@ -65,6 +65,10 @@ That password is changed at first sign-in. From then on, accounts are created in
 **Users**, in the administrator's menu, or with the
 [command line](#account-management).
 
+Read-only accounts see the controls that change something greyed out (create a
+project, start a simulation, generate a report, talk to the agents). Opening a
+screen never triggers an action either.
+
 ## Deploy with Docker
 
 You need Docker and Docker Compose v2. Two containers start: the application and

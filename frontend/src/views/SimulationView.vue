@@ -76,6 +76,7 @@ import { getSimulation, stopSimulation, getEnvStatus, closeSimulationEnv } from 
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import UserMenu from '../components/UserMenu.vue'
 import { useI18n } from 'vue-i18n'
+import { canEdit } from '../auth'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -184,7 +185,8 @@ const handleNextStep = (params = {}) => {
  * 当用户从 Step 3 返回到 Step 2 时，默认用户要退出模拟
  */
 const checkAndStopRunningSimulation = async () => {
-  if (!currentSimulationId.value) return
+  // Una cuenta de solo consulta no detiene simulaciones ajenas.
+  if (!currentSimulationId.value || !canEdit()) return
   
   try {
     // 先检查模拟环境是否存活
