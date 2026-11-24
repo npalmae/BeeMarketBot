@@ -8,7 +8,7 @@
 
    Regenerar (desde frontend/):  node scripts/build-web2-theme.mjs
    Ajustes a mano:               src/styles/web2-theme.css (se carga después)
-   Vistas ignoradas (sin uso):   views/Process.vue
+   Vistas ignoradas (sin uso):   views/Process.vue, views/LoginView.vue, views/AccountView.vue, views/UsersView.vue, components/AppHeader.vue, components/UserMenu.vue
    ============================================================================ */
 
 /* -------------------------------------------------- App.vue */
@@ -3496,89 +3496,89 @@ html.web2 [data-v-36ae47da] .md-hr {
 /* -------------------------------------------------- views/Home.vue */
 
 html.web2 .arrow[data-v-2dc54a20],
-html.web2 .arrow[data-v-88d845a6] {
+html.web2 .arrow[data-v-5a294583] {
   font-family: 'DM Mono', monospace;
 }
 html.web2 .version-text[data-v-2dc54a20],
-html.web2 .version-text[data-v-88d845a6] {
+html.web2 .version-text[data-v-5a294583] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .gradient-text[data-v-2dc54a20],
-html.web2 .gradient-text[data-v-88d845a6] {
+html.web2 .gradient-text[data-v-5a294583] {
   background-image: linear-gradient(90deg, #4689C8 0%, #4689C8 100%);
 }
 html.web2 .highlight-code[data-v-2dc54a20],
-html.web2 .highlight-code[data-v-88d845a6] {
+html.web2 .highlight-code[data-v-5a294583] {
   background-image: rgba(245, 247, 250, 0.05);
 }
 html.web2 .panel-header[data-v-2dc54a20],
-html.web2 .panel-header[data-v-88d845a6] {
+html.web2 .panel-header[data-v-5a294583] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .metric-label[data-v-2dc54a20],
-html.web2 .metric-label[data-v-88d845a6] {
+html.web2 .metric-label[data-v-5a294583] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .steps-header[data-v-2dc54a20],
-html.web2 .steps-header[data-v-88d845a6] {
+html.web2 .steps-header[data-v-5a294583] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .console-box[data-v-2dc54a20],
-html.web2 .console-box[data-v-88d845a6] {
+html.web2 .console-box[data-v-5a294583] {
   border-color: rgba(70, 137, 200, .38);
 }
 html.web2 .console-header[data-v-2dc54a20],
-html.web2 .console-header[data-v-88d845a6] {
+html.web2 .console-header[data-v-5a294583] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .upload-zone[data-v-2dc54a20],
-html.web2 .upload-zone[data-v-88d845a6] {
+html.web2 .upload-zone[data-v-5a294583] {
   border-color: rgba(70, 137, 200, .38);
   background-color: #0D1228;
 }
 html.web2 .upload-zone:hover[data-v-2dc54a20],
-html.web2 .upload-zone:hover[data-v-88d845a6] {
+html.web2 .upload-zone:hover[data-v-5a294583] {
   background-color: #111936;
   border-color: rgba(245, 247, 250, .28);
 }
 html.web2 .upload-icon[data-v-2dc54a20],
-html.web2 .upload-icon[data-v-88d845a6] {
+html.web2 .upload-icon[data-v-5a294583] {
   border-color: rgba(70, 137, 200, .38);
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .upload-hint[data-v-2dc54a20],
-html.web2 .upload-hint[data-v-88d845a6] {
+html.web2 .upload-hint[data-v-5a294583] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .file-item[data-v-2dc54a20],
-html.web2 .file-item[data-v-88d845a6] {
+html.web2 .file-item[data-v-5a294583] {
   border-color: rgba(70, 137, 200, .38);
 }
 html.web2 .remove-btn[data-v-2dc54a20],
-html.web2 .remove-btn[data-v-88d845a6] {
+html.web2 .remove-btn[data-v-5a294583] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .console-divider[data-v-2dc54a20]::before,
-html.web2 .console-divider[data-v-88d845a6]::before,
+html.web2 .console-divider[data-v-5a294583]::before,
 html.web2 .console-divider[data-v-2dc54a20]::after,
-html.web2 .console-divider[data-v-88d845a6]::after {
+html.web2 .console-divider[data-v-5a294583]::after {
   background-color: #111936;
 }
 html.web2 .console-divider span[data-v-2dc54a20],
-html.web2 .console-divider span[data-v-88d845a6] {
+html.web2 .console-divider span[data-v-5a294583] {
   color: rgba(245, 247, 250, .55);
 }
 html.web2 .input-wrapper[data-v-2dc54a20],
-html.web2 .input-wrapper[data-v-88d845a6] {
+html.web2 .input-wrapper[data-v-5a294583] {
   border-color: rgba(70, 137, 200, .38);
   background-color: #0D1228;
 }
 html.web2 .model-badge[data-v-2dc54a20],
-html.web2 .model-badge[data-v-88d845a6] {
+html.web2 .model-badge[data-v-5a294583] {
   color: rgba(245, 247, 250, .55);
 }
 html.web2 .start-engine-btn:disabled[data-v-2dc54a20],
-html.web2 .start-engine-btn:disabled[data-v-88d845a6] {
+html.web2 .start-engine-btn:disabled[data-v-5a294583] {
   background-color: #111936;
   color: rgba(245, 247, 250, .72);
   border-color: rgba(70, 137, 200, .38);
@@ -3618,311 +3618,311 @@ html.web2:is([lang="en"], [lang="es"]) .workflow-list {
 /* -------------------------------------------------- views/InteractionView.vue */
 
 html.web2 .main-view[data-v-ea334b53],
-html.web2 .main-view[data-v-ba927492] {
+html.web2 .main-view[data-v-f85a921f] {
   background-color: #0D1228;
   font-family: 'DM Mono', monospace;
 }
 html.web2 .app-header[data-v-ea334b53],
-html.web2 .app-header[data-v-ba927492] {
+html.web2 .app-header[data-v-f85a921f] {
   border-bottom-color: rgba(70, 137, 200, .38);
   background-color: #0D1228;
 }
 html.web2 .brand[data-v-ea334b53],
-html.web2 .brand[data-v-ba927492] {
+html.web2 .brand[data-v-f85a921f] {
   font-family: 'DM Mono', monospace;
 }
 html.web2 .view-switcher[data-v-ea334b53],
-html.web2 .view-switcher[data-v-ba927492] {
+html.web2 .view-switcher[data-v-f85a921f] {
   background-color: #111936;
 }
 html.web2 .switch-btn[data-v-ea334b53],
-html.web2 .switch-btn[data-v-ba927492] {
+html.web2 .switch-btn[data-v-f85a921f] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .switch-btn.active[data-v-ea334b53],
-html.web2 .switch-btn.active[data-v-ba927492] {
+html.web2 .switch-btn.active[data-v-f85a921f] {
   background-color: #0D1228;
   color: #F5F7FA;
   box-shadow: 0 2px 4px transparent;
 }
 html.web2 .step-num[data-v-ea334b53],
-html.web2 .step-num[data-v-ba927492] {
+html.web2 .step-num[data-v-f85a921f] {
   font-family: 'DM Mono', monospace;
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .step-name[data-v-ea334b53],
-html.web2 .step-name[data-v-ba927492] {
+html.web2 .step-name[data-v-f85a921f] {
   color: #F5F7FA;
 }
 html.web2 .step-divider[data-v-ea334b53],
-html.web2 .step-divider[data-v-ba927492] {
+html.web2 .step-divider[data-v-f85a921f] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator[data-v-ea334b53],
-html.web2 .status-indicator[data-v-ba927492] {
+html.web2 .status-indicator[data-v-f85a921f] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .dot[data-v-ea334b53],
-html.web2 .dot[data-v-ba927492] {
+html.web2 .dot[data-v-f85a921f] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator.error .dot[data-v-ea334b53],
-html.web2 .status-indicator.error .dot[data-v-ba927492] {
+html.web2 .status-indicator.error .dot[data-v-f85a921f] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .panel-wrapper.left[data-v-ea334b53],
-html.web2 .panel-wrapper.left[data-v-ba927492] {
+html.web2 .panel-wrapper.left[data-v-f85a921f] {
   border-right-color: rgba(70, 137, 200, .38);
 }
 
 /* -------------------------------------------------- views/MainView.vue */
 
 html.web2 .main-view[data-v-bf5eacc9],
-html.web2 .main-view[data-v-37f81d5c] {
+html.web2 .main-view[data-v-789725d0] {
   background-color: #0D1228;
   font-family: 'DM Mono', monospace;
 }
 html.web2 .app-header[data-v-bf5eacc9],
-html.web2 .app-header[data-v-37f81d5c] {
+html.web2 .app-header[data-v-789725d0] {
   border-bottom-color: rgba(70, 137, 200, .38);
   background-color: #0D1228;
 }
 html.web2 .brand[data-v-bf5eacc9],
-html.web2 .brand[data-v-37f81d5c] {
+html.web2 .brand[data-v-789725d0] {
   font-family: 'DM Mono', monospace;
 }
 html.web2 .view-switcher[data-v-bf5eacc9],
-html.web2 .view-switcher[data-v-37f81d5c] {
+html.web2 .view-switcher[data-v-789725d0] {
   background-color: #111936;
 }
 html.web2 .switch-btn[data-v-bf5eacc9],
-html.web2 .switch-btn[data-v-37f81d5c] {
+html.web2 .switch-btn[data-v-789725d0] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .switch-btn.active[data-v-bf5eacc9],
-html.web2 .switch-btn.active[data-v-37f81d5c] {
+html.web2 .switch-btn.active[data-v-789725d0] {
   background-color: #0D1228;
   color: #F5F7FA;
   box-shadow: 0 2px 4px transparent;
 }
 html.web2 .status-indicator[data-v-bf5eacc9],
-html.web2 .status-indicator[data-v-37f81d5c] {
+html.web2 .status-indicator[data-v-789725d0] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .step-num[data-v-bf5eacc9],
-html.web2 .step-num[data-v-37f81d5c] {
+html.web2 .step-num[data-v-789725d0] {
   font-family: 'DM Mono', monospace;
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .step-name[data-v-bf5eacc9],
-html.web2 .step-name[data-v-37f81d5c] {
+html.web2 .step-name[data-v-789725d0] {
   color: #F5F7FA;
 }
 html.web2 .step-divider[data-v-bf5eacc9],
-html.web2 .step-divider[data-v-37f81d5c] {
+html.web2 .step-divider[data-v-789725d0] {
   background-color: #252E5A;
 }
 html.web2 .dot[data-v-bf5eacc9],
-html.web2 .dot[data-v-37f81d5c] {
+html.web2 .dot[data-v-789725d0] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator.processing .dot[data-v-bf5eacc9],
-html.web2 .status-indicator.processing .dot[data-v-37f81d5c] {
+html.web2 .status-indicator.processing .dot[data-v-789725d0] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .status-indicator.error .dot[data-v-bf5eacc9],
-html.web2 .status-indicator.error .dot[data-v-37f81d5c] {
+html.web2 .status-indicator.error .dot[data-v-789725d0] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .panel-wrapper.left[data-v-bf5eacc9],
-html.web2 .panel-wrapper.left[data-v-37f81d5c] {
+html.web2 .panel-wrapper.left[data-v-789725d0] {
   border-right-color: rgba(70, 137, 200, .38);
 }
 
 /* -------------------------------------------------- views/ReportView.vue */
 
 html.web2 .main-view[data-v-95801e60],
-html.web2 .main-view[data-v-d9b0ce66] {
+html.web2 .main-view[data-v-e995299e] {
   background-color: #0D1228;
   font-family: 'DM Mono', monospace;
 }
 html.web2 .app-header[data-v-95801e60],
-html.web2 .app-header[data-v-d9b0ce66] {
+html.web2 .app-header[data-v-e995299e] {
   border-bottom-color: rgba(70, 137, 200, .38);
   background-color: #0D1228;
 }
 html.web2 .brand[data-v-95801e60],
-html.web2 .brand[data-v-d9b0ce66] {
+html.web2 .brand[data-v-e995299e] {
   font-family: 'DM Mono', monospace;
 }
 html.web2 .view-switcher[data-v-95801e60],
-html.web2 .view-switcher[data-v-d9b0ce66] {
+html.web2 .view-switcher[data-v-e995299e] {
   background-color: #111936;
 }
 html.web2 .switch-btn[data-v-95801e60],
-html.web2 .switch-btn[data-v-d9b0ce66] {
+html.web2 .switch-btn[data-v-e995299e] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .switch-btn.active[data-v-95801e60],
-html.web2 .switch-btn.active[data-v-d9b0ce66] {
+html.web2 .switch-btn.active[data-v-e995299e] {
   background-color: #0D1228;
   color: #F5F7FA;
   box-shadow: 0 2px 4px transparent;
 }
 html.web2 .step-num[data-v-95801e60],
-html.web2 .step-num[data-v-d9b0ce66] {
+html.web2 .step-num[data-v-e995299e] {
   font-family: 'DM Mono', monospace;
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .step-name[data-v-95801e60],
-html.web2 .step-name[data-v-d9b0ce66] {
+html.web2 .step-name[data-v-e995299e] {
   color: #F5F7FA;
 }
 html.web2 .step-divider[data-v-95801e60],
-html.web2 .step-divider[data-v-d9b0ce66] {
+html.web2 .step-divider[data-v-e995299e] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator[data-v-95801e60],
-html.web2 .status-indicator[data-v-d9b0ce66] {
+html.web2 .status-indicator[data-v-e995299e] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .dot[data-v-95801e60],
-html.web2 .dot[data-v-d9b0ce66] {
+html.web2 .dot[data-v-e995299e] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator.error .dot[data-v-95801e60],
-html.web2 .status-indicator.error .dot[data-v-d9b0ce66] {
+html.web2 .status-indicator.error .dot[data-v-e995299e] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .panel-wrapper.left[data-v-95801e60],
-html.web2 .panel-wrapper.left[data-v-d9b0ce66] {
+html.web2 .panel-wrapper.left[data-v-e995299e] {
   border-right-color: rgba(70, 137, 200, .38);
 }
 
 /* -------------------------------------------------- views/SimulationRunView.vue */
 
 html.web2 .main-view[data-v-ec3d19e1],
-html.web2 .main-view[data-v-941ae1de] {
+html.web2 .main-view[data-v-1d98f0e2] {
   background-color: #0D1228;
   font-family: 'DM Mono', monospace;
 }
 html.web2 .app-header[data-v-ec3d19e1],
-html.web2 .app-header[data-v-941ae1de] {
+html.web2 .app-header[data-v-1d98f0e2] {
   border-bottom-color: rgba(70, 137, 200, .38);
   background-color: #0D1228;
 }
 html.web2 .brand[data-v-ec3d19e1],
-html.web2 .brand[data-v-941ae1de] {
+html.web2 .brand[data-v-1d98f0e2] {
   font-family: 'DM Mono', monospace;
 }
 html.web2 .view-switcher[data-v-ec3d19e1],
-html.web2 .view-switcher[data-v-941ae1de] {
+html.web2 .view-switcher[data-v-1d98f0e2] {
   background-color: #111936;
 }
 html.web2 .switch-btn[data-v-ec3d19e1],
-html.web2 .switch-btn[data-v-941ae1de] {
+html.web2 .switch-btn[data-v-1d98f0e2] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .switch-btn.active[data-v-ec3d19e1],
-html.web2 .switch-btn.active[data-v-941ae1de] {
+html.web2 .switch-btn.active[data-v-1d98f0e2] {
   background-color: #0D1228;
   color: #F5F7FA;
   box-shadow: 0 2px 4px transparent;
 }
 html.web2 .step-num[data-v-ec3d19e1],
-html.web2 .step-num[data-v-941ae1de] {
+html.web2 .step-num[data-v-1d98f0e2] {
   font-family: 'DM Mono', monospace;
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .step-name[data-v-ec3d19e1],
-html.web2 .step-name[data-v-941ae1de] {
+html.web2 .step-name[data-v-1d98f0e2] {
   color: #F5F7FA;
 }
 html.web2 .step-divider[data-v-ec3d19e1],
-html.web2 .step-divider[data-v-941ae1de] {
+html.web2 .step-divider[data-v-1d98f0e2] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator[data-v-ec3d19e1],
-html.web2 .status-indicator[data-v-941ae1de] {
+html.web2 .status-indicator[data-v-1d98f0e2] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .dot[data-v-ec3d19e1],
-html.web2 .dot[data-v-941ae1de] {
+html.web2 .dot[data-v-1d98f0e2] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator.processing .dot[data-v-ec3d19e1],
-html.web2 .status-indicator.processing .dot[data-v-941ae1de] {
+html.web2 .status-indicator.processing .dot[data-v-1d98f0e2] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .status-indicator.error .dot[data-v-ec3d19e1],
-html.web2 .status-indicator.error .dot[data-v-941ae1de] {
+html.web2 .status-indicator.error .dot[data-v-1d98f0e2] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .panel-wrapper.left[data-v-ec3d19e1],
-html.web2 .panel-wrapper.left[data-v-941ae1de] {
+html.web2 .panel-wrapper.left[data-v-1d98f0e2] {
   border-right-color: rgba(70, 137, 200, .38);
 }
 
 /* -------------------------------------------------- views/SimulationView.vue */
 
 html.web2 .main-view[data-v-444c5285],
-html.web2 .main-view[data-v-24e1edc9] {
+html.web2 .main-view[data-v-89ec1cab] {
   background-color: #0D1228;
   font-family: 'DM Mono', monospace;
 }
 html.web2 .app-header[data-v-444c5285],
-html.web2 .app-header[data-v-24e1edc9] {
+html.web2 .app-header[data-v-89ec1cab] {
   border-bottom-color: rgba(70, 137, 200, .38);
   background-color: #0D1228;
 }
 html.web2 .brand[data-v-444c5285],
-html.web2 .brand[data-v-24e1edc9] {
+html.web2 .brand[data-v-89ec1cab] {
   font-family: 'DM Mono', monospace;
 }
 html.web2 .view-switcher[data-v-444c5285],
-html.web2 .view-switcher[data-v-24e1edc9] {
+html.web2 .view-switcher[data-v-89ec1cab] {
   background-color: #111936;
 }
 html.web2 .switch-btn[data-v-444c5285],
-html.web2 .switch-btn[data-v-24e1edc9] {
+html.web2 .switch-btn[data-v-89ec1cab] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .switch-btn.active[data-v-444c5285],
-html.web2 .switch-btn.active[data-v-24e1edc9] {
+html.web2 .switch-btn.active[data-v-89ec1cab] {
   background-color: #0D1228;
   color: #F5F7FA;
   box-shadow: 0 2px 4px transparent;
 }
 html.web2 .step-num[data-v-444c5285],
-html.web2 .step-num[data-v-24e1edc9] {
+html.web2 .step-num[data-v-89ec1cab] {
   font-family: 'DM Mono', monospace;
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .step-name[data-v-444c5285],
-html.web2 .step-name[data-v-24e1edc9] {
+html.web2 .step-name[data-v-89ec1cab] {
   color: #F5F7FA;
 }
 html.web2 .step-divider[data-v-444c5285],
-html.web2 .step-divider[data-v-24e1edc9] {
+html.web2 .step-divider[data-v-89ec1cab] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator[data-v-444c5285],
-html.web2 .status-indicator[data-v-24e1edc9] {
+html.web2 .status-indicator[data-v-89ec1cab] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .dot[data-v-444c5285],
-html.web2 .dot[data-v-24e1edc9] {
+html.web2 .dot[data-v-89ec1cab] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator.processing .dot[data-v-444c5285],
-html.web2 .status-indicator.processing .dot[data-v-24e1edc9] {
+html.web2 .status-indicator.processing .dot[data-v-89ec1cab] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .status-indicator.error .dot[data-v-444c5285],
-html.web2 .status-indicator.error .dot[data-v-24e1edc9] {
+html.web2 .status-indicator.error .dot[data-v-89ec1cab] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .panel-wrapper.left[data-v-444c5285],
-html.web2 .panel-wrapper.left[data-v-24e1edc9] {
+html.web2 .panel-wrapper.left[data-v-89ec1cab] {
   border-right-color: rgba(70, 137, 200, .38);
 }

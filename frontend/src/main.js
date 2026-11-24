@@ -8,6 +8,8 @@ import './styles/web2-pages.css'
 // Interfaz de la app adaptada a ese estilo (solo aplica con la clase "web2")
 import './styles/web2-theme.generated.css'
 import './styles/web2-theme.css'
+// Pantallas de acceso (entrar, mi cuenta, usuarios), escritas directamente en el estilo Web2
+import './styles/auth.css'
 
 document.documentElement.classList.add('web2')
 

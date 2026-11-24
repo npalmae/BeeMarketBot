@@ -24,8 +24,19 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const SRC = join(ROOT, 'src')
 const OUT = join(SRC, 'styles', 'web2-theme.generated.css')
 
-/** Vistas que el router no usa: no se generan reglas para ellas. */
-const SKIP = new Set(['views/Process.vue'])
+/**
+ * Archivos que no pasan por aquí: la vista que el router no usa y las pantallas
+ * de acceso (entrar, mi cuenta, usuarios), escritas ya en el estilo Web2 con las
+ * clases de `src/styles/auth.css`.
+ */
+const SKIP = new Set([
+  'views/Process.vue',
+  'views/LoginView.vue',
+  'views/AccountView.vue',
+  'views/UsersView.vue',
+  'components/AppHeader.vue',
+  'components/UserMenu.vue'
+])
 
 // ---------------------------------------------------------------- paleta web2
 const P = {

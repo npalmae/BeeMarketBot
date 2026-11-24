@@ -664,5 +664,91 @@
     "llmSelectAgentFailed": "LLM选择Agent失败，使用默认选择: {error}",
     "generateInterviewQuestionsFailed": "生成采访问题失败: {error}",
     "generateInterviewSummaryFailed": "生成采访摘要失败: {error}"
+  },
+  "auth": {
+    "readOnly": {
+      "home": "你的账户为只读：可以打开下方的项目并查看其图谱、模拟和报告，但不能发起新的模拟。"
+    },
+    "error": {
+      "usernameRules": "用户名须为 3 到 32 个字符：字母、数字、'.'、'_' 或 '-'，且以字母或数字开头。",
+      "passwordTooShort": "密码至少需要 8 个字符。",
+      "passwordTooLong": "密码不能超过 128 个字符。",
+      "passwordEqualsUsername": "密码不能与用户名相同。",
+      "invalidRole": "访问级别无效。",
+      "usernameTaken": "该用户名已被使用。",
+      "lastAdmin": "不能降低或停用唯一的管理员。",
+      "userNotFound": "该账号不存在。",
+      "wrongCurrentPassword": "当前密码不正确。",
+      "mustBeBoolean": "该值必须是 true 或 false。",
+      "invalidCredentials": "用户名或密码错误。",
+      "loginRequired": "请先登录。",
+      "adminOnly": "只有管理员可以执行此操作。",
+      "readOnly": "你的账号只有查看权限。",
+      "csrfRejected": "你的会话已失效。请刷新页面后重试。",
+      "tooManyAttempts": "失败次数过多。请等待 {seconds} 秒后重试。"
+    },
+    "login": {
+      "title": "登录",
+      "subtitle": "登录以使用 BeeMarketBot。",
+      "username": "用户名",
+      "usernamePlaceholder": "你的用户名",
+      "password": "密码",
+      "submit": "登录",
+      "submitting": "正在登录...",
+      "noUsers": "还没有账户。在项目目录下创建第一个管理员：",
+      "noUsersCommand": "docker compose exec -T beemarketbot sh -c 'cd backend && uv run --frozen python -m app.auth create-user --username <name> --role admin --generate-password'\n# 不使用 Docker：\ncd backend && python -m app.auth create-user --username <name> --role admin"
+    },
+    "menu": {
+      "account": "我的账号",
+      "users": "用户",
+      "logout": "退出登录"
+    },
+    "roles": {
+      "label": "访问级别",
+      "admin": "管理员",
+      "editor": "编辑者",
+      "viewer": "查看者",
+      "adminDesc": "全部权限，并管理用户。",
+      "editorDesc": "创建和运行模拟、生成报告。",
+      "viewerDesc": "只能查看。"
+    },
+    "account": {
+      "title": "我的账号",
+      "memberSince": "账号创建于 {date}",
+      "currentPassword": "当前密码",
+      "newPassword": "新密码",
+      "confirmPassword": "再次输入新密码",
+      "change": "修改密码",
+      "changing": "正在修改...",
+      "changed": "密码已修改。",
+      "mustChange": "请先修改密码：当前密码由管理员分配。",
+      "mismatch": "两次输入的密码不一致。"
+    },
+    "users": {
+      "title": "用户",
+      "subtitle": "谁可以登录，以及访问级别。",
+      "username": "用户名",
+      "password": "初始密码",
+      "role": "级别",
+      "create": "创建用户",
+      "creating": "正在创建...",
+      "state": "状态",
+      "active": "正常",
+      "disabledAccount": "已停用",
+      "mustChange": "须修改密码",
+      "disable": "停用",
+      "enable": "启用",
+      "newPassword": "新密码",
+      "reset": "设置密码",
+      "you": "（你）",
+      "created": "已创建用户 {username}。",
+      "updated": "已更新用户 {username}。",
+      "passwordReset": "已为 {username} 设置密码，首次登录时须修改。",
+      "actions": "操作",
+      "generate": "生成",
+      "save": "保存",
+      "cancel": "取消",
+      "initialPassword": "初始密码（仅显示一次）："
+    }
   }
 }

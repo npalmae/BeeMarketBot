@@ -1,6 +1,8 @@
 """\n配置管理\n统一从项目根目录的 .env 文件加载配置\n"""
 
 import os
+import secrets
+from datetime import timedelta
 from dotenv import load_dotenv
 
 # 加载项目根目录的 .env 文件
@@ -14,11 +16,36 @@ else:
     load_dotenv(override=True)
 
 
+def _int_env(name: str, default: int) -> int:
+    try:
+        return int(os.environ.get(name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+# Valores que solo están en .env.example para explicar qué va ahí. Copiarlos
+# tal cual no dejaría ningún secretero fuera: una clave conocida por todos
+# permitiría falsificar sesiones, y una contraseña de ejemplo, entrar.
+EXAMPLE_VALUE_PREFIXES = ("change_me", "changeme", "cámbiame", "cambiame")
+
+
+def _secret_env(name: str) -> str | None:
+    """Valor de una variable secreta del entorno; None si falta, está vacía o es la de ejemplo."""
+
+    value = (os.environ.get(name) or "").strip()
+    if not value or value.lower().startswith(EXAMPLE_VALUE_PREFIXES):
+        return None
+    return value
+
+
 class Config:
     """Flask配置类"""
     
     # Flask配置
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'mirofish-secret-key')
+    # Sesiones: con SECRET_KEY en el entorno sobreviven a los reinicios. Sin ella
+    # se genera una al arrancar (y se avisa en el registro).
+    SECRET_KEY = _secret_env('SECRET_KEY') or secrets.token_hex(32)
+    SECRET_KEY_FROM_ENV = bool(_secret_env('SECRET_KEY'))
     DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     
     # JSON配置 - 禁用ASCII转义，让中文直接显示
@@ -36,6 +63,22 @@ class Config:
     MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 50MB
     UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), '../uploads')
     ALLOWED_EXTENSIONS = {'pdf', 'md', 'txt', 'markdown'}
+
+    # Inicio de sesión y niveles de acceso (ver app/auth). Las cuentas se guardan
+    # junto a los datos de la aplicación, así que persisten y entran en las copias.
+    AUTH_DB_PATH = os.environ.get('AUTH_DB_PATH') or os.path.join(UPLOAD_FOLDER, 'auth', 'users.db')
+    # Crea el primer administrador si todavía no hay cuentas. Nunca hay una
+    # contraseña por defecto: sin estas variables se crea con `python -m app.auth`.
+    ADMIN_USERNAME = (os.environ.get('ADMIN_USERNAME') or '').strip() or None
+    ADMIN_PASSWORD = _secret_env('ADMIN_PASSWORD')
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    # Activa COOKIE_SECURE cuando la interfaz se sirva por HTTPS.
+    SESSION_COOKIE_SECURE = os.environ.get('COOKIE_SECURE', 'false').lower() == 'true'
+    PERMANENT_SESSION_LIFETIME = timedelta(hours=_int_env('SESSION_HOURS', 24))
+    # Orígenes (esquema, host y puerto) desde cuyas páginas se puede llamar a la
+    # API. Vacío: solo desde la propia interfaz.
+    CORS_ORIGINS = [value.strip() for value in os.environ.get('CORS_ORIGINS', '').split(',') if value.strip()]
     
     # 文本处理配置
     DEFAULT_CHUNK_SIZE = 500  # 默认切块大小

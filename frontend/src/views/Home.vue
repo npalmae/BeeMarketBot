@@ -5,6 +5,7 @@
       <div class="nav-brand">BEEMARKET<span class="brand-accent">BOT</span></div>
       <div class="nav-links">
         <LanguageSwitcher />
+        <UserMenu />
         <a href="https://github.com/666ghj/MiroFish" target="_blank" class="github-link">
           {{ $t('nav.visitGithub') }} <span class="arrow">↗</span>
         </a>
@@ -125,7 +126,12 @@
 
         <!-- 右栏：交互控制台 -->
         <div class="right-panel">
-          <div class="console-box">
+          <!-- Solo consulta: no hay nada que iniciar; abajo están los proyectos. -->
+          <div v-if="!canEdit()" class="console-box read-only-box">
+            <span class="console-label">{{ $t('auth.roles.viewer') }}</span>
+            <p>{{ $t('auth.readOnly.home') }}</p>
+          </div>
+          <div v-else class="console-box">
             <!-- 上传区域 -->
             <div class="console-section">
               <div class="console-header">
@@ -214,10 +220,15 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import UserMenu from '../components/UserMenu.vue'
+import { canEdit } from '../auth'
 
 const router = useRouter()
+// Los textos de la plantilla ($t) salen del idioma de la aplicación.
+useI18n()
 
 // 表单数据
 const formData = ref({

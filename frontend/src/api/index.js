@@ -1,5 +1,6 @@
 import axios from 'axios'
 import i18n from '../i18n'
+import { sessionToken } from '../session'
 
 // 创建axios实例
 const service = axios.create({
@@ -12,10 +13,26 @@ const service = axios.create({
   }
 })
 
+// Sin token (sesión nueva o recién cerrada) se pide uno antes de cualquier cambio:
+// el servidor solo acepta el token de la sesión que lo recibió.
+async function ensureToken() {
+  if (sessionToken.value) return
+  const res = await service.get('/api/auth/session')
+  sessionToken.value = res.data?.csrf || null
+}
+
 // 请求拦截器
 service.interceptors.request.use(
-  config => {
+  async config => {
     config.headers['Accept-Language'] = i18n.global.locale.value
+    // Cada cambio va firmado con el token de la propia sesión (protección CSRF).
+    const method = (config.method || 'get').toLowerCase()
+    if (method !== 'get') {
+      await ensureToken()
+      if (sessionToken.value) {
+        config.headers['X-CSRF-Token'] = sessionToken.value
+      }
+    }
     return config
   },
   error => {
@@ -39,6 +56,17 @@ service.interceptors.response.use(
   },
   error => {
     console.error('Response error:', error)
+    // Sin sesión, o caducada: se anuncia para que la interfaz pida entrar de nuevo.
+    // Un intento de entrada rechazado no cuenta: ahí simplemente se muestra el error.
+    const url = error.config?.url || ''
+    if (
+      error.response?.status === 401 &&
+      sessionToken.value &&
+      !url.includes('/api/auth/login') &&
+      !url.includes('/api/auth/session')
+    ) {
+      window.dispatchEvent(new CustomEvent('beemarketbot:session-expired'))
+    }
     const apiError = error.response?.data?.error || error.response?.data?.message
     
     // 处理超时

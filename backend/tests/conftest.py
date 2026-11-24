@@ -184,6 +184,48 @@ class FakeEngine:
 
 
 @pytest.fixture(autouse=True)
+def isolated_auth_database(tmp_path, monkeypatch):
+    """Las cuentas de usuario nunca se guardan en la carpeta de datos real durante las pruebas."""
+
+    from app.config import Config
+
+    monkeypatch.setattr(Config, "AUTH_DB_PATH", str(tmp_path / "auth" / "users.db"))
+
+
+@pytest.fixture
+def signed_in(tmp_path):
+    """Fábrica de clientes de la aplicación real con una sesión ya iniciada."""
+
+    def make(app, username="editor", password="una-clave-valida", role="editor"):
+        with app.app_context():
+            app.extensions["auth"].create_user(username, password, role)
+        client = app.test_client()
+        token = client.get("/api/auth/session").get_json()["data"]["csrf"]
+        response = client.post(
+            "/api/auth/login",
+            json={"username": username, "password": password},
+            headers={"X-CSRF-Token": token},
+        )
+        assert response.status_code == 200, response.get_json()
+        # El token viaja en una cabecera que las pruebas deben enviar, igual que la interfaz.
+        client.csrf = response.get_json()["data"]["csrf"]
+        return client
+
+    return make
+
+
+@pytest.fixture(autouse=True)
+def restore_locale():
+    """Cada prueba deja el idioma del hilo como lo encontró."""
+
+    from app.utils.locale import get_locale, set_locale
+
+    previous = get_locale()
+    yield
+    set_locale(previous)
+
+
+@pytest.fixture(autouse=True)
 def no_provider_compatibility_settings(monkeypatch):
     """Ninguna prueba depende de la compatibilidad de proveedor que haya en el entorno.
 

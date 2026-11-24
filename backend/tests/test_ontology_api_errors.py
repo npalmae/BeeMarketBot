@@ -7,12 +7,14 @@ from app.utils.llm_client import LLMResponseError
 
 
 def _post_ontology(client):
+    # La sesión firmada exige el token de la propia sesión, igual que en la interfaz.
     return client.post(
         "/api/graph/ontology/generate",
         data={
             "simulation_requirement": "Simulate the discussion.",
             "files": (io.BytesIO(b"A short source document."), "source.md"),
         },
+        headers={"X-CSRF-Token": client.csrf},
         content_type="multipart/form-data",
     )
 
@@ -20,6 +22,7 @@ def _post_ontology(client):
 def test_ontology_api_returns_safe_truncation_error_and_failed_project(
     tmp_path,
     monkeypatch,
+    signed_in,
 ):
     class FailingGenerator:
         def generate(self, **kwargs):
@@ -33,7 +36,7 @@ def test_ontology_api_returns_safe_truncation_error_and_failed_project(
 
     app = create_app()
     app.config.update(TESTING=True)
-    response = _post_ontology(app.test_client())
+    response = _post_ontology(signed_in(app))
 
     assert response.status_code == 502
     assert response.json["success"] is False
@@ -46,7 +49,7 @@ def test_ontology_api_returns_safe_truncation_error_and_failed_project(
     assert project.error == response.json["error"]
 
 
-def test_ontology_api_does_not_expose_provider_error_body(tmp_path, monkeypatch):
+def test_ontology_api_does_not_expose_provider_error_body(tmp_path, monkeypatch, signed_in):
     class ProviderError(RuntimeError):
         status_code = 401
         request_id = "request-safe-id"
@@ -61,7 +64,7 @@ def test_ontology_api_does_not_expose_provider_error_body(tmp_path, monkeypatch)
 
     app = create_app()
     app.config.update(TESTING=True)
-    response = _post_ontology(app.test_client())
+    response = _post_ontology(signed_in(app))
 
     assert response.status_code == 502
     assert "HTTP 401" in response.json["error"]

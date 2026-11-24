@@ -8,6 +8,10 @@ en el orden en que las carga `src/main.js`:
 | `web2.css`, `web2-pages.css` | Kit de sixmanager.com | Paleta, tipografías y componentes del sitio (`.site-header`, `.hero`, `.primary-button`…). Son los archivos originales, sin modificar. |
 | `web2-theme.generated.css` | Generado | Traduce los colores y las tipografías de cada componente `.vue` a la paleta Web2. No se edita a mano. |
 | `web2-theme.css` | Manual | Lo que la traducción automática no puede decidir: titulares, botones y tarjetas con sombra dura, variables de la portada y excepciones. |
+| `auth.css` | Manual | Pantallas de acceso (entrar, mi cuenta, usuarios): tarjeta, campos, botones, avisos y tabla con clases `authkit-*`, escritas directamente en la paleta Web2. No dependen de `html.web2`. |
+
+Las pantallas de acceso (`LoginView`, `AccountView`, `UsersView`, `AppHeader`,
+`UserMenu`) están en la lista `SKIP` del generador: no se traducen dos veces.
 
 ## Cómo se activa
 

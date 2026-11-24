@@ -664,5 +664,91 @@
     "llmSelectAgentFailed": "LLM agent selection failed, using default selection: {error}",
     "generateInterviewQuestionsFailed": "Failed to generate interview questions: {error}",
     "generateInterviewSummaryFailed": "Failed to generate interview summary: {error}"
+  },
+  "auth": {
+    "readOnly": {
+      "home": "Your account is read-only: you can open the projects below and review their graphs, simulations and reports, but not start new simulations."
+    },
+    "error": {
+      "usernameRules": "The username must be 3 to 32 characters: letters, digits, '.', '_' or '-', starting with a letter or digit.",
+      "passwordTooShort": "The password must be at least 8 characters.",
+      "passwordTooLong": "The password cannot exceed 128 characters.",
+      "passwordEqualsUsername": "The password cannot be the same as the username.",
+      "invalidRole": "Invalid access level.",
+      "usernameTaken": "That username is already in use.",
+      "lastAdmin": "The only active administrator cannot be demoted or disabled.",
+      "userNotFound": "The account does not exist.",
+      "wrongCurrentPassword": "The current password is not correct.",
+      "mustBeBoolean": "The value must be true or false.",
+      "invalidCredentials": "Wrong username or password.",
+      "loginRequired": "Sign in to continue.",
+      "adminOnly": "Only administrators can do this.",
+      "readOnly": "Your account is read-only.",
+      "csrfRejected": "Your session is no longer valid. Reload the page and try again.",
+      "tooManyAttempts": "Too many failed attempts. Wait {seconds} seconds and try again."
+    },
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Sign in to use BeeMarketBot.",
+      "username": "Username",
+      "usernamePlaceholder": "Your username",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "noUsers": "There are no accounts yet. From the project folder, create the first administrator with:",
+      "noUsersCommand": "docker compose exec -T beemarketbot sh -c 'cd backend && uv run --frozen python -m app.auth create-user --username <name> --role admin --generate-password'\n# without Docker:\ncd backend && python -m app.auth create-user --username <name> --role admin"
+    },
+    "menu": {
+      "account": "My account",
+      "users": "Users",
+      "logout": "Sign out"
+    },
+    "roles": {
+      "label": "Access level",
+      "admin": "Administrator",
+      "editor": "Editor",
+      "viewer": "Viewer",
+      "adminDesc": "Everything, and manages users.",
+      "editorDesc": "Creates and runs simulations and generates reports.",
+      "viewerDesc": "Read-only."
+    },
+    "account": {
+      "title": "My account",
+      "memberSince": "Account created on {date}",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Repeat the new password",
+      "change": "Change password",
+      "changing": "Changing...",
+      "changed": "Password changed.",
+      "mustChange": "Change your password before continuing: an administrator assigned the current one.",
+      "mismatch": "The passwords do not match."
+    },
+    "users": {
+      "title": "Users",
+      "subtitle": "Who can sign in, and with which access level.",
+      "username": "Username",
+      "password": "Initial password",
+      "role": "Level",
+      "create": "Create user",
+      "creating": "Creating...",
+      "state": "State",
+      "active": "Active",
+      "disabledAccount": "Disabled",
+      "mustChange": "Must change password",
+      "disable": "Disable",
+      "enable": "Enable",
+      "newPassword": "New password",
+      "reset": "Set password",
+      "you": "(you)",
+      "created": "User {username} created.",
+      "updated": "User {username} updated.",
+      "passwordReset": "Password set for {username}. They must change it on first sign-in.",
+      "actions": "Actions",
+      "generate": "Generate",
+      "save": "Save",
+      "cancel": "Cancel",
+      "initialPassword": "Initial password (shown only once):"
+    }
   }
 }

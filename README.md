@@ -196,6 +196,38 @@ docker compose exec beemarketbot sh -c "cd backend && uv run --frozen python scr
 
 Reads `.env` from the root directory. Maps ports `3000` (frontend) and `5001` (backend); set `WEB_PORT`, `API_PORT` or `FALKORDB_PORT` in `.env` if they are taken. Project data is kept in `./backend/uploads` and the graph database in the `falkordb-data` volume.
 
+### Login and Access Levels
+
+Every page and API route asks for a session. There are three levels:
+
+| Level | Can |
+|---|---|
+| `admin` | Everything, and manages the accounts (`/users`) |
+| `editor` | Create and run simulations, generate reports |
+| `viewer` | Read only |
+
+There is no public sign-up and no default password. Create the first administrator once, from the project folder:
+
+```bash
+# Docker: prints the initial password once
+docker compose exec -T beemarketbot sh -c "cd backend && uv run --frozen python -m app.auth create-user --username <name> --role admin --generate-password"
+
+# Without Docker: asks for the password
+cd backend && uv run python -m app.auth create-user --username <name> --role admin
+```
+
+The initial password must be changed at first sign-in. From then on, accounts are created from **Users** in the administrator's menu, or with `python -m app.auth list-users | set-password | set-role | disable | enable`.
+
+| Variable | Purpose |
+|---|---|
+| `SECRET_KEY` | Signs the sessions. Set it (`openssl rand -hex 32`): without it, every restart signs everybody out. |
+| `ADMIN_USERNAME`, `ADMIN_PASSWORD` | Optional. Creates the first administrator at start, only when no account exists yet. |
+| `SESSION_HOURS` | Session lifetime (default `24`). |
+| `COOKIE_SECURE` | Set `true` when the app is served over HTTPS. |
+| `CORS_ORIGINS` | Extra origins allowed to call the API (default: none). |
+
+Accounts are kept in `./backend/uploads/auth/users.db`, with the project data, and passwords are stored as scrypt hashes. Over plain HTTP the password still travels unencrypted: put the app behind HTTPS if it is reachable from outside a trusted network.
+
 ## 📬 Join the Conversation
 
 <div align="center">

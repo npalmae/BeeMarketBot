@@ -664,5 +664,91 @@
     "llmSelectAgentFailed": "La selección de agentes por el LLM falló; se usa la selección por defecto: {error}",
     "generateInterviewQuestionsFailed": "No se pudieron generar las preguntas de entrevista: {error}",
     "generateInterviewSummaryFailed": "No se pudo generar el resumen de la entrevista: {error}"
+  },
+  "auth": {
+    "readOnly": {
+      "home": "Tu cuenta es de solo consulta: puedes abrir los proyectos de abajo y revisar sus grafos, simulaciones e informes, pero no iniciar simulaciones nuevas."
+    },
+    "error": {
+      "usernameRules": "El nombre de usuario debe tener entre 3 y 32 caracteres: letras, dígitos, '.', '_' o '-', y empezar por letra o dígito.",
+      "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
+      "passwordTooLong": "La contraseña no puede superar los 128 caracteres.",
+      "passwordEqualsUsername": "La contraseña no puede ser igual al nombre de usuario.",
+      "invalidRole": "Nivel de acceso no válido.",
+      "usernameTaken": "Ese nombre de usuario ya está en uso.",
+      "lastAdmin": "No se puede quitar el nivel de administrador al único administrador activo.",
+      "userNotFound": "La cuenta no existe.",
+      "wrongCurrentPassword": "La contraseña actual no es correcta.",
+      "mustBeBoolean": "El valor debe ser verdadero o falso.",
+      "invalidCredentials": "Usuario o contraseña incorrectos.",
+      "loginRequired": "Inicia sesión para continuar.",
+      "adminOnly": "Solo los administradores pueden hacer esto.",
+      "readOnly": "Tu cuenta es de solo consulta.",
+      "csrfRejected": "Tu sesión ya no es válida. Recarga la página e inténtalo de nuevo.",
+      "tooManyAttempts": "Demasiados intentos fallidos. Espera {seconds} segundos y vuelve a intentarlo."
+    },
+    "login": {
+      "title": "Entrar",
+      "subtitle": "Inicia sesión para usar BeeMarketBot.",
+      "username": "Usuario",
+      "usernamePlaceholder": "Tu usuario",
+      "password": "Contraseña",
+      "submit": "Entrar",
+      "submitting": "Entrando...",
+      "noUsers": "Todavía no hay cuentas. Desde la carpeta del proyecto, crea el primer administrador con:",
+      "noUsersCommand": "docker compose exec -T beemarketbot sh -c 'cd backend && uv run --frozen python -m app.auth create-user --username <nombre> --role admin --generate-password'\n# sin Docker:\ncd backend && python -m app.auth create-user --username <nombre> --role admin"
+    },
+    "menu": {
+      "account": "Mi cuenta",
+      "users": "Usuarios",
+      "logout": "Cerrar sesión"
+    },
+    "roles": {
+      "label": "Nivel de acceso",
+      "admin": "Administrador",
+      "editor": "Editor",
+      "viewer": "Visor",
+      "adminDesc": "Todo, y además administra los usuarios.",
+      "editorDesc": "Crea y ejecuta simulaciones y genera informes.",
+      "viewerDesc": "Solo consulta."
+    },
+    "account": {
+      "title": "Mi cuenta",
+      "memberSince": "Cuenta creada el {date}",
+      "currentPassword": "Contraseña actual",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Repite la nueva contraseña",
+      "change": "Cambiar contraseña",
+      "changing": "Cambiando...",
+      "changed": "Contraseña cambiada.",
+      "mustChange": "Cambia tu contraseña antes de continuar: la actual te la asignó un administrador.",
+      "mismatch": "Las contraseñas no coinciden."
+    },
+    "users": {
+      "title": "Usuarios",
+      "subtitle": "Quién puede entrar y con qué nivel de acceso.",
+      "username": "Usuario",
+      "password": "Contraseña inicial",
+      "role": "Nivel",
+      "create": "Crear usuario",
+      "creating": "Creando...",
+      "state": "Estado",
+      "active": "Activa",
+      "disabledAccount": "Deshabilitada",
+      "mustChange": "Debe cambiar la contraseña",
+      "disable": "Deshabilitar",
+      "enable": "Habilitar",
+      "newPassword": "Nueva contraseña",
+      "reset": "Asignar contraseña",
+      "you": "(tú)",
+      "created": "Usuario {username} creado.",
+      "updated": "Usuario {username} actualizado.",
+      "passwordReset": "Contraseña asignada a {username}. Deberá cambiarla al entrar.",
+      "actions": "Acciones",
+      "generate": "Generar",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "initialPassword": "Contraseña inicial (se muestra solo esta vez):"
+    }
   }
 }

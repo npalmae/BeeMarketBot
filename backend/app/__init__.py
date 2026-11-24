@@ -36,11 +36,20 @@ def create_app(config_class=Config):
     
     if should_log_startup:
         logger.info("=" * 50)
-        logger.info("MiroFish Backend 启动中...")
+        logger.info("BeeMarketBot Backend 启动中...")
         logger.info("=" * 50)
     
-    # 启用CORS
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # 启用CORS（仅限配置的来源；默认只允许同源）
+    if app.config.get('CORS_ORIGINS'):
+        CORS(app, resources={r"/api/*": {"origins": app.config['CORS_ORIGINS']}})
+
+    # Inicio de sesión y niveles de acceso: protege toda la API. Se registra
+    # antes que el resto de la cadena para que una petición sin sesión se rechace
+    # sin más procesamiento.
+    from .auth.routes import auth_bp
+    from .auth.guard import install as install_auth
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    install_auth(app)
     
     # 注册模拟进程清理函数（确保服务器关闭时终止所有模拟进程）
     from .services.simulation_runner import SimulationRunner
@@ -53,6 +62,10 @@ def create_app(config_class=Config):
     def log_request():
         logger = get_logger('mirofish.request')
         logger.debug(f"请求: {request.method} {request.path}")
+        # El cuerpo puede traer contraseñas (inicio de sesión, cambio de
+        # contraseña): nunca se registra.
+        if request.path.startswith('/api/auth/'):
+            return None
         if request.content_type and 'json' in request.content_type:
             logger.debug(f"请求体: {request.get_json(silent=True)}")
     
@@ -71,10 +84,10 @@ def create_app(config_class=Config):
     # 健康检查
     @app.route('/health')
     def health():
-        return {'status': 'ok', 'service': 'MiroFish Backend'}
+        return {'status': 'ok', 'service': 'BeeMarketBot Backend'}
     
     if should_log_startup:
-        logger.info("MiroFish Backend 启动完成")
+        logger.info("BeeMarketBot Backend 启动完成")
     
     return app
 
