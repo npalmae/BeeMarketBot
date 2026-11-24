@@ -3,7 +3,7 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-left">
-        <div class="brand" @click="router.push('/')">BEEMARKET<span class="brand-accent">BOT</span></div>
+        <BrandMark class="brand" @click="router.push('/')" />
       </div>
       
       <div class="header-center">
@@ -74,6 +74,7 @@ import { getProject, getGraphData } from '../api/graph'
 import { getSimulation } from '../api/simulation'
 import { getReport } from '../api/report'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import BrandMark from '../components/BrandMark.vue'
 import UserMenu from '../components/UserMenu.vue'
 
 const route = useRoute()

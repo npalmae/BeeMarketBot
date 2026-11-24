@@ -2,7 +2,7 @@
   <div class="home-container">
     <!-- 顶部导航栏 -->
     <nav class="navbar">
-      <div class="nav-brand">BEEMARKET<span class="brand-accent">BOT</span></div>
+      <BrandMark class="nav-brand" />
       <div class="nav-links">
         <LanguageSwitcher />
         <UserMenu />
@@ -223,6 +223,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import BrandMark from '../components/BrandMark.vue'
 import UserMenu from '../components/UserMenu.vue'
 import { canEdit } from '../auth'
 

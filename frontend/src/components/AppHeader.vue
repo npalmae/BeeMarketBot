@@ -1,6 +1,6 @@
 <template>
   <header class="app-header">
-    <div class="brand" @click="router.push('/')">BEEMARKET<span class="brand-accent">BOT</span></div>
+    <BrandMark class="brand" @click="router.push('/')" />
     <div class="header-right">
       <LanguageSwitcher />
       <UserMenu />
@@ -12,6 +12,7 @@
 import { useRouter } from 'vue-router'
 import LanguageSwitcher from './LanguageSwitcher.vue'
 import UserMenu from './UserMenu.vue'
+import BrandMark from './BrandMark.vue'
 
 const router = useRouter()
 </script>
@@ -37,10 +38,6 @@ const router = useRouter()
   letter-spacing: -.02em;
   color: #F5F7FA;
   cursor: pointer;
-}
-
-.brand-accent {
-  color: #76FA0A;
 }
 
 .header-right {

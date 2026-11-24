@@ -25,9 +25,9 @@ const SRC = join(ROOT, 'src')
 const OUT = join(SRC, 'styles', 'web2-theme.generated.css')
 
 /**
- * Archivos que no pasan por aquí: la vista que el router no usa y las pantallas
- * de acceso (entrar, mi cuenta, usuarios), escritas ya en el estilo Web2 con las
- * clases de `src/styles/auth.css`.
+ * Archivos que no pasan por aquí: la vista que el router no usa y las pantallas y
+ * piezas de acceso (entrar, mi cuenta, usuarios, sus cabeceras y la marca),
+ * escritas ya en el estilo Web2 con las clases de `src/styles/auth.css` o las suyas.
  */
 const SKIP = new Set([
   'views/Process.vue',
@@ -35,6 +35,7 @@ const SKIP = new Set([
   'views/AccountView.vue',
   'views/UsersView.vue',
   'components/AppHeader.vue',
+  'components/BrandMark.vue',
   'components/UserMenu.vue'
 ])
 

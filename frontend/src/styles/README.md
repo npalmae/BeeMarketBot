@@ -11,7 +11,8 @@ en el orden en que las carga `src/main.js`:
 | `auth.css` | Manual | Pantallas de acceso (entrar, mi cuenta, usuarios): tarjeta, campos, botones, avisos y tabla con clases `authkit-*`, escritas directamente en la paleta Web2. No dependen de `html.web2`. |
 
 Las pantallas de acceso (`LoginView`, `AccountView`, `UsersView`, `AppHeader`,
-`UserMenu`) están en la lista `SKIP` del generador: no se traducen dos veces.
+`UserMenu`) y la marca de las cabeceras (`BrandMark`: el hexágono junto al nombre)
+están en la lista `SKIP` del generador: no se traducen dos veces.
 
 ## Cómo se activa
 

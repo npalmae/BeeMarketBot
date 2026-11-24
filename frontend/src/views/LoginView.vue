@@ -1,10 +1,7 @@
 <template>
   <div class="login-page">
     <header class="login-header">
-      <div class="brand">
-        <img class="brand-isotype" src="/beemarketbot-icon.png" alt="" width="30" height="30">
-        <span>BEEMARKET<span class="brand-accent">BOT</span></span>
-      </div>
+      <BrandMark class="login-brand" />
       <LanguageSwitcher />
     </header>
 
@@ -53,6 +50,7 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import BrandMark from '../components/BrandMark.vue'
 import { auth, login } from '../auth'
 
 const route = useRoute()
@@ -102,23 +100,10 @@ const submit = async () => {
   background: rgba(5, 7, 19, .9);
 }
 
-/* La marca de la cabecera: el hexágono con la abeja (el mismo símbolo del icono de la
-   pestaña) junto al nombre. */
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.login-brand {
+  font-family: 'DM Mono', monospace;
   font-weight: 800;
   font-size: 18px;
   letter-spacing: -.02em;
 }
-
-.brand-isotype {
-  display: block;
-  flex: none;
-  width: 30px;
-  height: 30px;
-}
-
-.brand-accent { color: #76FA0A; }
 </style>

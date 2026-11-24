@@ -8,7 +8,7 @@
 
    Regenerar (desde frontend/):  node scripts/build-web2-theme.mjs
    Ajustes a mano:               src/styles/web2-theme.css (se carga después)
-   Vistas ignoradas (sin uso):   views/Process.vue, views/LoginView.vue, views/AccountView.vue, views/UsersView.vue, components/AppHeader.vue, components/UserMenu.vue
+   Vistas ignoradas (sin uso):   views/Process.vue, views/LoginView.vue, views/AccountView.vue, views/UsersView.vue, components/AppHeader.vue, components/BrandMark.vue, components/UserMenu.vue
    ============================================================================ */
 
 /* -------------------------------------------------- App.vue */
@@ -3496,89 +3496,89 @@ html.web2 [data-v-8a532987] .md-hr {
 /* -------------------------------------------------- views/Home.vue */
 
 html.web2 .arrow[data-v-2dc54a20],
-html.web2 .arrow[data-v-0a9aee52] {
+html.web2 .arrow[data-v-caa69386] {
   font-family: 'DM Mono', monospace;
 }
 html.web2 .version-text[data-v-2dc54a20],
-html.web2 .version-text[data-v-0a9aee52] {
+html.web2 .version-text[data-v-caa69386] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .gradient-text[data-v-2dc54a20],
-html.web2 .gradient-text[data-v-0a9aee52] {
+html.web2 .gradient-text[data-v-caa69386] {
   background-image: linear-gradient(90deg, #4689C8 0%, #4689C8 100%);
 }
 html.web2 .highlight-code[data-v-2dc54a20],
-html.web2 .highlight-code[data-v-0a9aee52] {
+html.web2 .highlight-code[data-v-caa69386] {
   background-image: rgba(245, 247, 250, 0.05);
 }
 html.web2 .panel-header[data-v-2dc54a20],
-html.web2 .panel-header[data-v-0a9aee52] {
+html.web2 .panel-header[data-v-caa69386] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .metric-label[data-v-2dc54a20],
-html.web2 .metric-label[data-v-0a9aee52] {
+html.web2 .metric-label[data-v-caa69386] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .steps-header[data-v-2dc54a20],
-html.web2 .steps-header[data-v-0a9aee52] {
+html.web2 .steps-header[data-v-caa69386] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .console-box[data-v-2dc54a20],
-html.web2 .console-box[data-v-0a9aee52] {
+html.web2 .console-box[data-v-caa69386] {
   border-color: rgba(70, 137, 200, .38);
 }
 html.web2 .console-header[data-v-2dc54a20],
-html.web2 .console-header[data-v-0a9aee52] {
+html.web2 .console-header[data-v-caa69386] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .upload-zone[data-v-2dc54a20],
-html.web2 .upload-zone[data-v-0a9aee52] {
+html.web2 .upload-zone[data-v-caa69386] {
   border-color: rgba(70, 137, 200, .38);
   background-color: #0D1228;
 }
 html.web2 .upload-zone:hover[data-v-2dc54a20],
-html.web2 .upload-zone:hover[data-v-0a9aee52] {
+html.web2 .upload-zone:hover[data-v-caa69386] {
   background-color: #111936;
   border-color: rgba(245, 247, 250, .28);
 }
 html.web2 .upload-icon[data-v-2dc54a20],
-html.web2 .upload-icon[data-v-0a9aee52] {
+html.web2 .upload-icon[data-v-caa69386] {
   border-color: rgba(70, 137, 200, .38);
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .upload-hint[data-v-2dc54a20],
-html.web2 .upload-hint[data-v-0a9aee52] {
+html.web2 .upload-hint[data-v-caa69386] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .file-item[data-v-2dc54a20],
-html.web2 .file-item[data-v-0a9aee52] {
+html.web2 .file-item[data-v-caa69386] {
   border-color: rgba(70, 137, 200, .38);
 }
 html.web2 .remove-btn[data-v-2dc54a20],
-html.web2 .remove-btn[data-v-0a9aee52] {
+html.web2 .remove-btn[data-v-caa69386] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .console-divider[data-v-2dc54a20]::before,
-html.web2 .console-divider[data-v-0a9aee52]::before,
+html.web2 .console-divider[data-v-caa69386]::before,
 html.web2 .console-divider[data-v-2dc54a20]::after,
-html.web2 .console-divider[data-v-0a9aee52]::after {
+html.web2 .console-divider[data-v-caa69386]::after {
   background-color: #111936;
 }
 html.web2 .console-divider span[data-v-2dc54a20],
-html.web2 .console-divider span[data-v-0a9aee52] {
+html.web2 .console-divider span[data-v-caa69386] {
   color: rgba(245, 247, 250, .55);
 }
 html.web2 .input-wrapper[data-v-2dc54a20],
-html.web2 .input-wrapper[data-v-0a9aee52] {
+html.web2 .input-wrapper[data-v-caa69386] {
   border-color: rgba(70, 137, 200, .38);
   background-color: #0D1228;
 }
 html.web2 .model-badge[data-v-2dc54a20],
-html.web2 .model-badge[data-v-0a9aee52] {
+html.web2 .model-badge[data-v-caa69386] {
   color: rgba(245, 247, 250, .55);
 }
 html.web2 .start-engine-btn:disabled[data-v-2dc54a20],
-html.web2 .start-engine-btn:disabled[data-v-0a9aee52] {
+html.web2 .start-engine-btn:disabled[data-v-caa69386] {
   background-color: #111936;
   color: rgba(245, 247, 250, .72);
   border-color: rgba(70, 137, 200, .38);
@@ -3618,311 +3618,311 @@ html.web2:is([lang="en"], [lang="es"]) .workflow-list {
 /* -------------------------------------------------- views/InteractionView.vue */
 
 html.web2 .main-view[data-v-ea334b53],
-html.web2 .main-view[data-v-f85a921f] {
+html.web2 .main-view[data-v-3189dbda] {
   background-color: #0D1228;
   font-family: 'DM Mono', monospace;
 }
 html.web2 .app-header[data-v-ea334b53],
-html.web2 .app-header[data-v-f85a921f] {
+html.web2 .app-header[data-v-3189dbda] {
   border-bottom-color: rgba(70, 137, 200, .38);
   background-color: #0D1228;
 }
 html.web2 .brand[data-v-ea334b53],
-html.web2 .brand[data-v-f85a921f] {
+html.web2 .brand[data-v-3189dbda] {
   font-family: 'DM Mono', monospace;
 }
 html.web2 .view-switcher[data-v-ea334b53],
-html.web2 .view-switcher[data-v-f85a921f] {
+html.web2 .view-switcher[data-v-3189dbda] {
   background-color: #111936;
 }
 html.web2 .switch-btn[data-v-ea334b53],
-html.web2 .switch-btn[data-v-f85a921f] {
+html.web2 .switch-btn[data-v-3189dbda] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .switch-btn.active[data-v-ea334b53],
-html.web2 .switch-btn.active[data-v-f85a921f] {
+html.web2 .switch-btn.active[data-v-3189dbda] {
   background-color: #0D1228;
   color: #F5F7FA;
   box-shadow: 0 2px 4px transparent;
 }
 html.web2 .step-num[data-v-ea334b53],
-html.web2 .step-num[data-v-f85a921f] {
+html.web2 .step-num[data-v-3189dbda] {
   font-family: 'DM Mono', monospace;
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .step-name[data-v-ea334b53],
-html.web2 .step-name[data-v-f85a921f] {
+html.web2 .step-name[data-v-3189dbda] {
   color: #F5F7FA;
 }
 html.web2 .step-divider[data-v-ea334b53],
-html.web2 .step-divider[data-v-f85a921f] {
+html.web2 .step-divider[data-v-3189dbda] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator[data-v-ea334b53],
-html.web2 .status-indicator[data-v-f85a921f] {
+html.web2 .status-indicator[data-v-3189dbda] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .dot[data-v-ea334b53],
-html.web2 .dot[data-v-f85a921f] {
+html.web2 .dot[data-v-3189dbda] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator.error .dot[data-v-ea334b53],
-html.web2 .status-indicator.error .dot[data-v-f85a921f] {
+html.web2 .status-indicator.error .dot[data-v-3189dbda] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .panel-wrapper.left[data-v-ea334b53],
-html.web2 .panel-wrapper.left[data-v-f85a921f] {
+html.web2 .panel-wrapper.left[data-v-3189dbda] {
   border-right-color: rgba(70, 137, 200, .38);
 }
 
 /* -------------------------------------------------- views/MainView.vue */
 
 html.web2 .main-view[data-v-bf5eacc9],
-html.web2 .main-view[data-v-37e6ab4f] {
+html.web2 .main-view[data-v-f376f44f] {
   background-color: #0D1228;
   font-family: 'DM Mono', monospace;
 }
 html.web2 .app-header[data-v-bf5eacc9],
-html.web2 .app-header[data-v-37e6ab4f] {
+html.web2 .app-header[data-v-f376f44f] {
   border-bottom-color: rgba(70, 137, 200, .38);
   background-color: #0D1228;
 }
 html.web2 .brand[data-v-bf5eacc9],
-html.web2 .brand[data-v-37e6ab4f] {
+html.web2 .brand[data-v-f376f44f] {
   font-family: 'DM Mono', monospace;
 }
 html.web2 .view-switcher[data-v-bf5eacc9],
-html.web2 .view-switcher[data-v-37e6ab4f] {
+html.web2 .view-switcher[data-v-f376f44f] {
   background-color: #111936;
 }
 html.web2 .switch-btn[data-v-bf5eacc9],
-html.web2 .switch-btn[data-v-37e6ab4f] {
+html.web2 .switch-btn[data-v-f376f44f] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .switch-btn.active[data-v-bf5eacc9],
-html.web2 .switch-btn.active[data-v-37e6ab4f] {
+html.web2 .switch-btn.active[data-v-f376f44f] {
   background-color: #0D1228;
   color: #F5F7FA;
   box-shadow: 0 2px 4px transparent;
 }
 html.web2 .status-indicator[data-v-bf5eacc9],
-html.web2 .status-indicator[data-v-37e6ab4f] {
+html.web2 .status-indicator[data-v-f376f44f] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .step-num[data-v-bf5eacc9],
-html.web2 .step-num[data-v-37e6ab4f] {
+html.web2 .step-num[data-v-f376f44f] {
   font-family: 'DM Mono', monospace;
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .step-name[data-v-bf5eacc9],
-html.web2 .step-name[data-v-37e6ab4f] {
+html.web2 .step-name[data-v-f376f44f] {
   color: #F5F7FA;
 }
 html.web2 .step-divider[data-v-bf5eacc9],
-html.web2 .step-divider[data-v-37e6ab4f] {
+html.web2 .step-divider[data-v-f376f44f] {
   background-color: #252E5A;
 }
 html.web2 .dot[data-v-bf5eacc9],
-html.web2 .dot[data-v-37e6ab4f] {
+html.web2 .dot[data-v-f376f44f] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator.processing .dot[data-v-bf5eacc9],
-html.web2 .status-indicator.processing .dot[data-v-37e6ab4f] {
+html.web2 .status-indicator.processing .dot[data-v-f376f44f] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .status-indicator.error .dot[data-v-bf5eacc9],
-html.web2 .status-indicator.error .dot[data-v-37e6ab4f] {
+html.web2 .status-indicator.error .dot[data-v-f376f44f] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .panel-wrapper.left[data-v-bf5eacc9],
-html.web2 .panel-wrapper.left[data-v-37e6ab4f] {
+html.web2 .panel-wrapper.left[data-v-f376f44f] {
   border-right-color: rgba(70, 137, 200, .38);
 }
 
 /* -------------------------------------------------- views/ReportView.vue */
 
 html.web2 .main-view[data-v-95801e60],
-html.web2 .main-view[data-v-e995299e] {
+html.web2 .main-view[data-v-ea8e7dc6] {
   background-color: #0D1228;
   font-family: 'DM Mono', monospace;
 }
 html.web2 .app-header[data-v-95801e60],
-html.web2 .app-header[data-v-e995299e] {
+html.web2 .app-header[data-v-ea8e7dc6] {
   border-bottom-color: rgba(70, 137, 200, .38);
   background-color: #0D1228;
 }
 html.web2 .brand[data-v-95801e60],
-html.web2 .brand[data-v-e995299e] {
+html.web2 .brand[data-v-ea8e7dc6] {
   font-family: 'DM Mono', monospace;
 }
 html.web2 .view-switcher[data-v-95801e60],
-html.web2 .view-switcher[data-v-e995299e] {
+html.web2 .view-switcher[data-v-ea8e7dc6] {
   background-color: #111936;
 }
 html.web2 .switch-btn[data-v-95801e60],
-html.web2 .switch-btn[data-v-e995299e] {
+html.web2 .switch-btn[data-v-ea8e7dc6] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .switch-btn.active[data-v-95801e60],
-html.web2 .switch-btn.active[data-v-e995299e] {
+html.web2 .switch-btn.active[data-v-ea8e7dc6] {
   background-color: #0D1228;
   color: #F5F7FA;
   box-shadow: 0 2px 4px transparent;
 }
 html.web2 .step-num[data-v-95801e60],
-html.web2 .step-num[data-v-e995299e] {
+html.web2 .step-num[data-v-ea8e7dc6] {
   font-family: 'DM Mono', monospace;
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .step-name[data-v-95801e60],
-html.web2 .step-name[data-v-e995299e] {
+html.web2 .step-name[data-v-ea8e7dc6] {
   color: #F5F7FA;
 }
 html.web2 .step-divider[data-v-95801e60],
-html.web2 .step-divider[data-v-e995299e] {
+html.web2 .step-divider[data-v-ea8e7dc6] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator[data-v-95801e60],
-html.web2 .status-indicator[data-v-e995299e] {
+html.web2 .status-indicator[data-v-ea8e7dc6] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .dot[data-v-95801e60],
-html.web2 .dot[data-v-e995299e] {
+html.web2 .dot[data-v-ea8e7dc6] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator.error .dot[data-v-95801e60],
-html.web2 .status-indicator.error .dot[data-v-e995299e] {
+html.web2 .status-indicator.error .dot[data-v-ea8e7dc6] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .panel-wrapper.left[data-v-95801e60],
-html.web2 .panel-wrapper.left[data-v-e995299e] {
+html.web2 .panel-wrapper.left[data-v-ea8e7dc6] {
   border-right-color: rgba(70, 137, 200, .38);
 }
 
 /* -------------------------------------------------- views/SimulationRunView.vue */
 
 html.web2 .main-view[data-v-ec3d19e1],
-html.web2 .main-view[data-v-d1a492b9] {
+html.web2 .main-view[data-v-df53f00e] {
   background-color: #0D1228;
   font-family: 'DM Mono', monospace;
 }
 html.web2 .app-header[data-v-ec3d19e1],
-html.web2 .app-header[data-v-d1a492b9] {
+html.web2 .app-header[data-v-df53f00e] {
   border-bottom-color: rgba(70, 137, 200, .38);
   background-color: #0D1228;
 }
 html.web2 .brand[data-v-ec3d19e1],
-html.web2 .brand[data-v-d1a492b9] {
+html.web2 .brand[data-v-df53f00e] {
   font-family: 'DM Mono', monospace;
 }
 html.web2 .view-switcher[data-v-ec3d19e1],
-html.web2 .view-switcher[data-v-d1a492b9] {
+html.web2 .view-switcher[data-v-df53f00e] {
   background-color: #111936;
 }
 html.web2 .switch-btn[data-v-ec3d19e1],
-html.web2 .switch-btn[data-v-d1a492b9] {
+html.web2 .switch-btn[data-v-df53f00e] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .switch-btn.active[data-v-ec3d19e1],
-html.web2 .switch-btn.active[data-v-d1a492b9] {
+html.web2 .switch-btn.active[data-v-df53f00e] {
   background-color: #0D1228;
   color: #F5F7FA;
   box-shadow: 0 2px 4px transparent;
 }
 html.web2 .step-num[data-v-ec3d19e1],
-html.web2 .step-num[data-v-d1a492b9] {
+html.web2 .step-num[data-v-df53f00e] {
   font-family: 'DM Mono', monospace;
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .step-name[data-v-ec3d19e1],
-html.web2 .step-name[data-v-d1a492b9] {
+html.web2 .step-name[data-v-df53f00e] {
   color: #F5F7FA;
 }
 html.web2 .step-divider[data-v-ec3d19e1],
-html.web2 .step-divider[data-v-d1a492b9] {
+html.web2 .step-divider[data-v-df53f00e] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator[data-v-ec3d19e1],
-html.web2 .status-indicator[data-v-d1a492b9] {
+html.web2 .status-indicator[data-v-df53f00e] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .dot[data-v-ec3d19e1],
-html.web2 .dot[data-v-d1a492b9] {
+html.web2 .dot[data-v-df53f00e] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator.processing .dot[data-v-ec3d19e1],
-html.web2 .status-indicator.processing .dot[data-v-d1a492b9] {
+html.web2 .status-indicator.processing .dot[data-v-df53f00e] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .status-indicator.error .dot[data-v-ec3d19e1],
-html.web2 .status-indicator.error .dot[data-v-d1a492b9] {
+html.web2 .status-indicator.error .dot[data-v-df53f00e] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .panel-wrapper.left[data-v-ec3d19e1],
-html.web2 .panel-wrapper.left[data-v-d1a492b9] {
+html.web2 .panel-wrapper.left[data-v-df53f00e] {
   border-right-color: rgba(70, 137, 200, .38);
 }
 
 /* -------------------------------------------------- views/SimulationView.vue */
 
 html.web2 .main-view[data-v-444c5285],
-html.web2 .main-view[data-v-2cd4ad62] {
+html.web2 .main-view[data-v-c28605df] {
   background-color: #0D1228;
   font-family: 'DM Mono', monospace;
 }
 html.web2 .app-header[data-v-444c5285],
-html.web2 .app-header[data-v-2cd4ad62] {
+html.web2 .app-header[data-v-c28605df] {
   border-bottom-color: rgba(70, 137, 200, .38);
   background-color: #0D1228;
 }
 html.web2 .brand[data-v-444c5285],
-html.web2 .brand[data-v-2cd4ad62] {
+html.web2 .brand[data-v-c28605df] {
   font-family: 'DM Mono', monospace;
 }
 html.web2 .view-switcher[data-v-444c5285],
-html.web2 .view-switcher[data-v-2cd4ad62] {
+html.web2 .view-switcher[data-v-c28605df] {
   background-color: #111936;
 }
 html.web2 .switch-btn[data-v-444c5285],
-html.web2 .switch-btn[data-v-2cd4ad62] {
+html.web2 .switch-btn[data-v-c28605df] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .switch-btn.active[data-v-444c5285],
-html.web2 .switch-btn.active[data-v-2cd4ad62] {
+html.web2 .switch-btn.active[data-v-c28605df] {
   background-color: #0D1228;
   color: #F5F7FA;
   box-shadow: 0 2px 4px transparent;
 }
 html.web2 .step-num[data-v-444c5285],
-html.web2 .step-num[data-v-2cd4ad62] {
+html.web2 .step-num[data-v-c28605df] {
   font-family: 'DM Mono', monospace;
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .step-name[data-v-444c5285],
-html.web2 .step-name[data-v-2cd4ad62] {
+html.web2 .step-name[data-v-c28605df] {
   color: #F5F7FA;
 }
 html.web2 .step-divider[data-v-444c5285],
-html.web2 .step-divider[data-v-2cd4ad62] {
+html.web2 .step-divider[data-v-c28605df] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator[data-v-444c5285],
-html.web2 .status-indicator[data-v-2cd4ad62] {
+html.web2 .status-indicator[data-v-c28605df] {
   color: rgba(245, 247, 250, .72);
 }
 html.web2 .dot[data-v-444c5285],
-html.web2 .dot[data-v-2cd4ad62] {
+html.web2 .dot[data-v-c28605df] {
   background-color: #252E5A;
 }
 html.web2 .status-indicator.processing .dot[data-v-444c5285],
-html.web2 .status-indicator.processing .dot[data-v-2cd4ad62] {
+html.web2 .status-indicator.processing .dot[data-v-c28605df] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .status-indicator.error .dot[data-v-444c5285],
-html.web2 .status-indicator.error .dot[data-v-2cd4ad62] {
+html.web2 .status-indicator.error .dot[data-v-c28605df] {
   background-color: rgba(215, 19, 67, .30);
 }
 html.web2 .panel-wrapper.left[data-v-444c5285],
-html.web2 .panel-wrapper.left[data-v-2cd4ad62] {
+html.web2 .panel-wrapper.left[data-v-c28605df] {
   border-right-color: rgba(70, 137, 200, .38);
 }
