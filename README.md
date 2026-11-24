@@ -1,255 +1,202 @@
 <div align="center">
 
-<img src="./static/image/MiroFish_logo_compressed.jpeg" alt="MiroFish Logo" width="75%"/>
+<img src="./frontend/src/assets/logo/beemarketbot-logo.jpg" alt="BeeMarketBot" width="360"/>
 
-<a href="https://trendshift.io/repositories/16144" target="_blank"><img src="https://trendshift.io/api/badge/repositories/16144" alt="666ghj%2FMiroFish | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+# BeeMarketBot
 
-简洁通用的群体智能引擎，预测万物
-</br>
-<em>A Simple and Universal Swarm Intelligence Engine, Predicting Anything</em>
+**Predice todo.** Sube un documento, formula una pregunta y obtén un informe a partir de una simulación social con agentes de IA.
 
-<a href="https://www.shanda.com/" target="_blank"><img src="./static/image/shanda_logo.png" alt="666ghj%2FMiroFish | Shanda" height="40"/></a>
-
-[![GitHub Stars](https://img.shields.io/github/stars/666ghj/MiroFish?style=flat-square&color=DAA520)](https://github.com/666ghj/MiroFish/stargazers)
-[![GitHub Watchers](https://img.shields.io/github/watchers/666ghj/MiroFish?style=flat-square)](https://github.com/666ghj/MiroFish/watchers)
-[![GitHub Forks](https://img.shields.io/github/forks/666ghj/MiroFish?style=flat-square)](https://github.com/666ghj/MiroFish/network)
-[![Docker](https://img.shields.io/badge/Docker-Build-2496ED?style=flat-square&logo=docker&logoColor=white)](https://hub.docker.com/)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/666ghj/MiroFish)
-
-[![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=flat-square&logo=discord&logoColor=white)](http://discord.gg/ePf5aPaHnA)
-[![X](https://img.shields.io/badge/X-Follow-000000?style=flat-square&logo=x&logoColor=white)](https://x.com/mirofish_ai)
-[![Instagram](https://img.shields.io/badge/Instagram-Follow-E4405F?style=flat-square&logo=instagram&logoColor=white)](https://www.instagram.com/mirofish_ai/)
-
-[English](./README.md) | [中文文档](./README-ZH.md)
+Español | [English](./README-EN.md) | [中文](./README-ZH.md)
 
 </div>
 
-## ⚡ Overview
+## Qué hace
 
-**MiroFish** is a next-generation AI prediction engine powered by multi-agent technology. By extracting seed information from the real world (such as breaking news, policy drafts, or financial signals), it automatically constructs a high-fidelity parallel digital world. Within this space, thousands of intelligent agents with independent personalities, long-term memory, and behavioral logic freely interact and undergo social evolution. You can inject variables dynamically from a "God's-eye view" to precisely deduce future trajectories — **rehearse the future in a digital sandbox, and win decisions after countless simulations**.
+BeeMarketBot construye un mundo simulado a partir de un documento y lo deja
+evolucionar para responder preguntas del tipo "¿qué pasaría si…?".
 
-> You only need to: Upload seed materials (data analysis reports or interesting novel stories) and describe your prediction requirements in natural language</br>
-> MiroFish will return: A detailed prediction report and a deeply interactive high-fidelity digital world
+Tú subes los materiales de partida (informes, datos, cualquier texto en PDF, MD
+o TXT) y describes en lenguaje natural lo que quieres saber. El sistema hace el
+resto en cinco pasos:
 
-### Our Vision
+1. **Construcción del grafo.** Extrae las entidades y las relaciones del documento
+   y arma un grafo de conocimiento con memoria, en el que se busca por significado.
+2. **Configuración del entorno.** Genera los perfiles de los agentes a partir de
+   esas entidades y les entrega su memoria y su configuración.
+3. **Simulación.** Los agentes conviven en dos plataformas sociales, una tipo
+   Twitter y otra tipo Reddit, y reaccionan entre sí durante las rondas que
+   definas, mientras su memoria se actualiza con lo que ocurre.
+4. **Informe.** Un agente de informes recorre la simulación con herramientas de
+   consulta y escribe un informe con la respuesta.
+5. **Interacción.** Puedes conversar con cualquier agente del mundo simulado o
+   con el agente de informes para profundizar.
 
-MiroFish is dedicated to creating a swarm intelligence mirror that maps reality. By capturing the collective emergence triggered by individual interactions, we break through the limitations of traditional prediction:
+Tú solo tienes que subir los materiales y describir la pregunta. BeeMarketBot
+devuelve un informe y el mundo simulado, abierto para seguir preguntando.
 
-- **At the Macro Level**: We are a rehearsal laboratory for decision-makers, allowing policies and public relations to be tested at zero risk
-- **At the Micro Level**: We are a creative sandbox for individual users — whether deducing novel endings or exploring imaginative scenarios, everything can be fun, playful, and accessible
+La interfaz está en español (predeterminado), inglés y chino, y el modelo
+responde en el idioma elegido.
 
-From serious predictions to playful simulations, we let every "what if" see its outcome, making it possible to predict anything.
+Las simulaciones hacen muchas llamadas al modelo. Conviene empezar con pocas
+rondas (menos de 40) y aumentar después.
 
-## 🌐 Live Demo
+## Acceso
 
-Welcome to visit our online demo environment and experience a prediction simulation on trending public opinion events we've prepared for you: [mirofish-live-demo](https://666ghj.github.io/mirofish-demo/)
+Cada página y cada ruta de la API pide iniciar sesión. No hay registro público
+ni contraseña por defecto. Hay tres niveles de acceso:
 
-## 📸 Screenshots
+| Nivel | Qué puede hacer |
+|---|---|
+| `admin` | Todo, y además administrar las cuentas (`/users`) |
+| `editor` | Crear y ejecutar simulaciones, generar informes |
+| `viewer` | Solo consultar |
 
-<div align="center">
-<table>
-<tr>
-<td><img src="./static/image/Screenshot/运行截图1.png" alt="Screenshot 1" width="100%"/></td>
-<td><img src="./static/image/Screenshot/运行截图2.png" alt="Screenshot 2" width="100%"/></td>
-</tr>
-<tr>
-<td><img src="./static/image/Screenshot/运行截图3.png" alt="Screenshot 3" width="100%"/></td>
-<td><img src="./static/image/Screenshot/运行截图4.png" alt="Screenshot 4" width="100%"/></td>
-</tr>
-<tr>
-<td><img src="./static/image/Screenshot/运行截图5.png" alt="Screenshot 5" width="100%"/></td>
-<td><img src="./static/image/Screenshot/运行截图6.png" alt="Screenshot 6" width="100%"/></td>
-</tr>
-</table>
-</div>
-
-## 🎬 Demo Videos
-
-### 1. Wuhan University Public Opinion Simulation + MiroFish Project Introduction
-
-<div align="center">
-<a href="https://www.bilibili.com/video/BV1VYBsBHEMY/" target="_blank"><img src="./static/image/武大模拟演示封面.png" alt="MiroFish Demo Video" width="75%"/></a>
-
-Click the image to watch the complete demo video for prediction using BettaFish-generated "Wuhan University Public Opinion Report"
-</div>
-
-### 2. Dream of the Red Chamber Lost Ending Simulation
-
-<div align="center">
-<a href="https://www.bilibili.com/video/BV1cPk3BBExq" target="_blank"><img src="./static/image/红楼梦模拟推演封面.jpg" alt="MiroFish Demo Video" width="75%"/></a>
-
-Click the image to watch MiroFish's deep prediction of the lost ending based on hundreds of thousands of words from the first 80 chapters of "Dream of the Red Chamber"
-</div>
-
-> **Financial Prediction**, **Political News Prediction** and more examples coming soon...
-
-## 🔄 Workflow
-
-1. **Graph Building**: Seed extraction & Individual/collective memory injection & GraphRAG construction
-2. **Environment Setup**: Entity relationship extraction & Persona generation & Agent configuration injection
-3. **Simulation**: Dual-platform parallel simulation & Auto-parse prediction requirements & Dynamic temporal memory updates
-4. **Report Generation**: ReportAgent with rich toolset for deep interaction with post-simulation environment
-5. **Deep Interaction**: Chat with any agent in the simulated world & Interact with ReportAgent
-
-## 🚀 Quick Start
-
-### Option 1: Source Code Deployment (Recommended)
-
-#### Prerequisites
-
-| Tool | Version | Description | Check Installation |
-|------|---------|-------------|-------------------|
-| **Node.js** | 18+ | Frontend runtime, includes npm | `node -v` |
-| **Python** | ≥3.11, ≤3.12 | Backend runtime | `python --version` |
-| **uv** | Latest | Python package manager | `uv --version` |
-| **FalkorDB** | 6.0.x | Graph database for the memory graph (or Neo4j 5.26+) | `docker exec falkordb redis-cli PING` |
-
-#### 1. Configure Environment Variables
+El primer administrador se crea una sola vez, desde la carpeta del proyecto:
 
 ```bash
-# Copy the example configuration file
+# Con Docker: muestra la contraseña inicial una sola vez
+docker compose exec -T beemarketbot sh -c "cd backend && uv run --frozen python -m app.auth create-user --username <nombre> --role admin --generate-password"
+
+# Sin Docker: pide la contraseña
+cd backend && uv run python -m app.auth create-user --username <nombre> --role admin
+```
+
+Esa contraseña se cambia en el primer ingreso. A partir de ahí, las cuentas se
+crean en **Usuarios**, dentro del menú del administrador, o con la
+[línea de comandos](#administración-de-cuentas).
+
+## Despliegue con Docker
+
+Necesitas Docker y Docker Compose v2. Se levantan dos contenedores: la
+aplicación y la base de grafos.
+
+```bash
+git clone https://github.com/npalmae/BeeMarketBot.git
+cd BeeMarketBot
+
+# 1. Configuración
 cp .env.example .env
+#    Edita .env: modelo, embeddings y SECRET_KEY (openssl rand -hex 32)
 
-# Edit the .env file and fill in the required API keys
-```
-
-**Required Environment Variables:**
-
-```env
-# LLM API Configuration (supports any LLM API with OpenAI SDK format)
-# Recommended: Alibaba Qwen-plus model via Bailian Platform: https://bailian.console.aliyun.com/
-# High consumption, try simulations with fewer than 40 rounds first
-LLM_API_KEY=your_api_key
-LLM_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
-LLM_MODEL_NAME=qwen-plus
-
-# Graph memory: graph database (self-hosted, no external memory service)
-# FalkorDB (recommended) or Neo4j:
-#   falkordb://host:6379              neo4j://user:password@host:7687/database
-GRAPH_DB_URL=falkordb://localhost:6379
-
-# Graph memory: embeddings (any OpenAI-format embeddings API)
-# Use the model and vector size of your provider. The values below work with
-# the Alibaba endpoint above, using the same key.
-EMBEDDING_MODEL=text-embedding-v3
-EMBEDDING_DIMENSIONS=1024
-```
-
-**Optional settings** (see `.env.example`): point the graph memory at a different model or embeddings provider (`GRAPH_LLM_*`, `EMBEDDING_API_KEY`, `EMBEDDING_BASE_URL`), and adapt providers that only accept a fixed temperature or need extra parameters (`LLM_TEMPERATURE`, `LLM_EXTRA_BODY`).
-
-#### 2. Install Dependencies
-
-```bash
-# One-click installation of all dependencies (root + frontend + backend)
-npm run setup:all
-```
-
-Or install step by step:
-
-```bash
-# Install Node dependencies (root + frontend)
-npm run setup
-
-# Install Python dependencies (backend, auto-creates virtual environment)
-npm run setup:backend
-```
-
-#### 3. Start Services
-
-```bash
-# Start the graph database for the memory (first time only)
-docker run -d --name falkordb -p 127.0.0.1:6379:6379 -v falkordb-data:/data falkordb/falkordb:6.0.4
-
-# Start both frontend and backend (run from project root)
-npm run dev
-```
-
-To check the memory graph end to end against your real configuration (it makes a few model calls and removes its temporary graph):
-
-```bash
-cd backend && uv run python scripts/validate_graph_memory.py
-```
-
-**Service URLs:**
-- Frontend: `http://localhost:3000`
-- Backend API: `http://localhost:5001`
-
-**Start Individually:**
-
-```bash
-npm run backend   # Start backend only
-npm run frontend  # Start frontend only
-```
-
-### Option 2: Docker Deployment
-
-```bash
-# 1. Configure environment variables (same as source deployment)
-cp .env.example .env
-
-# 2. Build the image and start (includes FalkorDB)
+# 2. Construir y arrancar (aplicación + FalkorDB)
 docker compose up -d --build
 
-# Check the memory graph against your real configuration
+# 3. Crear el primer administrador (ver «Acceso»)
+
+# 4. Comprobar la memoria en grafos con tu configuración real
 docker compose exec beemarketbot sh -c "cd backend && uv run --frozen python scripts/validate_graph_memory.py"
 ```
 
-Reads `.env` from the root directory. Maps ports `3000` (frontend) and `5001` (backend); set `WEB_PORT`, `API_PORT` or `FALKORDB_PORT` in `.env` if they are taken. Project data is kept in `./backend/uploads` and the graph database in the `falkordb-data` volume.
+La aplicación lee `.env` de la carpeta raíz y expone el puerto `3000` (interfaz) y
+el `5001` (API). Si están tomados, define `WEB_PORT` y `API_PORT` en `.env`.
+FalkorDB queda accesible solo desde el equipo, en `127.0.0.1:6379` (cambia el
+puerto con `FALKORDB_PORT`).
 
-### Login and Access Levels
+Los datos se conservan fuera del contenedor: `./backend/uploads` (proyectos,
+simulaciones, informes, estado de la memoria y cuentas) y el volumen
+`falkordb-data` (el grafo). Para actualizar, vuelve a ejecutar
+`docker compose up -d --build`.
 
-Every page and API route asks for a session. There are three levels:
+## Despliegue desde el código
 
-| Level | Can |
-|---|---|
-| `admin` | Everything, and manages the accounts (`/users`) |
-| `editor` | Create and run simulations, generate reports |
-| `viewer` | Read only |
-
-There is no public sign-up and no default password. Create the first administrator once, from the project folder:
+| Herramienta | Versión | Para |
+|---|---|---|
+| Node.js | 20.19 o posterior (o 22.12 y posterior) | Interfaz |
+| Python | 3.11 o 3.12 | Backend |
+| uv | reciente | Entorno de Python |
+| FalkorDB | 6.0.x (o Neo4j 5.26 y posterior) | Base de grafos de la memoria |
 
 ```bash
-# Docker: prints the initial password once
-docker compose exec -T beemarketbot sh -c "cd backend && uv run --frozen python -m app.auth create-user --username <name> --role admin --generate-password"
+# Dependencias (raíz + frontend + backend)
+npm run setup:all
 
-# Without Docker: asks for the password
-cd backend && uv run python -m app.auth create-user --username <name> --role admin
+# Base de grafos (solo la primera vez)
+docker run -d --name falkordb -p 127.0.0.1:6379:6379 -v falkordb-data:/data falkordb/falkordb:6.0.4
+
+# Interfaz y backend
+npm run dev
 ```
 
-The initial password must be changed at first sign-in. From then on, accounts are created from **Users** in the administrator's menu, or with `python -m app.auth list-users | set-password | set-role | disable | enable`.
+La interfaz queda en `http://localhost:3000` y la API en `http://localhost:5001`.
+La configuración es la misma `.env` de la carpeta raíz.
 
-| Variable | Purpose |
+## Configuración
+
+Todas las variables se definen en `.env`; `.env.example` las explica una por una.
+
+| Variable | Obligatoria | Para |
+|---|---|---|
+| `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL_NAME` | sí | Modelo de lenguaje. Sirve cualquier proveedor con formato de API de OpenAI. |
+| `GRAPH_DB_URL` | sí | Base de grafos: FalkorDB (`falkordb://host:6379`) o Neo4j (`neo4j://usuario:clave@host:7687`). Con Docker ya viene definida. |
+| `EMBEDDING_MODEL`, `EMBEDDING_DIMENSIONS` | sí | Modelo que convierte el texto en vectores y tamaño de esos vectores. |
+| `SECRET_KEY` | en un servidor | Firma las sesiones. Sin ella se genera una al arrancar y todos deben volver a entrar tras cada reinicio. |
+| `EMBEDDING_API_KEY`, `EMBEDDING_BASE_URL` | no | Solo si los embeddings los da un proveedor distinto del modelo. |
+| `GRAPH_LLM_*` | no | Otro modelo para la extracción del grafo, y otros ajustes de la memoria. |
+| `LLM_TEMPERATURE`, `LLM_EXTRA_BODY` | no | Proveedores que solo aceptan una temperatura fija o piden parámetros propios. |
+| `LLM_BOOST_*` | no | Un segundo proveedor para la simulación en paralelo, y así disponer de más llamadas simultáneas. |
+| `ADMIN_USERNAME`, `ADMIN_PASSWORD` | no | Crea el primer administrador al arrancar, solo si todavía no hay cuentas. |
+| `SESSION_HOURS`, `COOKIE_SECURE`, `CORS_ORIGINS` | no | Duración de la sesión (24 horas), cookies solo por HTTPS, orígenes externos que pueden llamar a la API. |
+
+## Administración de cuentas
+
+Los comandos se ejecutan desde `backend/` como `uv run python -m app.auth <comando>`.
+
+| Comando | Qué hace |
 |---|---|
-| `SECRET_KEY` | Signs the sessions. Set it (`openssl rand -hex 32`): without it, every restart signs everybody out. |
-| `ADMIN_USERNAME`, `ADMIN_PASSWORD` | Optional. Creates the first administrator at start, only when no account exists yet. |
-| `SESSION_HOURS` | Session lifetime (default `24`). |
-| `COOKIE_SECURE` | Set `true` when the app is served over HTTPS. |
-| `CORS_ORIGINS` | Extra origins allowed to call the API (default: none). |
+| `create-user --username <nombre> --role <nivel>` | Crea una cuenta; deberá cambiar la contraseña al entrar. |
+| `list-users` | Lista las cuentas. |
+| `set-password --username <nombre>` | Asigna una contraseña nueva; deberá cambiarla al entrar. |
+| `set-role --username <nombre> --role <nivel>` | Cambia el nivel de acceso. |
+| `disable --username <nombre>` | Impide que la cuenta entre. |
+| `enable --username <nombre>` | Vuelve a permitir que la cuenta entre. |
 
-Accounts are kept in `./backend/uploads/auth/users.db`, with the project data, and passwords are stored as scrypt hashes. Over plain HTTP the password still travels unencrypted: put the app behind HTTPS if it is reachable from outside a trusted network.
+Con Docker se ejecutan dentro del contenedor:
 
-## 📬 Join the Conversation
+```bash
+docker compose exec -T beemarketbot sh -c "cd backend && uv run --frozen python -m app.auth list-users"
+```
 
-<div align="center">
-<img src="./static/image/QQ群.png" alt="QQ Group" width="60%"/>
-</div>
+La contraseña nunca se pasa como argumento: se pide en el terminal, se lee de la
+entrada estándar (`--password-stdin`) o se genera (`--generate-password`, que la
+muestra una sola vez).
 
-&nbsp;
+Las cuentas se guardan en `backend/uploads/auth/users.db`, junto al resto de los
+datos, con las contraseñas cifradas (scrypt). Los intentos fallidos de ingreso
+tienen límite. Si la aplicación se sirve por HTTP, la contraseña viaja sin
+cifrar: ponle HTTPS si se usa desde fuera de una red de confianza.
 
-The MiroFish team is recruiting full-time/internship positions. If you're interested in multi-agent simulation and LLM applications, feel free to send your resume to: **mirofish@shanda.com**
+## Desarrollo
 
-## 📄 Acknowledgments
+```bash
+# Pruebas del backend
+cd backend && uv run python -m pytest -q tests
 
-**MiroFish has received strategic support and incubation from Shanda Group!**
+# Compilar la interfaz
+cd frontend && npm run build
 
-MiroFish's simulation engine is powered by **[OASIS (Open Agent Social Interaction Simulations)](https://github.com/camel-ai/oasis)**, We sincerely thank the CAMEL-AI team for their open-source contributions!
+# Regenerar el estilo de la interfaz después de cambiar un componente
+cd frontend && node scripts/build-web2-theme.mjs
+```
 
-## 📈 Project Statistics
+Las pruebas nunca escriben en la carpeta de datos real. Cinco de ellas comprueban
+la memoria contra una base de grafos real y solo se ejecutan si se define
+`GRAPH_MEMORY_TEST_URL`.
 
-<a href="https://github.com/666ghj/MiroFish">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="static/image/star-history-dark.svg" />
-   <source media="(prefers-color-scheme: light)" srcset="static/image/star-history-light.svg" />
-   <img alt="666ghj/MiroFish Star History Chart" src="static/image/star-history-light.svg" />
- </picture>
-</a>
+```
+backend/app/api           rutas de la API
+backend/app/auth          cuentas, sesión y niveles de acceso
+backend/app/graph_memory  memoria en grafos (Graphiti)
+backend/app/services      ontología, grafo, simulación e informe
+backend/scripts           ejecutores de la simulación y validación de la memoria
+backend/tests            pruebas del backend
+frontend/src              interfaz (Vue 3)
+locales                   textos de la interfaz y de los mensajes
+```
+
+## Licencia y origen
+
+BeeMarketBot es software libre bajo la
+[GNU Affero General Public License v3.0](./LICENSE). Es un derivado de
+[MiroFish](https://github.com/666ghj/MiroFish), de 666ghj. La simulación social
+se apoya en [OASIS](https://github.com/camel-ai/oasis) (camel-ai) y la memoria en
+grafos en [Graphiti](https://github.com/getzep/graphiti).

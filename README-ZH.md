@@ -1,203 +1,186 @@
 <div align="center">
 
-<img src="./static/image/MiroFish_logo_compressed.jpeg" alt="MiroFish Logo" width="75%"/>
+<img src="./frontend/src/assets/logo/beemarketbot-logo.jpg" alt="BeeMarketBot" width="360"/>
 
-<a href="https://trendshift.io/repositories/16144" target="_blank"><img src="https://trendshift.io/api/badge/repositories/16144" alt="666ghj%2FMiroFish | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+# BeeMarketBot
 
-简洁通用的群体智能引擎，预测万物
-</br>
-<em>A Simple and Universal Swarm Intelligence Engine, Predicting Anything</em>
+**预测万物。** 上传一份文档，提出一个问题，即可获得一份基于 AI 智能体社会模拟的报告。
 
-<a href="https://www.shanda.com/" target="_blank"><img src="./static/image/shanda_logo.png" alt="666ghj%2FMiroFish | Shanda" height="40"/></a>
-
-[![GitHub Stars](https://img.shields.io/github/stars/666ghj/MiroFish?style=flat-square&color=DAA520)](https://github.com/666ghj/MiroFish/stargazers)
-[![GitHub Watchers](https://img.shields.io/github/watchers/666ghj/MiroFish?style=flat-square)](https://github.com/666ghj/MiroFish/watchers)
-[![GitHub Forks](https://img.shields.io/github/forks/666ghj/MiroFish?style=flat-square)](https://github.com/666ghj/MiroFish/network)
-[![Docker](https://img.shields.io/badge/Docker-Build-2496ED?style=flat-square&logo=docker&logoColor=white)](https://hub.docker.com/)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/666ghj/MiroFish)
-
-[![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=flat-square&logo=discord&logoColor=white)](http://discord.gg/ePf5aPaHnA)
-[![X](https://img.shields.io/badge/X-Follow-000000?style=flat-square&logo=x&logoColor=white)](https://x.com/mirofish_ai)
-[![Instagram](https://img.shields.io/badge/Instagram-Follow-E4405F?style=flat-square&logo=instagram&logoColor=white)](https://www.instagram.com/mirofish_ai/)
-
-[English](./README.md) | [中文文档](./README-ZH.md)
+[Español](./README.md) | [English](./README-EN.md) | 中文
 
 </div>
 
-## ⚡ 项目概述
+## 功能
 
-**MiroFish** 是一款基于多智能体技术的新一代 AI 预测引擎。通过提取现实世界的种子信息（如突发新闻、政策草案、金融信号），自动构建出高保真的平行数字世界。在此空间内，成千上万个具备独立人格、长期记忆与行为逻辑的智能体进行自由交互与社会演化。你可透过「上帝视角」动态注入变量，精准推演未来走向——**让未来在数字沙盘中预演，助决策在百战模拟后胜出**。
+BeeMarketBot 根据一份文档构建一个模拟世界，并让这个世界自行演化，从而回答
+"如果……会怎样？"的问题。
 
-> 你只需：上传种子材料（数据分析报告或者有趣的小说故事），并用自然语言描述预测需求</br>
-> MiroFish 将返回：一份详尽的预测报告，以及一个可深度交互的高保真数字世界
+你只需上传素材（报告、数据，或 PDF、MD、TXT 格式的任意文本），并用自然语言
+描述你想了解的问题。系统会分五步完成剩下的工作：
 
-### 我们的愿景
+1. **图谱构建。** 从文档中提取实体和关系，构建一个带记忆的知识图谱，按语义检索。
+2. **环境配置。** 根据这些实体生成智能体的画像，并交给它们各自的记忆和配置。
+3. **模拟。** 智能体共同生活在两个社交平台上（一个类似 Twitter，一个类似
+   Reddit），在你设定的轮数内相互反应，记忆随发生的事情不断更新。
+4. **报告。** 报告智能体借助查询工具回溯整个模拟过程，写出包含答案的报告。
+5. **交互。** 你可以与模拟世界中的任意智能体对话，也可以和报告智能体深入探讨。
 
-MiroFish 致力于打造映射现实的群体智能镜像，通过捕捉个体互动引发的群体涌现，突破传统预测的局限：
+你只需要上传素材、描述问题。BeeMarketBot 返回一份报告，以及一个可以继续提问的
+模拟世界。
 
-- **于宏观**：我们是决策者的预演实验室，让政策与公关在零风险中试错
-- **于微观**：我们是个人用户的创意沙盘，无论是推演小说结局还是探索脑洞，皆可有趣、好玩、触手可及
+界面提供西班牙语（默认）、英语和中文，模型会用所选语言回答。
 
-从严肃预测到趣味仿真，我们让每一个如果都能看见结果，让预测万物成为可能。
+模拟会大量调用模型。建议先从较少的轮数开始（少于 40 轮），之后再逐步增加。
 
-## 🌐 在线体验
+## 访问
 
-欢迎访问在线 Demo 演示环境，体验我们为你准备的一次关于热点舆情事件的推演预测：[mirofish-live-demo](https://666ghj.github.io/mirofish-demo/)
+每个页面和每个 API 路由都要求登录。没有公开注册，也没有默认密码。访问权限
+分为三级：
 
-## 📸 系统截图
+| 级别 | 权限 |
+|---|---|
+| `admin` | 全部权限，另外可以管理账户（`/users`） |
+| `editor` | 创建并运行模拟，生成报告 |
+| `viewer` | 只读 |
 
-<div align="center">
-<table>
-<tr>
-<td><img src="./static/image/Screenshot/运行截图1.png" alt="截图1" width="100%"/></td>
-<td><img src="./static/image/Screenshot/运行截图2.png" alt="截图2" width="100%"/></td>
-</tr>
-<tr>
-<td><img src="./static/image/Screenshot/运行截图3.png" alt="截图3" width="100%"/></td>
-<td><img src="./static/image/Screenshot/运行截图4.png" alt="截图4" width="100%"/></td>
-</tr>
-<tr>
-<td><img src="./static/image/Screenshot/运行截图5.png" alt="截图5" width="100%"/></td>
-<td><img src="./static/image/Screenshot/运行截图6.png" alt="截图6" width="100%"/></td>
-</tr>
-</table>
-</div>
-
-## 🎬 演示视频
-
-### 1. 武汉大学舆情推演预测 + MiroFish项目讲解
-
-<div align="center">
-<a href="https://www.bilibili.com/video/BV1VYBsBHEMY/" target="_blank"><img src="./static/image/武大模拟演示封面.png" alt="MiroFish Demo Video" width="75%"/></a>
-
-点击图片查看使用微舆BettaFish生成的《武大舆情报告》进行预测的完整演示视频
-</div>
-
-### 2. 《红楼梦》失传结局推演预测
-
-<div align="center">
-<a href="https://www.bilibili.com/video/BV1cPk3BBExq" target="_blank"><img src="./static/image/红楼梦模拟推演封面.jpg" alt="MiroFish Demo Video" width="75%"/></a>
-
-点击图片查看基于《红楼梦》前80回数十万字，MiroFish深度预测失传结局
-</div>
-
-> **金融方向推演预测**、**时政要闻推演预测**等示例陆续更新中...
-
-## 🔄 工作流程
-
-1. **图谱构建**：现实种子提取 & 个体与群体记忆注入 & GraphRAG构建
-2. **环境搭建**：实体关系抽取 & 人设生成 & 环境配置Agent注入仿真参数
-3. **开始模拟**：双平台并行模拟 & 自动解析预测需求 & 动态更新时序记忆
-4. **报告生成**：ReportAgent拥有丰富的工具集与模拟后环境进行深度交互
-5. **深度互动**：与模拟世界中的任意一位进行对话 & 与ReportAgent进行对话
-
-## 🚀 快速开始
-
-### 一、源码部署（推荐）
-
-#### 前置要求
-
-| 工具 | 版本要求 | 说明 | 安装检查 |
-|------|---------|------|---------|
-| **Node.js** | 18+ | 前端运行环境，包含 npm | `node -v` |
-| **Python** | ≥3.11, ≤3.12 | 后端运行环境 | `python --version` |
-| **uv** | 最新版 | Python 包管理器 | `uv --version` |
-
-#### 1. 配置环境变量
+首个管理员只需创建一次，在项目目录下执行：
 
 ```bash
-# 复制示例配置文件
+# 使用 Docker：仅显示一次初始密码
+docker compose exec -T beemarketbot sh -c "cd backend && uv run --frozen python -m app.auth create-user --username <用户名> --role admin --generate-password"
+
+# 不使用 Docker：在终端中输入密码
+cd backend && uv run python -m app.auth create-user --username <用户名> --role admin
+```
+
+首次登录时必须修改该密码。之后可以在管理员的菜单中打开 **用户** 页面创建账户，
+也可以使用[命令行](#账户管理)。
+
+## 使用 Docker 部署
+
+需要 Docker 和 Docker Compose v2。会启动两个容器：应用和图数据库。
+
+```bash
+git clone https://github.com/npalmae/BeeMarketBot.git
+cd BeeMarketBot
+
+# 1. 配置
 cp .env.example .env
+#    编辑 .env：模型、embeddings 以及 SECRET_KEY（openssl rand -hex 32）
 
-# 编辑 .env 文件，填入必要的 API 密钥
+# 2. 构建并启动（应用 + FalkorDB）
+docker compose up -d --build
+
+# 3. 创建首个管理员（见「访问」）
+
+# 4. 用你的真实配置检查图谱记忆
+docker compose exec beemarketbot sh -c "cd backend && uv run --frozen python scripts/validate_graph_memory.py"
 ```
 
-**必需的环境变量：**
+应用读取项目根目录下的 `.env`，开放端口 `3000`（界面）和 `5001`（API）。如果
+端口被占用，可在 `.env` 中设置 `WEB_PORT` 和 `API_PORT`。FalkorDB 只能从本机
+访问，地址为 `127.0.0.1:6379`（可用 `FALKORDB_PORT` 更改端口）。
 
-```env
-# LLM API配置（支持 OpenAI SDK 格式的任意 LLM API）
-# 推荐使用阿里百炼平台qwen-plus模型：https://bailian.console.aliyun.com/
-# 注意消耗较大，可先进行小于40轮的模拟尝试
-LLM_API_KEY=your_api_key
-LLM_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
-LLM_MODEL_NAME=qwen-plus
+数据保存在容器之外：`./backend/uploads`（项目、模拟、报告、记忆状态和账户）以及
+`falkordb-data` 数据卷（图谱）。更新时再次执行 `docker compose up -d --build`。
 
-# Zep Cloud 配置
-# 每月免费额度即可支撑简单使用：https://app.getzep.com/
-ZEP_API_KEY=your_zep_api_key
-```
+## 从源码部署
 
-#### 2. 安装依赖
+| 工具 | 版本 | 用途 |
+|---|---|---|
+| Node.js | 20.19 及以上（或 22.12 及以上） | 界面 |
+| Python | 3.11 或 3.12 | 后端 |
+| uv | 较新版本 | Python 环境 |
+| FalkorDB | 6.0.x（或 Neo4j 5.26 及以上） | 记忆使用的图数据库 |
 
 ```bash
-# 一键安装所有依赖（根目录 + 前端 + 后端）
+# 依赖（根目录 + 前端 + 后端）
 npm run setup:all
-```
 
-或者分步安装：
+# 图数据库（仅首次）
+docker run -d --name falkordb -p 127.0.0.1:6379:6379 -v falkordb-data:/data falkordb/falkordb:6.0.4
 
-```bash
-# 安装 Node 依赖（根目录 + 前端）
-npm run setup
-
-# 安装 Python 依赖（后端，自动创建虚拟环境）
-npm run setup:backend
-```
-
-#### 3. 启动服务
-
-```bash
-# 同时启动前后端（在项目根目录执行）
+# 界面和后端
 npm run dev
 ```
 
-**服务地址：**
-- 前端：`http://localhost:3000`
-- 后端 API：`http://localhost:5001`
+界面位于 `http://localhost:3000`，API 位于 `http://localhost:5001`。配置同样
+使用根目录下的 `.env`。
 
-**单独启动：**
+## 配置
+
+所有变量都在 `.env` 中设置；`.env.example` 对每一项都有说明。
+
+| 变量 | 是否必需 | 用途 |
+|---|---|---|
+| `LLM_API_KEY`、`LLM_BASE_URL`、`LLM_MODEL_NAME` | 是 | 语言模型。任何兼容 OpenAI API 格式的提供商都可以。 |
+| `GRAPH_DB_URL` | 是 | 图数据库：FalkorDB（`falkordb://host:6379`）或 Neo4j（`neo4j://user:password@host:7687`）。使用 Docker 时已自动设置。 |
+| `EMBEDDING_MODEL`、`EMBEDDING_DIMENSIONS` | 是 | 把文本转换成向量的模型，以及向量的维度。 |
+| `SECRET_KEY` | 服务器上必需 | 为会话签名。不设置时会在启动时生成一个，每次重启后所有人都需要重新登录。 |
+| `EMBEDDING_API_KEY`、`EMBEDDING_BASE_URL` | 否 | 仅当 embeddings 由与模型不同的提供商提供时使用。 |
+| `GRAPH_LLM_*` | 否 | 图谱抽取使用的另一个模型，以及记忆的其他设置。 |
+| `LLM_TEMPERATURE`、`LLM_EXTRA_BODY` | 否 | 只接受固定温度、或需要自有参数的提供商。 |
+| `LLM_BOOST_*` | 否 | 为并行模拟再配置一个提供商，以获得更多并发调用。 |
+| `ADMIN_USERNAME`、`ADMIN_PASSWORD` | 否 | 启动时创建首个管理员，仅在还没有任何账户时生效。 |
+| `SESSION_HOURS`、`COOKIE_SECURE`、`CORS_ORIGINS` | 否 | 会话时长（24 小时）、仅通过 HTTPS 发送 cookie、允许调用 API 的外部来源。 |
+
+## 账户管理
+
+命令在 `backend/` 下以 `uv run python -m app.auth <命令>` 的形式执行。
+
+| 命令 | 作用 |
+|---|---|
+| `create-user --username <用户名> --role <级别>` | 创建账户；首次登录时必须修改密码。 |
+| `list-users` | 列出账户。 |
+| `set-password --username <用户名>` | 指定新密码；下次登录时必须修改。 |
+| `set-role --username <用户名> --role <级别>` | 更改访问级别。 |
+| `disable --username <用户名>` | 禁止该账户登录。 |
+| `enable --username <用户名>` | 重新允许该账户登录。 |
+
+使用 Docker 时在容器内执行：
 
 ```bash
-npm run backend   # 仅启动后端
-npm run frontend  # 仅启动前端
+docker compose exec -T beemarketbot sh -c "cd backend && uv run --frozen python -m app.auth list-users"
 ```
 
-### 二、Docker 部署
+密码永远不会作为参数传递：在终端中输入、从标准输入读取（`--password-stdin`），
+或者自动生成（`--generate-password`，只显示一次）。
+
+账户保存在 `backend/uploads/auth/users.db` 中，与其他数据放在一起，密码以
+scrypt 哈希保存。登录失败次数有限制。通过纯 HTTP 访问时密码是不加密传输的：
+如果应用可以被可信网络之外访问，请在前面加上 HTTPS。
+
+## 开发
 
 ```bash
-# 1. 配置环境变量（同源码部署）
-cp .env.example .env
+# 后端测试
+cd backend && uv run python -m pytest -q tests
 
-# 2. 拉取镜像并启动
-docker compose up -d
+# 构建界面
+cd frontend && npm run build
+
+# 修改组件后重新生成界面样式
+cd frontend && node scripts/build-web2-theme.mjs
 ```
 
-默认会读取根目录下的 `.env`，并映射端口 `3000（前端）/5001（后端）`
+测试从不写入真实的数据目录。其中有五个测试会针对真实的图数据库检查记忆，
+仅在设置了 `GRAPH_MEMORY_TEST_URL` 时运行。
 
-> 在 `docker-compose.yml` 中已通过注释提供加速镜像地址，可按需替换
+```
+backend/app/api           API 路由
+backend/app/auth          账户、会话和访问级别
+backend/app/graph_memory  图谱记忆（Graphiti）
+backend/app/services      本体、图谱、模拟和报告
+backend/scripts           模拟运行脚本和记忆校验
+backend/tests             后端测试
+frontend/src              界面（Vue 3）
+locales                   界面文案和消息文本
+```
 
-## 📬 更多交流
+## 许可证与来源
 
-<div align="center">
-<img src="./static/image/QQ群.png" alt="QQ交流群" width="60%"/>
-</div>
-
-&nbsp;
-
-MiroFish团队长期招募全职/实习，如果你对多Agent应用感兴趣，欢迎投递简历至：**mirofish@shanda.com**
-
-## 📄 致谢
-
-**MiroFish 得到了盛大集团的战略支持和孵化！**
-
-MiroFish 的仿真引擎由 **[OASIS](https://github.com/camel-ai/oasis)** 驱动，我们衷心感谢 CAMEL-AI 团队的开源贡献！
-
-## 📈 项目统计
-
-<a href="https://github.com/666ghj/MiroFish">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="static/image/star-history-dark.svg" />
-   <source media="(prefers-color-scheme: light)" srcset="static/image/star-history-light.svg" />
-   <img alt="666ghj/MiroFish Star History Chart" src="static/image/star-history-light.svg" />
- </picture>
-</a>
+BeeMarketBot 是自由软件，采用
+[GNU Affero General Public License v3.0](./LICENSE)。它衍生自 666ghj 的
+[MiroFish](https://github.com/666ghj/MiroFish)。社会模拟基于
+[OASIS](https://github.com/camel-ai/oasis)（camel-ai），图谱记忆基于
+[Graphiti](https://github.com/getzep/graphiti)。
