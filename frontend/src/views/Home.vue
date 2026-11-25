@@ -656,6 +656,10 @@ const startSimulation = () => {
   object-fit: contain;
 }
 
+:global(html.web2.light) .sixmanager-signature {
+  color: #26345f;
+}
+
 /* 项目模拟步骤介绍 */
 .steps-container {
   border: 1px solid var(--border);
