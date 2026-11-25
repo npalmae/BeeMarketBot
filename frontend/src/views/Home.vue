@@ -661,7 +661,7 @@ const startSimulation = () => {
 }
 
 :global(html.web2.light #app) .sixmanager-signature {
-  color: #26345f;
+  color: #4a4a4a;
 }
 
 :global(html.web2 #app .home-container .metric-card:last-child) {
