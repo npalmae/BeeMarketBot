@@ -80,6 +80,13 @@ def create_app(config_class=Config):
     app.register_blueprint(graph_bp, url_prefix='/api/graph')
     app.register_blueprint(simulation_bp, url_prefix='/api/simulation')
     app.register_blueprint(report_bp, url_prefix='/api/report')
+
+    # Conexión con los servicios de IA configurada desde la interfaz: se aplica
+    # lo guardado (pisa a las variables de entorno) y se expone su edición.
+    from . import modelconfig
+    from .api.modelconfig import config_models_bp
+    modelconfig.apply()
+    app.register_blueprint(config_models_bp, url_prefix='/api/config')
     
     # 健康检查
     @app.route('/health')

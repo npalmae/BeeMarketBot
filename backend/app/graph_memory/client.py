@@ -829,12 +829,14 @@ _shared_client: GraphMemoryClient | None = None
 
 
 def get_shared_client() -> GraphMemoryClient:
-    """Cliente único por proceso, creado con la configuración del entorno."""
+    """Cliente único por proceso. Usa la configuración vigente: la de la interfaz
+    si un administrador la cambió, si no la del entorno (ver app/modelconfig.py)."""
 
     global _shared_client
     with _shared_lock:
         if _shared_client is None:
-            _shared_client = GraphMemoryClient()
+            from ..modelconfig import effective_env
+            _shared_client = GraphMemoryClient(GraphMemorySettings.from_env(effective_env()))
         return _shared_client
 
 

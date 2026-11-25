@@ -75,7 +75,13 @@
     "layoutGraph": "Graph",
     "layoutSplit": "Split",
     "layoutWorkbench": "Workbench",
-    "stepNames": ["Graph Build", "Env Setup", "Run Simulation", "Report Generation", "Deep Interaction"]
+    "stepNames": [
+      "Graph Build",
+      "Env Setup",
+      "Run Simulation",
+      "Report Generation",
+      "Deep Interaction"
+    ]
   },
   "step1": {
     "ontologyGeneration": "Ontology Generation",
@@ -205,7 +211,9 @@
     "forceStopSuccess": "Simulation force stopped",
     "forceStopFailed": "Force stop failed: {error}",
     "startGenerateReportBtn": "Generate Report",
-    "generatingReportBtn": "Starting..."
+    "generatingReportBtn": "Starting...",
+    "stopSimulationBtn": "Stop simulation",
+    "confirmStop": "Stop the simulation? Completed rounds are kept and you can still generate the report."
   },
   "step4": {
     "generatingSection": "Generating {title}...",
@@ -708,7 +716,8 @@
     "menu": {
       "account": "My account",
       "users": "Users",
-      "logout": "Sign out"
+      "logout": "Sign out",
+      "models": "Models"
     },
     "roles": {
       "label": "Access level",
@@ -757,5 +766,35 @@
       "cancel": "Cancel",
       "initialPassword": "Initial password (shown only once):"
     }
+  },
+  "models": {
+    "title": "AI models",
+    "subtitle": "Where answers and vectors come from: a paid service, or your own machine.",
+    "llm": {
+      "title": "Language model",
+      "lead": "The app's brain: agent profiles, conversations and reports."
+    },
+    "embedding": {
+      "title": "Embeddings",
+      "lead": "Turn text into numbers for meaning search in the graph memory."
+    },
+    "fields": {
+      "baseUrl": "Base URL",
+      "apiKey": "API key",
+      "model": "Model",
+      "dimensions": "Dimensions"
+    },
+    "sourceInterface": "interface",
+    "sourceServer": "server",
+    "inheritHint": "empty: use the server's",
+    "keyMissing": "no key configured",
+    "test": "Test connection",
+    "testing": "Testing...",
+    "testOk": "✓ Responds in {ms} ms ({model})",
+    "testFailed": "✗ No response: {error}",
+    "save": "Save configuration",
+    "saving": "Saving...",
+    "saved": "Configuration saved and applied.",
+    "note": "Applies immediately to new operations. A running simulation keeps the configuration it started with."
   }
 }

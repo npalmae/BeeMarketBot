@@ -75,7 +75,13 @@
     "layoutGraph": "Grafo",
     "layoutSplit": "Dividido",
     "layoutWorkbench": "Espacio de trabajo",
-    "stepNames": ["Construcción del grafo", "Configuración del entorno", "Ejecutar simulación", "Generación del informe", "Interacción profunda"]
+    "stepNames": [
+      "Construcción del grafo",
+      "Configuración del entorno",
+      "Ejecutar simulación",
+      "Generación del informe",
+      "Interacción profunda"
+    ]
   },
   "step1": {
     "ontologyGeneration": "Generación de la ontología",
@@ -205,7 +211,9 @@
     "forceStopSuccess": "Simulación detenida por la fuerza",
     "forceStopFailed": "No se pudo detener por la fuerza: {error}",
     "startGenerateReportBtn": "Generar informe",
-    "generatingReportBtn": "Iniciando..."
+    "generatingReportBtn": "Iniciando...",
+    "stopSimulationBtn": "Detener simulación",
+    "confirmStop": "¿Detener la simulación? Las rondas ya ejecutadas se conservan y puedes generar el informe con ellas."
   },
   "step4": {
     "generatingSection": "Generando {title}...",
@@ -708,7 +716,8 @@
     "menu": {
       "account": "Mi cuenta",
       "users": "Usuarios",
-      "logout": "Cerrar sesión"
+      "logout": "Cerrar sesión",
+      "models": "Modelos"
     },
     "roles": {
       "label": "Nivel de acceso",
@@ -757,5 +766,35 @@
       "cancel": "Cancelar",
       "initialPassword": "Contraseña inicial (se muestra solo esta vez):"
     }
+  },
+  "models": {
+    "title": "Modelos de IA",
+    "subtitle": "De dónde salen las respuestas y los vectores: un servicio de pago, o tu propia máquina.",
+    "llm": {
+      "title": "Modelo de lenguaje",
+      "lead": "El cerebro de la aplicación: perfiles de agentes, conversaciones e informes."
+    },
+    "embedding": {
+      "title": "Vectores (embeddings)",
+      "lead": "Convierten texto en números para buscar por significado en la memoria del grafo."
+    },
+    "fields": {
+      "baseUrl": "URL base",
+      "apiKey": "Clave de API",
+      "model": "Modelo",
+      "dimensions": "Dimensiones"
+    },
+    "sourceInterface": "interfaz",
+    "sourceServer": "servidor",
+    "inheritHint": "vacío: usar el del servidor",
+    "keyMissing": "sin clave configurada",
+    "test": "Probar conexión",
+    "testing": "Probando...",
+    "testOk": "✓ Responde en {ms} ms ({model})",
+    "testFailed": "✗ No responde: {error}",
+    "save": "Guardar configuración",
+    "saving": "Guardando...",
+    "saved": "Configuración guardada y aplicada.",
+    "note": "Se aplica de inmediato a las operaciones nuevas. Una simulación en curso conserva la configuración con la que partió."
   }
 }

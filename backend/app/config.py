@@ -111,7 +111,8 @@ class Config:
         from .graph_memory.settings import GraphMemorySettings
 
         try:
-            return GraphMemorySettings.from_env().validate()
+            from .modelconfig import effective_env
+            return GraphMemorySettings.from_env(effective_env()).validate()
         except GraphMemoryError as error:
             return [str(error)]
         except (TypeError, ValueError) as error:

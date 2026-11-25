@@ -8,6 +8,7 @@ import InteractionView from '../views/InteractionView.vue'
 import LoginView from '../views/LoginView.vue'
 import AccountView from '../views/AccountView.vue'
 import UsersView from '../views/UsersView.vue'
+import ModelsView from '../views/ModelsView.vue'
 import { auth, canEdit, loadSession } from '../auth'
 
 const routes = [
@@ -61,6 +62,12 @@ const routes = [
     path: '/users',
     name: 'Users',
     component: UsersView,
+    meta: { roles: ['admin'] }
+  },
+  {
+    path: '/models',
+    name: 'Models',
+    component: ModelsView,
     meta: { roles: ['admin'] }
   },
   // Cualquier otra dirección vuelve a la portada (que a su vez pide entrar si hace falta).

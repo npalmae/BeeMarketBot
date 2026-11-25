@@ -10,6 +10,9 @@
       <li v-if="auth.user?.role === 'admin'" class="menu-option" @click="go('Users')">
         {{ $t('auth.menu.users') }}
       </li>
+      <li v-if="auth.user?.role === 'admin'" class="menu-option" @click="go('Models')">
+        {{ $t('auth.menu.models') }}
+      </li>
       <li class="menu-option leave" @click="signOut">{{ $t('auth.menu.logout') }}</li>
     </ul>
   </div>

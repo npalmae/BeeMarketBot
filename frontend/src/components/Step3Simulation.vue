@@ -91,6 +91,15 @@
       </div>
 
       <div class="action-controls">
+        <button
+          v-if="phase === 1"
+          class="action-btn danger"
+          :disabled="!canEdit() || isStopping"
+          :title="writeHint"
+          @click="confirmStopSimulation"
+        >
+          {{ isStopping ? $t('log.stoppingSim') : $t('step3.stopSimulationBtn') }}
+        </button>
         <button 
           class="action-btn primary"
           :disabled="!canEdit() || phase !== 2 || isGeneratingReport"
@@ -436,6 +445,13 @@ const doStartSimulation = async () => {
     emit('update-status', 'error')
   } finally {
     isStarting.value = false
+  }
+}
+
+// Detener la simulación pide confirmación: las rondas ya corridas se conservan.
+const confirmStopSimulation = () => {
+  if (window.confirm(t('step3.confirmStop'))) {
+    handleStopSimulation()
   }
 }
 
@@ -907,6 +923,17 @@ onUnmounted(() => {
 
 .action-btn.primary:hover:not(:disabled) {
   background: #333;
+}
+
+.action-btn.danger {
+  background: transparent;
+  color: #c0392b;
+  border: 1px solid #c0392b;
+}
+
+.action-btn.danger:hover:not(:disabled) {
+  background: #c0392b;
+  color: #fff;
 }
 
 .action-btn:disabled {
