@@ -4,6 +4,7 @@ import Process from '../views/MainView.vue'
 import SimulationView from '../views/SimulationView.vue'
 import SimulationRunView from '../views/SimulationRunView.vue'
 import ReportView from '../views/ReportView.vue'
+import ReportPrintView from '../views/ReportPrintView.vue'
 import InteractionView from '../views/InteractionView.vue'
 import LoginView from '../views/LoginView.vue'
 import AccountView from '../views/AccountView.vue'
@@ -39,6 +40,12 @@ const routes = [
     path: '/report/:reportId',
     name: 'Report',
     component: ReportView,
+    props: true
+  },
+  {
+    path: '/report/:reportId/print',
+    name: 'ReportPrint',
+    component: ReportPrintView,
     props: true
   },
   {

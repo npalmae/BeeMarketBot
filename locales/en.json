@@ -256,7 +256,8 @@
     "panelRelatedNodes": "Related Nodes",
     "world1": "World 1",
     "world2": "World 2",
-    "downloadReport": "Download report (.md)"
+    "downloadReport": "Download report (.md)",
+    "downloadPdf": "Download PDF"
   },
   "step5": {
     "interactiveTools": "Interactive Tools",
@@ -797,5 +798,13 @@
     "saving": "Saving...",
     "saved": "Configuration saved and applied.",
     "note": "Applies immediately to new operations. A running simulation keeps the configuration it started with."
+  },
+  "print": {
+    "savePdf": "Save as PDF",
+    "hint": "In the print dialog choose “Save as PDF”.",
+    "back": "Back to report",
+    "reportLabel": "Simulation report",
+    "title": "Prediction report",
+    "generatedAt": "generated on"
   }
 }

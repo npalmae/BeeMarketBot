@@ -256,7 +256,8 @@
     "panelRelatedNodes": "Nodos relacionados",
     "world1": "Mundo 1",
     "world2": "Mundo 2",
-    "downloadReport": "Descargar informe (.md)"
+    "downloadReport": "Descargar informe (.md)",
+    "downloadPdf": "Descargar PDF"
   },
   "step5": {
     "interactiveTools": "Herramientas interactivas",
@@ -797,5 +798,13 @@
     "saving": "Guardando...",
     "saved": "Configuración guardada y aplicada.",
     "note": "Se aplica de inmediato a las operaciones nuevas. Una simulación en curso conserva la configuración con la que partió."
+  },
+  "print": {
+    "savePdf": "Guardar como PDF",
+    "hint": "En el diálogo de impresión elige «Guardar como PDF».",
+    "back": "Volver al informe",
+    "reportLabel": "Informe de simulación",
+    "title": "Informe de predicción",
+    "generatedAt": "generado el"
   }
 }
