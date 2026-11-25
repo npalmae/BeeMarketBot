@@ -73,8 +73,11 @@
             <div class="metric-card">
               <div class="sixmanager-signature" aria-label="Powered by Sixmanager">
                 <span>Powered by</span>
-                <img class="sixmanager-logo sixmanager-logo-dark" src="/logo-sixmanager-dark.png" alt="Sixmanager: tus metas también son las nuestras" />
-                <img class="sixmanager-logo sixmanager-logo-light" src="/logo-sixmanager-light.png" alt="Sixmanager: tus metas también son las nuestras" />
+                <img
+                  class="sixmanager-logo"
+                  :src="theme.light ? '/logo-sixmanager-light.png' : '/logo-sixmanager-dark.png'"
+                  alt="Sixmanager: tus metas también son las nuestras"
+                />
               </div>
             </div>
             <div class="metric-card">
@@ -231,6 +234,7 @@ import ThemeSwitch from '../components/ThemeSwitch.vue'
 import BrandMark from '../components/BrandMark.vue'
 import UserMenu from '../components/UserMenu.vue'
 import { canEdit } from '../auth'
+import { theme } from '../theme'
 
 const router = useRouter()
 // Los textos de la plantilla ($t) salen del idioma de la aplicación.
@@ -631,12 +635,12 @@ const startSimulation = () => {
 .sixmanager-signature {
   display: inline-flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: 10px;
   width: 100%;
   min-height: 150px;
-  margin: 0 auto;
+  margin: 0;
   color: rgba(255, 255, 255, 0.78);
   font-size: 11px;
   font-weight: 600;
@@ -646,21 +650,10 @@ const startSimulation = () => {
 
 .sixmanager-logo {
   display: block;
-  width: min(100%, 360px);
+  width: 100%;
+  max-width: 420px;
   height: auto;
   object-fit: contain;
-}
-
-.sixmanager-logo-light {
-  display: none;
-}
-
-:global(html.web2.light) .sixmanager-logo-dark {
-  display: none;
-}
-
-:global(html.web2.light) .sixmanager-logo-light {
-  display: block;
 }
 
 /* 项目模拟步骤介绍 */
