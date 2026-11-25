@@ -37,6 +37,10 @@ devuelve un informe y el mundo simulado, abierto para seguir preguntando.
 La interfaz está en español (predeterminado), inglés y chino, y el modelo
 responde en el idioma elegido.
 
+La interfaz tiene dos modos de color, oscuro (el predeterminado) y claro. Se
+cambia con el botón de la cabecera, al lado del idioma, y cada equipo recuerda su
+elección.
+
 Las simulaciones hacen muchas llamadas al modelo. Conviene empezar con pocas
 rondas (menos de 40) y aumentar después.
 

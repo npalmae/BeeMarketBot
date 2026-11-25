@@ -1,7 +1,12 @@
 <!doctype html>
 <html lang="es">
   <head>
-    <script>document.documentElement.lang = localStorage.getItem('locale') || 'es'</script>
+    <script>
+      // Idioma y modo de color se aplican antes del primer pintado, para que no parpadee.
+      document.documentElement.lang = localStorage.getItem('locale') || 'es'
+      try { if (localStorage.getItem('theme') === 'light') document.documentElement.classList.add('light') } catch (e) {}
+    </script>
+    <meta name="color-scheme" content="dark light" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">

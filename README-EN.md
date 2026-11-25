@@ -37,6 +37,10 @@ returns a report and the simulated world, open for further questions.
 The interface is in Spanish (default), English and Chinese, and the model
 answers in the chosen language.
 
+The interface has two color modes, dark (the default) and light. The button in
+the header, next to the language selector, switches between them, and each device
+remembers the choice.
+
 Simulations make many calls to the model. Start with few rounds (fewer than 40)
 and increase afterwards.
 

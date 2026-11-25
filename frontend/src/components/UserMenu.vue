@@ -66,8 +66,8 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
   gap: 8px;
   padding: 6px 10px;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, .5);
-  color: #F5F7FA;
+  border: 1px solid rgb(var(--w2-strong-rgb) / .5);
+  color: var(--w2-text);
   font-family: 'DM Mono', monospace;
   font-size: 11px;
   letter-spacing: .08em;
@@ -78,9 +78,9 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
 
 .menu-trigger:hover,
 .menu-trigger:focus-visible {
-  border-color: #fff;
-  background: #fff;
-  color: #050713;
+  border-color: var(--w2-invert-bg);
+  background: var(--w2-invert-bg);
+  color: var(--w2-invert-text);
 }
 
 .user-name {
@@ -104,14 +104,14 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
   margin: 0;
   padding: 4px 0;
   list-style: none;
-  border: 1px solid #050713;
-  background: #F5F7FA;
-  box-shadow: 6px 6px 0 #4689C8;
+  border: 1px solid var(--w2-invert-text);
+  background: var(--w2-invert-bg);
+  box-shadow: 6px 6px 0 var(--w2-accent);
 }
 
 .menu-option {
   padding: 8px 12px;
-  color: #050713;
+  color: var(--w2-invert-text);
   font-size: 11px;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -120,14 +120,14 @@ onUnmounted(() => document.removeEventListener('click', onClickOutside))
 }
 
 .menu-option:hover {
-  background: rgba(70, 137, 200, .18);
+  background: rgb(var(--w2-accent-rgb) / .18);
 }
 
 .menu-option.leave {
   margin-top: 4px;
   padding-top: 10px;
-  border-top: 1px solid rgba(70, 137, 200, .45);
-  color: #761472;
+  border-top: 1px solid rgb(var(--w2-accent-rgb) / .45);
+  color: var(--w2-invert-accent);
 }
 
 /* En pantallas angostas la cabecera va justa: el menú muestra solo el nombre. */

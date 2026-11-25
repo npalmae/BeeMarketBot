@@ -5,6 +5,7 @@
       <BrandMark class="nav-brand" />
       <div class="nav-links">
         <LanguageSwitcher />
+        <ThemeSwitch />
         <UserMenu />
         <a href="https://github.com/npalmae/BeeMarketBot" target="_blank" class="github-link">
           {{ $t('nav.visitGithub') }} <span class="arrow">↗</span>
@@ -223,6 +224,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import ThemeSwitch from '../components/ThemeSwitch.vue'
 import BrandMark from '../components/BrandMark.vue'
 import UserMenu from '../components/UserMenu.vue'
 import { canEdit } from '../auth'

@@ -665,6 +665,12 @@
     "generateInterviewQuestionsFailed": "No se pudieron generar las preguntas de entrevista: {error}",
     "generateInterviewSummaryFailed": "No se pudo generar el resumen de la entrevista: {error}"
   },
+  "theme": {
+    "light": "Claro",
+    "dark": "Oscuro",
+    "toLight": "Cambiar a modo claro",
+    "toDark": "Cambiar a modo oscuro"
+  },
   "auth": {
     "readOnly": {
       "home": "Tu cuenta es de solo consulta: puedes abrir los proyectos de abajo y revisar sus grafos, simulaciones e informes, pero no iniciar simulaciones nuevas.",

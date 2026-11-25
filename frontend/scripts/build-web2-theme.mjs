@@ -26,7 +26,8 @@ const OUT = join(SRC, 'styles', 'web2-theme.generated.css')
 
 /**
  * Archivos que no pasan por aquí: la vista que el router no usa y las pantallas y
- * piezas de acceso (entrar, mi cuenta, usuarios, sus cabeceras y la marca),
+ * piezas de acceso (entrar, mi cuenta, usuarios, sus cabeceras, la marca y el
+ * botón de modo claro),
  * escritas ya en el estilo Web2 con las clases de `src/styles/auth.css` o las suyas.
  */
 const SKIP = new Set([
@@ -36,21 +37,32 @@ const SKIP = new Set([
   'views/UsersView.vue',
   'components/AppHeader.vue',
   'components/BrandMark.vue',
+  'components/ThemeSwitch.vue',
   'components/UserMenu.vue'
 ])
 
 // ---------------------------------------------------------------- paleta web2
+// La hoja generada no escribe colores: escribe las variables del tema, que
+// web2-theme.css define dos veces (oscuro y claro). Lo único que recibe reglas
+// propias para el modo claro es lo que el oscuro conserva tal cual, porque ya se
+// lee bien sobre fondo oscuro y sobre blanco no.
 const P = {
-  ink: '#050713', paper: '#0D1228', paper2: '#111936', hover: '#252E5A',
-  lime: '#4689C8', soft: '#7FC4FF', text: '#F5F7FA'
+  ink: 'var(--w2-bg)', paper: 'var(--w2-surface)', paper2: 'var(--w2-surface-2)',
+  hover: 'var(--w2-hover)', lime: 'var(--w2-accent)', soft: 'var(--w2-accent-soft)',
+  text: 'var(--w2-text)'
 }
-const line = a => `rgba(70, 137, 200, ${a})`
-const dim = a => `rgba(245, 247, 250, ${a})`
-/** Tintes de fondo por familia de color, en formato "r, g, b". */
+/** Color con transparencia: la variable trae la tripleta "r g b". */
+const alpha = (token, a) => `rgb(var(${token}) / ${a})`
+const line = a => alpha('--w2-accent-rgb', a)
+const dim = a => alpha('--w2-text-rgb', a)
+/** Texto atenuado: en el modo claro nunca baja del mínimo legible sobre blanco
+    (--w2-min-text-a vale 0 en oscuro, así que ahí no cambia nada). */
+const textDim = a => `rgb(var(--w2-text-rgb) / max(${a}, var(--w2-min-text-a)))`
+/** Tintes de fondo por familia de color: la variable con la tripleta "r g b". */
 const TINT = {
-  red: '215, 19, 67', orange: '215, 19, 67', pink: '215, 19, 67',
-  yellow: '245, 158, 11', green: '85, 158, 68',
-  blue: '70, 137, 200', purple: '118, 20, 114'
+  red: '--w2-danger-rgb', orange: '--w2-danger-rgb', pink: '--w2-danger-rgb',
+  yellow: '--w2-warn-rgb', green: '--w2-ok-rgb',
+  blue: '--w2-accent-rgb', purple: '--w2-purple-rgb'
 }
 const MONO = "'DM Mono', monospace"
 const SERIF = "Georgia, 'Times New Roman', serif"
@@ -128,9 +140,9 @@ const MAP = {
       if (c.a < 1) {
         if (c.l < 0.5) {
           return c.a < 0.2 ? dim(Math.min(0.12, +c.a.toFixed(3)))
-            : `rgba(5, 7, 19, ${Math.min(0.9, +(c.a + 0.2).toFixed(3))})`
+            : alpha('--w2-bg-rgb', Math.min(0.9, +(c.a + 0.2).toFixed(3)))
         }
-        return `rgba(13, 18, 40, ${c.a})`
+        return c.a >= 0.7 ? alpha('--w2-surface-rgb', c.a) : alpha('--w2-text-rgb', c.a)
       }
       if (c.l >= 0.965) return P.paper
       if (c.l >= 0.88) return P.paper2
@@ -138,22 +150,22 @@ const MAP = {
       return P.lime
     }
     if (c.a < 1 || c.l < 0.55) return null
-    return `rgba(${TINT[c.family]}, ${c.l >= 0.85 ? '.16' : '.30'})`
+    return alpha(TINT[c.family], c.l >= 0.85 ? '.16' : '.30')
   },
   /** Texto oscuro pasa a claro; los grises, a texto atenuado. */
   fg(c) {
     if (c.transparent) return 'transparent'
     if (c.family === 'neutral') {
-      if (c.a < 1) return `rgba(245, 247, 250, ${c.a})`
+      if (c.a < 1) return textDim(c.a)
       if (c.l < 0.35) return P.text
-      if (c.l < 0.62) return dim('.72')
-      if (c.l < 0.93) return dim('.55')
+      if (c.l < 0.62) return textDim('.72')
+      if (c.l < 0.93) return textDim('.55')
       return P.text
     }
     if (c.a < 1) return null
     if (c.family === 'orange') return P.soft
-    if (c.family === 'red' && c.l < 0.42) return '#FF7A90'
-    if (c.family === 'green' && c.l < 0.42) return '#8CD97C'
+    if (c.family === 'red' && c.l < 0.42) return 'var(--w2-danger)'
+    if (c.family === 'green' && c.l < 0.42) return 'var(--w2-ok)'
     if (c.family === 'blue' && c.l < 0.3) return P.soft
     return null
   },
@@ -162,7 +174,7 @@ const MAP = {
     if (c.transparent) return 'transparent'
     if (c.family === 'neutral') {
       if (c.a < 1) {
-        return c.l < 0.5 ? dim(Math.min(0.3, +(c.a * 1.4).toFixed(3))) : `rgba(245, 247, 250, ${c.a})`
+        return c.l < 0.5 ? dim(Math.min(0.3, +(c.a * 1.4).toFixed(3))) : dim(c.a)
       }
       if (c.l >= 0.985) return dim('.35')
       if (c.l >= 0.7) return line('.38')
@@ -171,6 +183,46 @@ const MAP = {
     }
     return c.family === 'orange' ? P.soft : null
   }
+}
+
+// ------------------------------------------------------ traducción del modo claro
+/** Saturación y luminosidad bastan para saber si un color es un gris con tinte. */
+function esGris(c) {
+  const max = Math.max(c.r, c.g, c.b)
+  return max > 0 && (max - Math.min(c.r, c.g, c.b)) / max < 0.25
+}
+
+/**
+ * Color de texto para el modo claro cuando el oscuro conserva el original.
+ * Un gris con tinte pasa a texto atenuado; un color, al tono de su familia.
+ * Devuelve null si no hay con qué cambiarlo.
+ */
+function lightFg(c) {
+  if (c.transparent) return null
+  if (esGris(c)) {
+    if (c.l < 0.35 || c.l >= 0.93) return P.text
+    return textDim(c.l < 0.62 ? '.72' : '.55')
+  }
+  switch (c.family) {
+    case 'red':
+    case 'pink':
+    case 'orange':
+      return 'var(--w2-danger)'
+    case 'green':
+      return 'var(--w2-ok)'
+    case 'yellow':
+      return 'var(--w2-warn-text)'
+    case 'blue':
+      return 'var(--w2-accent-soft)'
+    case 'purple':
+      return 'var(--w2-purple)'
+  }
+  return null
+}
+
+/** Un fondo saturado y opaco que el tema conserva: en modo claro necesita texto claro. */
+function esIsla(c) {
+  return !!c && !c.transparent && c.family !== 'neutral' && c.a === 1 && c.l < 0.55 && MAP.bg(c) === null
 }
 
 /** Sustituye var(...), url(...) etc. por marcadores para no tocar sus colores internos. */
@@ -231,6 +283,29 @@ function mapColors(value, role) {
     return mapped
   })
   return changed ? restore(out) : null
+}
+
+/** Reemplaza cada color de un valor por su versión del modo claro, o null si alguno no cambia. */
+function mapColorsLight(value) {
+  const { masked, restore } = maskFunctions(value, ['var', 'url', 'env', 'constant', 'attr'])
+  let changed = true
+  const out = masked.replace(COLOR_ALL, token => {
+    const mapped = lightFg(describe(token))
+    if (!mapped) {
+      changed = false
+      return token
+    }
+    return mapped
+  })
+  return changed ? restore(out) : null
+}
+
+/** Colores sueltos de un valor de fondo (uno por capa). */
+function colorsOfBackground(value, p) {
+  if (p === 'background-color') return (maskFunctions(value, ['var', 'url']).masked.match(COLOR_ALL) || [])
+  if (p !== 'background') return []
+  const layers = splitTop(value, ',').map(splitBackgroundLayer)
+  return layers.every(l => l.color) ? layers.map(l => l.color) : []
 }
 
 /**
@@ -317,7 +392,21 @@ const COLOR_FULL = new RegExp(`^(?:${COLOR_SRC})$`)
 /** Saca el color suelto de una capa de `background` (fuera de url() y de gradientes). */
 function splitBackgroundLayer(layer) {
   const { masked, restore } = maskImages(layer)
-  const tokens = masked.split(/\s+/).filter(Boolean)
+  // Se separa por espacios solo fuera de paréntesis: `rgba(0, 0, 0, .5)` es un solo trozo.
+  const tokens = []
+  let buf = ''
+  let depth = 0
+  for (const ch of masked) {
+    if (ch === '(') depth++
+    if (ch === ')') depth--
+    if (!depth && /\s/.test(ch)) {
+      if (buf) tokens.push(buf)
+      buf = ''
+    } else {
+      buf += ch
+    }
+  }
+  if (buf) tokens.push(buf)
   let color = null
   for (let i = tokens.length - 1; i >= 0; i--) {
     if (tokens[i].match(COLOR_FULL)) {
@@ -331,13 +420,14 @@ function splitBackgroundLayer(layer) {
 
 /**
  * Traduce una declaración `prop: value`. Devuelve las declaraciones
- * equivalentes (solo color y tipografía). Los shorthands se emiten como su
- * propiedad de color, para no pisar longhands declarados después
- * (p. ej. `border: 1px solid #ccc` seguido de `border-top: none`).
+ * equivalentes (solo color y tipografía): `dark` para el modo oscuro y `light`
+ * para el claro (solo cuando el oscuro conservó un color de texto). Los
+ * shorthands se emiten como su propiedad de color, para no pisar longhands
+ * declarados después (p. ej. `border: 1px solid #ccc` seguido de `border-top: none`).
  */
 function themeDeclaration(text) {
   const colon = text.indexOf(':')
-  if (colon < 0) return []
+  if (colon < 0) return { dark: [], light: [], island: false }
   const prop = text.slice(0, colon).trim()
   let value = text.slice(colon + 1).trim()
   let important = false
@@ -346,25 +436,42 @@ function themeDeclaration(text) {
     value = value.replace(/!\s*important$/, '').trim()
   }
   const p = prop.toLowerCase()
-  const emit = (name, mapped) => (mapped ? [[name, mapped, important]] : [])
+  const out = { dark: [], light: [], island: false }
+  const emit = (name, mapped, target = out.dark) => {
+    if (mapped) target.push([name, mapped, important])
+    return out
+  }
 
-  if (p.startsWith('--')) return []
-  if (p === 'font-family') return emit(p, mapFamily(value))
-  if (FG_PROPS.has(p)) return emit(p, mapColors(value, 'fg'))
-  if (p === 'background-color' || p === 'background-image') return emit(p, mapColors(value, 'bg'))
+  if (p.startsWith('--')) return out
+  if (p === 'font-family') {
+    emit(p, mapFamily(value))
+    return out
+  }
+  if (FG_PROPS.has(p)) {
+    const mapped = mapColors(value, 'fg')
+    emit(p, mapped)
+    // Lo que el modo oscuro deja tal cual, el claro lo cambia para leerse sobre blanco.
+    if (!mapped) emit(p, mapColorsLight(value), out.light)
+    return out
+  }
+  if (p === 'background-color' || p === 'background-image') {
+    emit(p, mapColors(value, 'bg'))
+    out.island = colorsOfBackground(value, p).some(color => esIsla(describe(color)))
+    return out
+  }
   if (p === 'background') {
-    const out = []
     const layers = splitTop(value, ',').map(splitBackgroundLayer)
     if (layers.every(l => l.color)) {
       const colors = layers.map(l => l.color)
       const each = colors.map(c => mapColors(c, 'bg'))
       if (each.some(Boolean)) {
-        out.push(['background-color', each.map((m, i) => m || colors[i]).join(', '), important])
+        out.dark.push(['background-color', each.map((m, i) => m || colors[i]).join(', '), important])
       }
+      out.island = colors.some(color => esIsla(describe(color)))
     }
     if (layers.some(l => l.image)) {
       const mapped = mapColors(layers.map(l => l.image || 'none').join(', '), 'bg')
-      if (mapped) out.push(['background-image', mapped, important])
+      if (mapped) out.dark.push(['background-image', mapped, important])
     }
     return out
   }
@@ -372,11 +479,11 @@ function themeDeclaration(text) {
   const sh = p.match(SHORTHAND)
   if (sh) {
     const color = extractColor(value)
-    if (!color) return []
+    if (!color) return out
     return emit(`${p}-color`, mapColors(color, sh[1] === 'text-decoration' ? 'fg' : 'bd'))
   }
   if (p === 'box-shadow' || p === 'text-shadow') return emit(p, mapShadow(value))
-  return []
+  return out
 }
 
 // ------------------------------------------------------------- análisis CSS
@@ -521,14 +628,14 @@ function compileScoped(sel, id) {
 }
 
 /** Selector de un bloque sin scoped: se limita a la app y al tema activo. */
-function globalSelector(sel) {
+function globalSelector(sel, root = 'html.web2') {
   const s = sel.replace(/\s+/g, ' ').trim()
-  if (/^#app\b/.test(s)) return `html.web2 ${s}`
-  if (/^html\b/.test(s)) return s.replace(/^html/, 'html.web2')
-  if (/^:root\b/.test(s)) return s.replace(/^:root/, 'html.web2')
-  if (/^body\b/.test(s)) return `html.web2 ${s}`
+  if (/^#app\b/.test(s)) return `${root} ${s}`
+  if (/^html\b/.test(s)) return s.replace(/^html/, root)
+  if (/^:root\b/.test(s)) return s.replace(/^:root/, root)
+  if (/^body\b/.test(s)) return `${root} ${s}`
   const first = splitSelector(s)[0]
-  return /[.#]/.test(first) ? `html.web2 #app ${s}` : `html.web2 body ${s}`
+  return /[.#]/.test(first) ? `${root} #app ${s}` : `${root} body ${s}`
 }
 
 /** Reglas de un bloque de estilo. Solo conserva las que tienen algo traducible. */
@@ -547,8 +654,13 @@ function collect(nodes, ctx, block) {
     }
     const decls = n.children.filter(c => c.kind === 'decl').map(c => c.text)
     const themed = []
+    const light = []
+    let island = false
     for (const d of decls) {
-      themed.push(...themeDeclaration(d))
+      const traduccion = themeDeclaration(d)
+      themed.push(...traduccion.dark)
+      light.push(...traduccion.light)
+      island = island || traduccion.island
       // informe: superficies oscuras, que el tema vuelve azules por defecto
       const p = d.slice(0, d.indexOf(':')).trim().toLowerCase()
       if (p === 'background' || p === 'background-color') {
@@ -558,7 +670,10 @@ function collect(nodes, ctx, block) {
         }
       }
     }
-    if (themed.length) block.rules.push({ ctx, selector: n.prelude, decls: themed })
+    if (themed.length) block.rules.push({ ctx, selector: n.prelude, decls: themed, block })
+    // El modo claro solo lleva lo que el oscuro conservó: para qué repetir el resto.
+    if (light.length) block.light.push({ ctx, selector: n.prelude, decls: light, block })
+    if (island) block.islands.push({ selector: n.prelude, block })
     if (n.children.some(c => c.kind === 'block')) block.file.nested.push(n.prelude)
   }
 }
@@ -586,7 +701,7 @@ const files = walk(SRC)
       custom: [...new Set([...source.matchAll(/(--[\w-]+)\s*:\s*[^;}]+/g)].map(x => x[0].replace(/\s+/g, ' ')))]
     }
     for (const m of source.matchAll(/<style([^>]*)>([\s\S]*?)<\/style>/g)) {
-      const block = { file, scoped: /\bscoped\b/.test(m[1]), rules: [] }
+      const block = { file, scoped: /\bscoped\b/.test(m[1]), rules: [], light: [], islands: [] }
       file.blocks.push(block)
       collect(parseBlock(stripComments(m[2]), 0).nodes, [], block)
     }
@@ -594,16 +709,18 @@ const files = walk(SRC)
   })
 
 // ------------------------------------------------------------- salida
-function selectorFor(rule, block) {
+function selectorFor(rule, root = 'html.web2') {
+  // Una regla que salió de un bloque concreto (las del modo claro) lleva el suyo.
+  const block = rule.block || rule
   const singles = splitTop(rule.selector, ',').map(s => s.replace(/\s+/g, ' ').trim()).filter(Boolean)
   const list = block.scoped
-    ? singles.flatMap(s => block.file.ids.map(id => `html.web2 ${compileScoped(s, id)}`))
-    : singles.map(globalSelector)
+    ? singles.flatMap(s => block.file.ids.map(id => `${root} ${compileScoped(s, id)}`))
+    : singles.map(s => globalSelector(s, root))
   return [...new Set(list)]
 }
 
 /** Escribe las reglas agrupando las que comparten el mismo @media / @supports. */
-function emitRules(out, rules, block) {
+function emitRules(out, rules, root = 'html.web2') {
   const open = []
   const indent = () => '  '.repeat(open.length)
   for (const r of rules) {
@@ -617,7 +734,7 @@ function emitRules(out, rules, block) {
       out.push(`${indent()}${r.ctx[open.length]} {`)
       open.push(r.ctx[open.length])
     }
-    out.push(selectorFor(r, block).map(l => indent() + l).join(',\n') + ' {')
+    out.push(selectorFor(r, root).map(l => indent() + l).join(',\n') + ' {')
     for (const [p, v, imp] of r.decls) out.push(`${indent()}  ${p}: ${v}${imp ? ' !important' : ''};`)
     out.push(`${indent()}}`)
   }
@@ -633,8 +750,13 @@ const out = [
   '',
   '   Generado por scripts/build-web2-theme.mjs a partir de los bloques <style>',
   '   de los componentes .vue. Repite cada regla con color o tipografía usando',
-  '   la paleta del estilo Web2 de SIXMANAGER, y solo cuando <html> tiene la',
-  '   clase "web2". Los componentes originales no se modifican.',
+  '   las variables del estilo Web2 de SIXMANAGER (definidas en web2-theme.css',
+  '   para el modo oscuro y el claro), y solo cuando <html> tiene la clase',
+  '   "web2". Los componentes originales no se modifican.',
+  '',
+  '   Cada archivo lleva dos secciones: las reglas del tema, y al final las que',
+  '   solo aplican al modo claro (bajo html.web2.light): textos que el modo oscuro',
+  '   conserva y fondos de color cuyo texto debe seguir claro.',
   '',
   '   Regenerar (desde frontend/):  node scripts/build-web2-theme.mjs',
   '   Ajustes a mano:               src/styles/web2-theme.css (se carga después)',
@@ -643,20 +765,51 @@ const out = [
 ]
 
 const summary = []
+const LIGHT_ROOT = 'html.web2.light'
+// Una "isla" (un fondo de color que el tema conserva) vuelve a tomar en el modo
+// claro los colores del modo oscuro. Se leen de la hoja manual, para no mantenerlos
+// dos veces: el primer bloque `html.web2 { … }` es justo el de esas variables.
+const DARK_TOKENS = (() => {
+  const manual = readFileSync(join(SRC, 'styles', 'web2-theme.css'), 'utf8')
+  const start = manual.indexOf('html.web2 {')
+  const end = manual.indexOf('}', start)
+  return [...manual.slice(start, end).matchAll(/(--w2-[\w-]+):\s*([^;]+);/g)].map(m => `${m[1]}: ${m[2]}`)
+})()
 for (const file of files) {
   let count = 0
-  out.push('')
-  out.push(`/* -------------------------------------------------- ${file.rel} */`)
+  let lightCount = 0
+  const islands = file.blocks.flatMap(block => block.islands)
   for (const block of file.blocks) {
     if (!block.rules.length) continue
     count += block.rules.length
     out.push('')
-    emitRules(out, block.rules, block)
+    out.push(`/* -------------------------------------------------- ${file.rel} */`)
+    emitRules(out, block.rules)
   }
-  summary.push({ file: file.rel, rules: count, ...file })
+  const lightRules = file.blocks.flatMap(block => block.light)
+  if (lightRules.length || islands.length) {
+    out.push('')
+    out.push(`/* ------------------------------------- ${file.rel} (solo modo claro) */`)
+    if (lightRules.length) {
+      lightCount = lightRules.length
+      out.push('')
+      emitRules(out, lightRules, LIGHT_ROOT)
+    }
+    if (islands.length) {
+      out.push('')
+      out.push('/* Fondos de color que el tema conserva: su texto sigue claro en el modo claro. */')
+      out.push(islands.flatMap(island => selectorFor(island, LIGHT_ROOT)).join(',\n') + ' {')
+      out.push('  color: var(--w2-text);')
+      for (const declaration of DARK_TOKENS) out.push(`  ${declaration};`)
+      out.push('}')
+    }
+  }
+  summary.push({ file: file.rel, rules: count, light: lightCount, islands: islands.length, ...file })
 }
 
-writeFileSync(OUT, out.join('\n') + '\n')
+const finalCss = out.join('\n') + '\n'
+if (finalCss.includes('[object Object]')) throw new Error('selectores mal compuestos: revisar selectorFor/emitRules')
+writeFileSync(OUT, finalCss)
 
 // ------------------------------------------------------------- informe
 const total = summary.reduce((n, s) => n + s.rules, 0)
@@ -668,6 +821,7 @@ for (const s of summary) {
     s.custom.length && `variables: ${s.custom.join(' · ')}`
   ].filter(Boolean)
   console.log(`  ${String(s.rules).padStart(4)}  ${s.file}${notes.length ? `   [${notes.join(']; [')}]` : ''}`)
+  if (s.light || s.islands) console.log(`        modo claro: ${s.light} reglas, ${s.islands} fondos de color`)
   s.skipped.forEach(x => console.log(`          omitida: ${x}`))
 }
 const review = summary.flatMap(s => s.review.map(r => `  ${s.file} :: ${r}`))

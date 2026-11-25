@@ -4,8 +4,8 @@
 .authkit-page {
   min-height: calc(100vh - 60px);
   padding: 40px 24px 64px;
-  background: #050713;
-  color: #F5F7FA;
+  background: var(--w2-bg);
+  color: var(--w2-text);
   font-family: 'DM Mono', monospace;
 }
 
@@ -19,9 +19,9 @@
   width: min(460px, 100%);
   margin: 0 auto;
   padding: 36px 32px;
-  border: 1px solid rgba(70, 137, 200, .62);
-  background: #0D1228;
-  box-shadow: 8px 8px 0 #4689C8;
+  border: 1px solid rgb(var(--w2-accent-rgb) / .62);
+  background: var(--w2-surface);
+  box-shadow: 8px 8px 0 var(--w2-accent);
 }
 
 .authkit-card.wide { width: min(1040px, 100%); }
@@ -31,7 +31,7 @@
   font-size: 11px;
   letter-spacing: .14em;
   text-transform: uppercase;
-  color: #7FC4FF;
+  color: var(--w2-accent-soft);
 }
 
 .authkit-title {
@@ -45,7 +45,7 @@
   margin: 0 0 24px;
   font-size: 14px;
   line-height: 1.5;
-  color: rgba(245, 247, 250, .75);
+  color: rgb(var(--w2-text-rgb) / .75);
 }
 
 .authkit-field {
@@ -56,7 +56,7 @@
   font-size: 11px;
   letter-spacing: .08em;
   text-transform: uppercase;
-  color: rgba(245, 247, 250, .75);
+  color: rgb(var(--w2-text-rgb) / .75);
   text-align: left;
 }
 
@@ -66,10 +66,10 @@
   width: 100%;
   margin: 0;
   padding: 12px;
-  border: 1px solid rgba(255, 255, 255, .4);
+  border: 1px solid rgb(var(--w2-strong-rgb) / .4);
   border-radius: 0;
-  background: #050713;
-  color: #F5F7FA;
+  background: var(--w2-field);
+  color: var(--w2-text);
   font: 14px 'DM Mono', monospace;
   letter-spacing: normal;
   text-transform: none;
@@ -77,14 +77,14 @@
 }
 
 .authkit-field select option,
-.authkit-input option { background: #0D1228; }
+.authkit-input option { background: var(--w2-surface); }
 
 .authkit-field input:focus,
 .authkit-field select:focus,
 .authkit-input:focus {
-  outline: 2px solid #4689C8;
+  outline: 2px solid var(--w2-accent);
   outline-offset: 1px;
-  border-color: #4689C8;
+  border-color: var(--w2-accent);
 }
 
 .authkit-input:disabled { opacity: .55; cursor: not-allowed; }
@@ -92,20 +92,20 @@
 .authkit-button {
   margin: 0;
   padding: 14px 18px;
-  border: 1px solid #4689C8;
-  background: #4689C8;
-  color: #050713;
+  border: 1px solid var(--w2-accent);
+  background: var(--w2-accent);
+  color: var(--w2-ink);
   font: 700 12px 'DM Mono', monospace;
   letter-spacing: .12em;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 4px 4px 0 rgba(127, 196, 255, .45);
+  box-shadow: 4px 4px 0 rgb(var(--w2-accent-soft-rgb) / .45);
   transition: transform .15s, box-shadow .15s;
 }
 
 .authkit-button:hover:not(:disabled) {
   transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 rgba(127, 196, 255, .45);
+  box-shadow: 2px 2px 0 rgb(var(--w2-accent-soft-rgb) / .45);
 }
 
 .authkit-button:disabled { opacity: .5; cursor: not-allowed; }
@@ -114,27 +114,27 @@
 
 .authkit-button.ghost {
   background: transparent;
-  color: #F5F7FA;
-  border-color: rgba(255, 255, 255, .5);
+  color: var(--w2-text);
+  border-color: rgb(var(--w2-strong-rgb) / .5);
   box-shadow: none;
 }
 
 .authkit-button.ghost:hover:not(:disabled) {
-  background: #fff;
-  color: #050713;
+  background: var(--w2-invert-bg);
+  color: var(--w2-invert-text);
   transform: none;
 }
 
 .authkit-button.danger {
   background: transparent;
-  color: #FFB4B4;
-  border-color: #D71343;
+  color: var(--w2-danger-soft);
+  border-color: var(--coral);
   box-shadow: none;
 }
 
 .authkit-button.danger:hover:not(:disabled) {
-  background: #D71343;
-  color: #fff;
+  background: var(--coral);
+  color: #FFFFFF;
   transform: none;
 }
 
@@ -146,17 +146,17 @@
   line-height: 1.5;
 }
 
-.authkit-message.info { border-color: #4689C8; background: rgba(70, 137, 200, .12); color: #7FC4FF; }
-.authkit-message.success { border-color: #76FA0A; background: rgba(118, 250, 10, .1); color: #B9FF7A; }
-.authkit-message.error { border-color: #D71343; background: rgba(215, 19, 67, .14); color: #FFD3D3; }
+.authkit-message.info { border-color: var(--w2-accent); background: rgb(var(--w2-accent-rgb) / .12); color: var(--w2-accent-soft); }
+.authkit-message.success { border-color: var(--w2-brand); background: rgb(var(--w2-brand-rgb) / .1); color: var(--w2-ok-soft); }
+.authkit-message.error { border-color: var(--coral); background: rgb(var(--w2-danger-rgb) / .14); color: var(--w2-danger-soft); }
 
 .authkit-message code {
   display: block;
   margin-top: 8px;
   padding: 8px 10px;
-  border: 1px solid rgba(255, 255, 255, .25);
-  background: #050713;
-  color: #F5F7FA;
+  border: 1px solid rgb(var(--w2-strong-rgb) / .25);
+  background: var(--w2-surface-2);
+  color: var(--w2-text);
   font: 13px 'DM Mono', monospace;
   text-transform: none;
   letter-spacing: normal;
@@ -174,7 +174,7 @@
 .authkit-table th,
 .authkit-table td {
   padding: 10px 12px;
-  border-bottom: 1px solid rgba(70, 137, 200, .35);
+  border-bottom: 1px solid rgb(var(--w2-accent-rgb) / .35);
   text-align: left;
   vertical-align: middle;
 }
@@ -184,7 +184,7 @@
   font-weight: 500;
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: #7FC4FF;
+  color: var(--w2-accent-soft);
 }
 
 /* En pantallas angostas la tabla se desplaza en vez de aplastarse. */
@@ -201,14 +201,14 @@
 .authkit-badge {
   display: inline-block;
   padding: 2px 8px;
-  border: 1px solid rgba(255, 255, 255, .35);
+  border: 1px solid rgb(var(--w2-strong-rgb) / .35);
   font-size: 10px;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
 
-.authkit-badge.pending { border-color: #761472; color: #D9A6D7; }
-.authkit-badge.off { border-color: #D71343; color: #FFB4B4; }
+.authkit-badge.pending { border-color: var(--w2-purple); color: var(--w2-purple-soft); }
+.authkit-badge.off { border-color: var(--coral); color: var(--w2-danger-soft); }
 
 .authkit-actions {
   display: flex;
@@ -230,7 +230,7 @@
   height: 0;
   margin: 28px 0;
   border: 0;
-  border-top: 1px solid rgba(70, 137, 200, .45);
+  border-top: 1px solid rgb(var(--w2-accent-rgb) / .45);
 }
 
 .authkit-facts {
@@ -245,7 +245,7 @@
   font-size: 10px;
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: #7FC4FF;
+  color: var(--w2-accent-soft);
 }
 
 .authkit-facts div strong { font-size: 15px; }
@@ -264,7 +264,7 @@ html.web2 #app .home-container .read-only-box .console-label {
   font-size: 11px;
   letter-spacing: .14em;
   text-transform: uppercase;
-  color: #7FC4FF;
+  color: var(--w2-accent-soft);
 }
 
 html.web2 #app .home-container .read-only-box p {
@@ -272,5 +272,5 @@ html.web2 #app .home-container .read-only-box p {
   font: 15px/1.65 'DM Mono', monospace;
   letter-spacing: normal;
   text-transform: none;
-  color: #F5F7FA;
+  color: var(--w2-text);
 }

@@ -3,6 +3,7 @@
     <BrandMark class="brand" @click="router.push('/')" />
     <div class="header-right">
       <LanguageSwitcher />
+      <ThemeSwitch />
       <UserMenu />
     </div>
   </header>
@@ -11,6 +12,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import LanguageSwitcher from './LanguageSwitcher.vue'
+import ThemeSwitch from './ThemeSwitch.vue'
 import UserMenu from './UserMenu.vue'
 import BrandMark from './BrandMark.vue'
 
@@ -28,7 +30,7 @@ const router = useRouter()
   height: 60px;
   padding: 0 24px;
   border-bottom: var(--line);
-  background: rgba(5, 7, 19, .9);
+  background: rgb(var(--w2-bg-rgb) / .9);
 }
 
 .brand {
@@ -36,7 +38,7 @@ const router = useRouter()
   font-weight: 800;
   font-size: 18px;
   letter-spacing: -.02em;
-  color: #F5F7FA;
+  color: var(--w2-text);
   cursor: pointer;
 }
 

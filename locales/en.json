@@ -665,6 +665,12 @@
     "generateInterviewQuestionsFailed": "Failed to generate interview questions: {error}",
     "generateInterviewSummaryFailed": "Failed to generate interview summary: {error}"
   },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "toLight": "Switch to light mode",
+    "toDark": "Switch to dark mode"
+  },
   "auth": {
     "readOnly": {
       "home": "Your account is read-only: you can open the projects below and review their graphs, simulations and reports, but not start new simulations.",

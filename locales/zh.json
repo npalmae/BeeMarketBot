@@ -665,6 +665,12 @@
     "generateInterviewQuestionsFailed": "生成采访问题失败: {error}",
     "generateInterviewSummaryFailed": "生成采访摘要失败: {error}"
   },
+  "theme": {
+    "light": "浅色",
+    "dark": "深色",
+    "toLight": "切换到浅色模式",
+    "toDark": "切换到深色模式"
+  },
   "auth": {
     "readOnly": {
       "home": "你的账户为只读：可以打开下方的项目并查看其图谱、模拟和报告，但不能发起新的模拟。",

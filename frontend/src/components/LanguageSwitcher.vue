@@ -1,7 +1,8 @@
 <template>
   <div class="language-switcher" ref="switcherRef">
     <button class="switcher-trigger" @click="toggleDropdown">
-      {{ currentLabel }}
+      <span class="switcher-label">{{ currentLabel }}</span>
+      <span class="switcher-short">{{ locale.toUpperCase() }}</span>
       <span class="caret">{{ open ? '▲' : '▼' }}</span>
     </button>
     <ul v-if="open" class="switcher-dropdown">
@@ -87,6 +88,14 @@ onUnmounted(() => {
 
 .caret {
   font-size: 0.6rem;
+}
+
+/* En pantallas angostas solo cabe el código del idioma ("ES"). */
+.switcher-short { display: none; }
+
+@media (max-width: 640px) {
+  .switcher-label { display: none; }
+  .switcher-short { display: inline; }
 }
 
 .switcher-dropdown {

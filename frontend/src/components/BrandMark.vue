@@ -1,6 +1,7 @@
 <template>
   <div class="brand-lockup">
     <img class="brand-isotype" src="/beemarketbot-icon.png" alt="" width="30" height="30">
+    <img class="brand-isotype brand-isotype-light" src="/beemarketbot-icon-light.png" alt="" width="30" height="30">
     <span>BEEMARKET<span class="brand-accent">BOT</span></span>
   </div>
 </template>
@@ -26,6 +27,10 @@
   height: 30px;
 }
 
+/* La versión para modo claro solo se muestra en él (la regla está en web2-theme.css):
+   el original lleva las alas blancas, que sobre fondo claro no se ven. */
+.brand-isotype-light { display: none; }
+
 /* El isotipo es decorativo para los lectores de pantalla: el nombre va justo al lado. */
-.brand-accent { color: #76FA0A; }
+.brand-accent { color: var(--w2-brand); }
 </style>

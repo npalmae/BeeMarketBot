@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import i18n from './i18n'
+import { initTheme } from './theme'
 // Estilo visual Web2 neobrutalista (desde SIXMANAGER)
 import './styles/web2.css'
 import './styles/web2-pages.css'
@@ -17,5 +18,7 @@ const app = createApp(App)
 
 app.use(router)
 app.use(i18n)
+// El modo de color ya lo aplicó index.html; aquí se acomoda el icono de la pestaña.
+initTheme()
 
 app.mount('#app')

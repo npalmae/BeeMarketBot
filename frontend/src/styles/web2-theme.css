@@ -3,55 +3,206 @@
    ----------------------------------------------------------------------------
    Complementa a web2-theme.generated.css, que traduce los colores de cada
    componente. Aquí va lo que la traducción automática no puede decidir:
-   tipografía de títulos, botones y tarjetas con sombra dura, variables de la
-   portada y las superficies que deben seguir oscuras.
+   las variables del tema (oscuro y claro), la tipografía de títulos, los
+   botones y tarjetas con sombra dura y las superficies invertidas.
 
-   Solo aplica cuando <html> tiene la clase "web2". Las reglas usan
-   `html.web2 #app …`, que gana a los estilos scoped de los componentes y a la
-   capa generada. Cada regla incluye la clase raíz de su pantalla, porque
-   nombres como .step-num, .section-title o .brand se repiten entre vistas:
-     .home-container · .main-view · .graph-panel · .history-database
-     .language-switcher · .workbench-panel · .env-setup-panel
-     .simulation-panel · .report-panel · .interaction-panel
+   Solo aplica cuando <html> tiene la clase "web2"; con "web2 light" además se
+   activa el modo claro. Las reglas usan `html.web2 #app …`, que gana a los
+   estilos scoped de los componentes y a la capa generada. Cada regla incluye la
+   clase raíz de su pantalla, porque nombres como .step-num, .section-title o
+   .brand se repiten entre vistas:
+      .home-container · .main-view · .graph-panel · .history-database
+      .language-switcher · .workbench-panel · .env-setup-panel
+      .simulation-panel · .report-panel · .interaction-panel
+
+   En esta hoja no se escribe ningún color: solo las variables de la sección 1.
    ============================================================================ */
 
-/* ------------------------------------------------------------- 1. Base */
+/* ------------------------------------------------------------- 1. Variables
+   Cada variable del tema se define dos veces: para el modo oscuro (el que sigue
+   activo por defecto) y para el modo claro, que se enciende con la clase
+   "light" en <html> (ver components/ThemeSwitch.vue). Todas las hojas del tema
+   (la generada, esta y auth.css) usan solo estas variables. */
 html.web2 {
+  /* Fondos. */
+  --w2-bg: #050713;
+  --w2-bg-rgb: 5 7 19;
+  --w2-surface: #0D1228;
+  --w2-surface-rgb: 13 18 40;
+  --w2-surface-2: #111936;
+  --w2-hover: #252E5A;
+  --w2-field: #050713;
+  /* Texto. */
+  --w2-text: #F5F7FA;
+  --w2-text-rgb: 245 247 250;
+  --w2-strong: #FFFFFF;
+  --w2-strong-rgb: 255 255 255;
+  /* Acento azul y sus tintes. */
+  --w2-accent: #4689C8;
+  --w2-accent-rgb: 70 137 200;
+  --w2-accent-soft: #7FC4FF;
+  --w2-accent-soft-rgb: 127 196 255;
+  /* Colores de estado. */
+  --w2-danger: #FF7A90;
+  --w2-danger-rgb: 215 19 67;
+  --w2-ok: #8CD97C;
+  --w2-ok-rgb: 85 158 68;
+  --w2-warn-rgb: 245 158 11;
+  --w2-purple: #761472;
+  --w2-purple-rgb: 118 20 114;
+  /* Verde de la marca (la sílaba "BOT" y el marco del logo). */
+  --w2-brand: #76FA0A;
+  /* Ámbar con que se escribe un aviso. */
+  --w2-warn-text: #F59E0B;
+  /* Transparencia mínima del texto atenuado. En oscuro no exige nada; en claro
+     evita que un gris de .55 quede ilegible sobre blanco. */
+  --w2-min-text-a: 0;
+  --w2-brand-rgb: 118 250 10;
+  /* Tonos suaves con que se escribe sobre los tintes de estado (avisos, insignias). */
+  --w2-danger-soft: #FFB4B4;
+  --w2-ok-soft: #B9FF7A;
+  --w2-purple-soft: #D9A6D7;
+  /* Texto sobre un relleno de acento. */
+  --w2-on-accent: #FFFFFF;
+  /* Superficies invertidas: claras con texto oscuro (desplegables, bloque destacado). */
+  --w2-invert-bg: #F5F7FA;
+  --w2-invert-hover: #FFFFFF;
+  --w2-invert-text: #050713;
+  --w2-invert-text-rgb: 5 7 19;
+  /* Negro de la tinta: no cambia con el modo (texto de los botones de acceso). */
+  --w2-ink: #050713;
+  /* Color de realce que se lee sobre una superficie invertida. */
+  --w2-invert-accent: #761472;
+  /* Consolas, código y avisos: oscuros en los dos modos. */
+  --w2-console-bg: #050713;
+  /* Los controles del navegador (desplegables de un select, autocompletado) siguen el modo. */
+  color-scheme: dark;
+
   /* Home.vue declara estas variables dentro de un bloque scoped, donde Vue las
      compila como `[data-v-…]:root` y nunca se aplican. Aquí sí funcionan. */
-  --black: #F5F7FA;
-  --white: #F5F7FA;
-  --orange: #7FC4FF;
-  --gray-light: #111936;
-  --gray-text: rgba(245, 247, 250, .72);
-  --border: rgba(70, 137, 200, .62);
+  --black: var(--w2-text);
+  --white: var(--w2-text);
+  --orange: var(--w2-accent-soft);
+  --gray-light: var(--w2-surface-2);
+  --gray-text: rgb(var(--w2-text-rgb) / .72);
+  --border: rgb(var(--w2-accent-rgb) / .62);
   --font-mono: 'DM Mono', monospace;
   --font-sans: 'DM Mono', monospace;
   --font-cn: 'DM Mono', monospace;
 
-  --w2-text-dim: rgba(245, 247, 250, .72);
-  --w2-text-mute: rgba(245, 247, 250, .55);
+  /* Variables del kit (web2.css) que usan algunas reglas de esta hoja. */
+  --ink: #050713;
+  --paper: var(--w2-surface);
+  --lime: var(--w2-accent);
+  --purple: var(--w2-purple);
+  --line: 1px solid rgb(var(--w2-accent-rgb) / .62);
 
-  background: var(--ink);
-  color: #F5F7FA;
+  --w2-text-dim: rgb(var(--w2-text-rgb) / max(.72, var(--w2-min-text-a)));
+  --w2-text-mute: rgb(var(--w2-text-rgb) / max(.55, var(--w2-min-text-a)));
+
+  background: var(--w2-bg);
+  color: var(--w2-text);
 }
 
-html.web2 body { background: var(--ink); }
+html.web2 body { background: var(--w2-bg); }
+
+/* En modo claro, la marca usa el isotipo con las alas oscuras. */
+html.web2.light .brand-lockup .brand-isotype-light { display: block; }
+
+html.web2.light .brand-lockup .brand-isotype:not(.brand-isotype-light) { display: none; }
+
+/* Modo claro: mismas piezas, fondos blancos y texto oscuro. Los tintes de estado
+   conservan su color; cambia el tono con que se escribe el texto sobre ellos. */
+html.web2.light {
+  --w2-bg: #EEF1F7;
+  --w2-bg-rgb: 238 241 247;
+  --w2-surface: #FFFFFF;
+  --w2-surface-rgb: 255 255 255;
+  --w2-surface-2: #E8EDF6;
+  --w2-hover: #D3DFF2;
+  --w2-field: #F7F9FC;
+  --w2-text: #0A0F1E;
+  --w2-text-rgb: 10 15 30;
+  --w2-strong: #050713;
+  --w2-strong-rgb: 5 7 19;
+  --w2-accent-soft: #2A66A5;
+  --w2-accent-soft-rgb: 42 102 165;
+  --w2-danger: #B8103A;
+  --w2-ok: #2E7A1E;
+  --w2-brand: #2A7D00;
+  --w2-brand-rgb: 47 140 0;
+  --w2-danger-soft: #A3103A;
+  --w2-ok-soft: #2A701B;
+  --w2-purple-soft: #6B1670;
+  --w2-warn-text: #8A5A00;
+  /* El texto atenuado nunca baja de .62: sobre blanco, .55 no llega al mínimo. */
+  --w2-min-text-a: .62;
+  /* Sobre el azul del acento, el texto oscuro se lee mejor que el blanco. */
+  --w2-on-accent: #050713;
+  /* Invertido ahora es oscuro con texto claro. */
+  --w2-invert-bg: #050713;
+  --w2-invert-hover: #111936;
+  --w2-invert-text: #F5F7FA;
+  --w2-invert-text-rgb: 245 247 250;
+  --w2-invert-accent: #D9A6D7;
+  color-scheme: light;
+}
+
+/* En el modo claro, consolas, código y avisos siguen oscuros. Para que su texto
+   no se vuelva oscuro encima, vuelven a tomar los colores del modo oscuro. */
+html.web2.light #app .system-logs,
+html.web2.light #app .console-logs,
+html.web2.light #app .code-block,
+html.web2.light #app .actions-tooltip {
+  --w2-bg: #050713;
+  --w2-bg-rgb: 5 7 19;
+  --w2-surface: #0D1228;
+  --w2-surface-rgb: 13 18 40;
+  --w2-surface-2: #111936;
+  --w2-hover: #252E5A;
+  --w2-text: #F5F7FA;
+  --w2-text-rgb: 245 247 250;
+  --w2-strong: #FFFFFF;
+  --w2-strong-rgb: 255 255 255;
+  --w2-accent-soft: #7FC4FF;
+  --w2-accent-soft-rgb: 127 196 255;
+  --w2-danger: #FF7A90;
+  --w2-ok: #8CD97C;
+  --w2-brand: #76FA0A;
+  --w2-warn-text: #F59E0B;
+  --w2-on-accent: #FFFFFF;
+  --w2-invert-bg: #F5F7FA;
+  --w2-invert-hover: #FFFFFF;
+  --w2-invert-text: #050713;
+  --w2-invert-text-rgb: 5 7 19;
+  --w2-invert-accent: #761472;
+  --w2-min-text-a: 0;
+  --black: var(--w2-text);
+  --white: var(--w2-text);
+  --orange: var(--w2-accent-soft);
+  --gray-light: var(--w2-surface-2);
+  --gray-text: rgb(var(--w2-text-rgb) / .72);
+  --border: rgb(var(--w2-accent-rgb) / .62);
+  --paper: var(--w2-surface);
+  --line: 1px solid rgb(var(--w2-accent-rgb) / .62);
+  --w2-text-dim: rgb(var(--w2-text-rgb) / .72);
+  --w2-text-mute: rgb(var(--w2-text-rgb) / .55);
+}
 
 html.web2 #app {
-  background: var(--ink);
-  color: #F5F7FA;
+  background: var(--w2-bg);
+  color: var(--w2-text);
   /* La hoja original desactiva la negrita sintética; la interfaz de la app se
      apoya en pesos 600-700 que DM Mono no trae, así que se vuelve a permitir. */
   font-synthesis: weight;
 }
 
-html.web2 #app ::selection { background: var(--lime); color: #fff; }
+html.web2 #app ::selection { background: var(--lime); color: var(--w2-on-accent); }
 
 html.web2 #app ::-webkit-scrollbar { width: 8px; height: 8px; }
 html.web2 #app ::-webkit-scrollbar-track { background: transparent; }
-html.web2 #app ::-webkit-scrollbar-thumb { background: rgba(70, 137, 200, .45); }
-html.web2 #app ::-webkit-scrollbar-thumb:hover { background: #7FC4FF; }
+html.web2 #app ::-webkit-scrollbar-thumb { background: rgb(var(--w2-accent-rgb) / .45); }
+html.web2 #app ::-webkit-scrollbar-thumb:hover { background: var(--w2-accent-soft); }
 
 /* ------------------------------------------------------- 2. Titulares */
 html.web2 #app .home-container .main-title,
@@ -84,7 +235,7 @@ html.web2 #app .history-database .section-title {
   font-weight: 500;
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: #7FC4FF;
+  color: var(--w2-accent-soft);
 }
 
 /* La portada pinta su propio fondo con var(--white); aquí manda el fondo de la página */
@@ -97,7 +248,7 @@ html.web2 #app .home-container .navbar {
   z-index: 20;
   height: 72px;
   padding: 0 3vw;
-  background: rgba(5, 7, 19, .84);
+  background: rgb(var(--w2-bg-rgb) / .84);
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
   border-bottom: var(--line);
@@ -107,7 +258,7 @@ html.web2 #app .home-container .nav-brand { font-size: 20px; letter-spacing: -.0
 
 /* Sílaba final del nombre, en el verde de la marca (como en el logo) */
 html.web2 #app .home-container .nav-brand .brand-accent,
-html.web2 #app .main-view .brand .brand-accent { color: #76FA0A; }
+html.web2 #app .main-view .brand .brand-accent { color: var(--w2-brand); }
 
 html.web2 #app .home-container .nav-links { gap: 14px; }
 
@@ -120,7 +271,7 @@ html.web2 #app .home-container .github-link {
   text-transform: uppercase;
 }
 
-html.web2 #app .home-container .github-link:hover { opacity: 1; border-color: #fff; }
+html.web2 #app .home-container .github-link:hover { opacity: 1; border-color: var(--w2-strong); }
 
 html.web2 #app .home-container .main-content { max-width: 1600px; padding: 64px 3vw 90px; }
 
@@ -133,9 +284,9 @@ html.web2 #app .home-container .tag-row { gap: 12px; margin-bottom: 28px; text-t
 
 html.web2 #app .home-container .orange-tag {
   padding: 6px 10px;
-  border: 1px solid #7FC4FF;
+  border: 1px solid var(--w2-accent-soft);
   background: var(--lime);
-  color: #fff;
+  color: var(--w2-on-accent);
   font-size: 10px;
   font-weight: 500;
   letter-spacing: .12em;
@@ -150,7 +301,7 @@ html.web2 #app .home-container .version-text {
 
 html.web2 #app .home-container .main-title {
   margin: 0 0 34px;
-  color: #F5F7FA;
+  color: var(--w2-text);
   font-size: clamp(46px, 5.3vw, 88px);
 }
 
@@ -160,8 +311,8 @@ html.web2 #app .home-container .gradient-text {
   background: none;
   -webkit-background-clip: border-box;
   background-clip: border-box;
-  -webkit-text-fill-color: #7FC4FF;
-  color: #7FC4FF;
+  -webkit-text-fill-color: var(--w2-accent-soft);
+  color: var(--w2-accent-soft);
   font-family: 'Instrument Serif', serif;
   font-style: italic;
   font-weight: 400;
@@ -178,18 +329,18 @@ html.web2 #app .home-container .hero-desc {
   font-weight: 400;
   line-height: 1.7;
   text-align: left;
-  color: rgba(245, 247, 250, .86);
+  color: rgb(var(--w2-text-rgb) / .86);
 }
 
-html.web2 #app .home-container .highlight-bold { color: #F5F7FA; font-weight: 500; }
-html.web2 #app .home-container .highlight-orange { color: #7FC4FF; font-weight: 500; white-space: nowrap; }
+html.web2 #app .home-container .highlight-bold { color: var(--w2-text); font-weight: 500; }
+html.web2 #app .home-container .highlight-orange { color: var(--w2-accent-soft); font-weight: 500; white-space: nowrap; }
 
 html.web2 #app .home-container .highlight-code {
   padding: 1px 7px;
-  border: 1px solid rgba(127, 196, 255, .35);
+  border: 1px solid rgb(var(--w2-accent-soft-rgb) / .35);
   border-radius: 0;
-  background: rgba(127, 196, 255, .12);
-  color: #F5F7FA;
+  background: rgb(var(--w2-accent-soft-rgb) / .12);
+  color: var(--w2-text);
   font-weight: 400;
   white-space: nowrap;
 }
@@ -197,7 +348,7 @@ html.web2 #app .home-container .highlight-code {
 html.web2 #app .home-container .slogan-text {
   padding-left: 14px;
   border-left: 2px solid var(--lime);
-  color: #F5F7FA;
+  color: var(--w2-text);
   font-size: 14px;
   font-weight: 500;
   letter-spacing: .02em;
@@ -220,22 +371,22 @@ html.web2 #app .home-container .logo-container { flex: 1; align-items: center; j
 
 html.web2 #app .home-container .hero-logo {
   max-width: 400px;
-  border: 1px solid #76FA0A;
+  border: 1px solid var(--w2-brand);
   background: #000;
-  box-shadow: 14px 14px 0 #76FA0A;
+  box-shadow: 14px 14px 0 var(--w2-brand);
   transform: rotate(-2deg);
   transition: transform .25s cubic-bezier(.16, 1, .3, 1), box-shadow .25s;
   animation: w2-sticker-in .7s cubic-bezier(.16, 1, .3, 1) .35s backwards;
 }
 
 html.web2 #app .home-container .hero-logo:hover {
-  box-shadow: 7px 7px 0 #76FA0A;
+  box-shadow: 7px 7px 0 var(--w2-brand);
   transform: rotate(0deg) translateY(-6px);
 }
 
-html.web2 #app .home-container .scroll-down-btn { border: 1px solid rgba(255, 255, 255, .5); color: #fff; }
+html.web2 #app .home-container .scroll-down-btn { border: 1px solid rgb(var(--w2-strong-rgb) / .5); color: var(--w2-strong); }
 
-html.web2 #app .home-container .scroll-down-btn:hover { border-color: #fff; background: #fff; color: var(--ink); }
+html.web2 #app .home-container .scroll-down-btn:hover { border-color: var(--w2-invert-bg); background: var(--w2-invert-bg); color: var(--w2-invert-text); }
 
 /* ------------------------------------- 5. Portada: estado y métricas */
 html.web2 #app .home-container .panel-header,
@@ -248,7 +399,7 @@ html.web2 #app .home-container .steps-header::before { content: '[ '; }
 html.web2 #app .home-container .steps-header::after { content: ' ]'; }
 
 html.web2 #app .home-container .status-dot,
-html.web2 #app .home-container .diamond-icon { color: #7FC4FF; font-size: 10px; }
+html.web2 #app .home-container .diamond-icon { color: var(--w2-accent-soft); font-size: 10px; }
 
 html.web2 #app .home-container .section-title { margin: 0 0 14px; font-size: clamp(34px, 3.2vw, 52px); }
 
@@ -276,11 +427,11 @@ html.web2 #app .home-container .metric-card {
   transition: transform .25s, background-color .25s, border-color .25s;
 }
 
-html.web2 #app .home-container .metric-card:last-child { border-right: 0; background: #F5F7FA; color: var(--ink); }
+html.web2 #app .home-container .metric-card:last-child { border-right: 0; background: var(--w2-invert-bg); color: var(--w2-invert-text); }
 
-html.web2 #app .home-container .metric-card:hover { border-color: #7FC4FF; background-color: #111936; }
+html.web2 #app .home-container .metric-card:hover { border-color: var(--w2-accent-soft); background-color: var(--w2-surface-2); }
 
-html.web2 #app .home-container .metric-card:last-child:hover { background-color: #fff; }
+html.web2 #app .home-container .metric-card:last-child:hover { background-color: var(--w2-invert-hover); }
 
 html.web2 #app .home-container .metric-value {
   margin-bottom: 10px;
@@ -295,7 +446,7 @@ html.web2 #app .home-container .metric-value {
 html.web2 #app .home-container .metric-label { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--w2-text-dim); }
 
 html.web2 #app .home-container .metric-card:last-child .metric-value,
-html.web2 #app .home-container .metric-card:last-child .metric-label { color: rgba(5, 7, 19, .78); }
+html.web2 #app .home-container .metric-card:last-child .metric-label { color: rgb(var(--w2-invert-text-rgb) / .78); }
 
 /* Pasos del flujo: filas con borde compartido */
 html.web2 #app .home-container .steps-container { padding: 0; background: var(--paper); border: var(--line); }
@@ -313,13 +464,13 @@ html.web2 #app .home-container .workflow-item {
 
 html.web2 #app .home-container .workflow-item:last-child { border-bottom: 0; }
 
-html.web2 #app .home-container .workflow-item:hover { background: #111936; }
+html.web2 #app .home-container .workflow-item:hover { background: var(--w2-surface-2); }
 
-html.web2 #app .home-container .step-num { min-width: 26px; padding-top: 2px; color: #7FC4FF; font-size: 11px; font-weight: 500; letter-spacing: .08em; opacity: 1; }
+html.web2 #app .home-container .step-num { min-width: 26px; padding-top: 2px; color: var(--w2-accent-soft); font-size: 11px; font-weight: 500; letter-spacing: .08em; opacity: 1; }
 
 html.web2 #app .home-container .step-title { margin-bottom: 4px; font-size: 13px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
 
-html.web2 #app .home-container .step-desc { font-size: 12px !important; line-height: 1.6 !important; color: rgba(245, 247, 250, .66); }
+html.web2 #app .home-container .step-desc { font-size: 12px !important; line-height: 1.6 !important; color: rgb(var(--w2-text-rgb) / .66); }
 
 /* ------------------------------------------ 6. Portada: consola */
 html.web2 #app .home-container .console-box { padding: 0; border: var(--line); background: var(--paper); }
@@ -332,38 +483,38 @@ html.web2 #app .home-container .console-header { margin-bottom: 14px; }
 
 html.web2 #app .home-container .console-meta { color: var(--w2-text-mute); letter-spacing: .08em; }
 
-html.web2 #app .home-container .upload-zone { border: 1px dashed rgba(127, 196, 255, .45); background: var(--ink); }
+html.web2 #app .home-container .upload-zone { border: 1px dashed rgb(var(--w2-accent-soft-rgb) / .45); background: var(--w2-field); }
 
 html.web2 #app .home-container .upload-zone:hover,
-html.web2 #app .home-container .upload-zone.drag-over { border-color: #7FC4FF; background: #111936; }
+html.web2 #app .home-container .upload-zone.drag-over { border-color: var(--w2-accent-soft); background: var(--w2-surface-2); }
 
-html.web2 #app .home-container .upload-icon { border-color: rgba(127, 196, 255, .6); color: #7FC4FF; }
+html.web2 #app .home-container .upload-icon { border-color: rgb(var(--w2-accent-soft-rgb) / .6); color: var(--w2-accent-soft); }
 
 html.web2 #app .home-container .upload-title { font-size: 13px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
 
 html.web2 #app .home-container .upload-hint { font-size: 11px; color: var(--w2-text-mute); }
 
-html.web2 #app .home-container .file-item { border: var(--w2-line-soft, 1px solid rgba(70, 137, 200, .38)); background: #111936; }
+html.web2 #app .home-container .file-item { border: var(--w2-line-soft, 1px solid rgb(var(--w2-accent-rgb) / .38)); background: var(--w2-surface-2); }
 
 html.web2 #app .home-container .console-divider::before,
-html.web2 #app .home-container .console-divider::after { background: rgba(70, 137, 200, .62); }
+html.web2 #app .home-container .console-divider::after { background: rgb(var(--w2-accent-rgb) / .62); }
 
-html.web2 #app .home-container .console-divider span { color: #7FC4FF; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; }
+html.web2 #app .home-container .console-divider span { color: var(--w2-accent-soft); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; }
 
-html.web2 #app .home-container .input-wrapper { border: var(--line); background: var(--ink); transition: border-color .2s, box-shadow .2s; }
+html.web2 #app .home-container .input-wrapper { border: var(--line); background: var(--w2-field); transition: border-color .2s, box-shadow .2s; }
 
-html.web2 #app .home-container .input-wrapper:focus-within { border-color: #7FC4FF; box-shadow: 4px 4px 0 var(--lime); }
+html.web2 #app .home-container .input-wrapper:focus-within { border-color: var(--w2-accent-soft); box-shadow: 4px 4px 0 var(--lime); }
 
-html.web2 #app .home-container .code-input { color: #F5F7FA; caret-color: #7FC4FF; font-size: 14px; }
+html.web2 #app .home-container .code-input { color: var(--w2-text); caret-color: var(--w2-accent-soft); font-size: 14px; }
 
-html.web2 #app .home-container .code-input::placeholder { color: rgba(245, 247, 250, .4); }
+html.web2 #app .home-container .code-input::placeholder { color: rgb(var(--w2-text-rgb) / max(.4, var(--w2-min-text-a))); }
 
-html.web2 #app .home-container .model-badge { color: rgba(245, 247, 250, .45); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+html.web2 #app .home-container .model-badge { color: rgb(var(--w2-text-rgb) / max(.45, var(--w2-min-text-a))); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
 
 /* Botón principal: fondo de acento, borde claro y sombra dura */
 html.web2 #app .home-container .start-engine-btn {
   padding: 18px 22px;
-  color: #fff;
+  color: var(--w2-on-accent);
   font-size: 13px;
   font-weight: 500;
   letter-spacing: .08em;
@@ -373,14 +524,16 @@ html.web2 #app .home-container .start-engine-btn {
 
 html.web2 #app .home-container .start-engine-btn:not(:disabled) {
   background: var(--lime);
-  border: 1px solid #7FC4FF;
+  border: 1px solid var(--w2-accent-soft);
   box-shadow: 6px 6px 0 var(--purple);
   animation: none;
 }
 
 html.web2 #app .home-container .start-engine-btn:hover:not(:disabled) {
   background: var(--purple);
-  border-color: #fff;
+  border-color: var(--w2-strong);
+  /* Sobre el morado del hover, el texto va siempre en blanco. */
+  color: #FFFFFF;
   transform: translate(4px, 4px);
 }
 
@@ -389,57 +542,64 @@ html.web2 #app .home-container .start-engine-btn:not(:disabled):hover { box-shad
 html.web2 #app .home-container .start-engine-btn:active:not(:disabled) { transform: translate(6px, 6px); }
 
 html.web2 #app .home-container .start-engine-btn:disabled {
-  border: 1px solid rgba(245, 247, 250, .18);
-  background: rgba(245, 247, 250, .06);
-  color: rgba(245, 247, 250, .4);
+  border: 1px solid rgb(var(--w2-text-rgb) / .18);
+  background: rgb(var(--w2-text-rgb) / .06);
+  color: rgb(var(--w2-text-rgb) / max(.4, var(--w2-min-text-a)));
 }
 
 /* ------------------------------------------ 7. Portada: historial */
 html.web2 #app .history-database .section-title { padding: 0 18px; font-size: 11px; letter-spacing: .2em; }
 
-html.web2 #app .history-database .section-line { height: 1px; background: rgba(70, 137, 200, .62); }
+html.web2 #app .history-database .section-line { height: 1px; background: rgb(var(--w2-accent-rgb) / .62); }
 
 html.web2 #app .history-database .project-card { transition: box-shadow .25s, border-color .25s; }
 
-html.web2 #app .history-database .project-card.hovering { border-color: #7FC4FF; box-shadow: 8px 8px 0 var(--lime); }
+html.web2 #app .history-database .project-card.hovering { border-color: var(--w2-accent-soft); box-shadow: 8px 8px 0 var(--lime); }
 
 /* Modal de historial: se monta fuera de #app (Teleport) */
-html.web2 body .modal-content { border: 1px solid #7FC4FF; box-shadow: 12px 12px 0 var(--lime); }
+html.web2 body .modal-content { border: 1px solid var(--w2-accent-soft); box-shadow: 12px 12px 0 var(--lime); }
 
 html.web2 body .modal-btn { border-radius: 0; text-transform: uppercase; letter-spacing: .04em; transition: transform .2s, box-shadow .2s, border-color .2s; }
 
-html.web2 body .modal-btn:not(:disabled) { box-shadow: 4px 4px 0 var(--purple); border-color: #7FC4FF; }
+html.web2 body .modal-btn:not(:disabled) { box-shadow: 4px 4px 0 var(--purple); border-color: var(--w2-accent-soft); }
 
-html.web2 body .modal-btn:hover:not(:disabled) { border-color: #fff; box-shadow: 0 0 0 var(--purple); transform: translate(3px, 3px); }
+html.web2 body .modal-btn:hover:not(:disabled) { border-color: var(--w2-strong); box-shadow: 0 0 0 var(--purple); transform: translate(3px, 3px); }
 
 /* ------------------------------------------ 8. Selector de idioma */
 html.web2 #app .language-switcher .switcher-trigger {
   padding: 6px 10px;
-  border: 1px solid rgba(255, 255, 255, .5);
-  color: #F5F7FA;
+  border: 1px solid rgb(var(--w2-strong-rgb) / .5);
+  color: var(--w2-text);
   font-size: 11px;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
 
-html.web2 #app .language-switcher .switcher-trigger:hover { border-color: #fff; background: #fff; color: var(--ink); }
+html.web2 #app .language-switcher .switcher-trigger:hover { border-color: var(--w2-invert-bg); background: var(--w2-invert-bg); color: var(--w2-invert-text); }
 
-html.web2 #app .language-switcher .switcher-dropdown { border: 1px solid var(--ink); background: #F5F7FA; box-shadow: 6px 6px 0 var(--lime); }
+html.web2 #app .language-switcher .switcher-dropdown { border: 1px solid var(--w2-invert-text); background: var(--w2-invert-bg); box-shadow: 6px 6px 0 var(--lime); }
 
-html.web2 #app .language-switcher .switcher-option { padding: 8px 12px; color: var(--ink); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+html.web2 #app .language-switcher .switcher-option { padding: 8px 12px; color: var(--w2-invert-text); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
 
-html.web2 #app .language-switcher .switcher-option:hover { background: rgba(70, 137, 200, .18); }
+html.web2 #app .language-switcher .switcher-option:hover { background: rgb(var(--w2-accent-rgb) / .18); }
 
-html.web2 #app .language-switcher .switcher-option.active { color: var(--purple); }
+html.web2 #app .language-switcher .switcher-option.active { color: var(--w2-invert-accent); }
 
 /* ------------------------------------------ 9. Vistas interiores */
-html.web2 #app .main-view { background: var(--ink); font-family: 'DM Mono', monospace; }
+html.web2 #app .main-view { background: var(--w2-bg); font-family: 'DM Mono', monospace; }
 
-html.web2 #app .main-view .app-header { background: rgba(5, 7, 19, .9); border-bottom: var(--line); }
+html.web2 #app .main-view .app-header { background: rgb(var(--w2-bg-rgb) / .9); border-bottom: var(--line); }
 
 html.web2 #app .main-view .brand { font-size: 18px; letter-spacing: -.02em; }
 
-html.web2 #app .main-view .view-switcher { gap: 0; padding: 0; border: var(--line); border-radius: 0; background: transparent; }
+/* El selector de vista flotaba en el centro exacto y tapaba las herramientas de la
+   derecha en cuanto estas crecieron. Va en el flujo, centrado en el hueco que queda. */
+html.web2 #app .main-view .header-left,
+html.web2 #app .main-view .header-right { flex: none; }
+
+html.web2 #app .main-view .header-center { position: static; flex: 1; display: flex; justify-content: center; min-width: 0; transform: none; }
+
+html.web2 #app .main-view .view-switcher { flex: none; gap: 0; padding: 0; border: var(--line); border-radius: 0; background: transparent; }
 
 html.web2 #app .main-view .switch-btn {
   padding: 8px 14px;
@@ -454,25 +614,25 @@ html.web2 #app .main-view .switch-btn {
 
 html.web2 #app .main-view .switch-btn:last-child { border-right: 0; }
 
-html.web2 #app .main-view .switch-btn:not(.active):hover { background: #111936; color: #F5F7FA; }
+html.web2 #app .main-view .switch-btn:not(.active):hover { background: var(--w2-surface-2); color: var(--w2-text); }
 
-html.web2 #app .main-view .switch-btn.active { background: #F5F7FA; color: var(--ink); box-shadow: none; }
+html.web2 #app .main-view .switch-btn.active { background: var(--w2-invert-bg); color: var(--w2-invert-text); box-shadow: none; }
 
 html.web2 #app .main-view .status-indicator { color: var(--w2-text-dim); font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
 
 html.web2 #app .main-view .workflow-step { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
 
-html.web2 #app .main-view .step-num { color: #7FC4FF; letter-spacing: .08em; }
+html.web2 #app .main-view .step-num { color: var(--w2-accent-soft); letter-spacing: .08em; }
 
 html.web2 #app .main-view .step-name { font-weight: 500; }
 
-html.web2 #app .main-view .step-divider { background: rgba(70, 137, 200, .62); }
+html.web2 #app .main-view .step-divider { background: rgb(var(--w2-accent-rgb) / .62); }
 
 html.web2 #app .main-view .panel-wrapper.left { border-right: var(--line); }
 
 html.web2 #app .workbench-panel .step-num,
 html.web2 #app .env-setup-panel .step-num {
-  color: #7FC4FF;
+  color: var(--w2-accent-soft);
   font-family: 'Archivo Black', sans-serif;
   font-weight: 400;
   letter-spacing: -.04em;
@@ -485,16 +645,16 @@ html.web2 #app .report-panel .section-title,
 html.web2 #app .interaction-panel .section-title { font-size: 20px; letter-spacing: -.04em; }
 
 /* Grafo: los colores son atributos SVG, que una regla CSS sí puede sobreescribir */
-html.web2 #app .graph-panel .links path:not(:hover) { stroke: rgba(70, 137, 200, .5); }
+html.web2 #app .graph-panel .links path:not(:hover) { stroke: rgb(var(--w2-accent-rgb) / .5); }
 
-html.web2 #app .graph-panel .links rect { fill: var(--paper); stroke: rgba(70, 137, 200, .38); }
+html.web2 #app .graph-panel .links rect { fill: var(--paper); stroke: rgb(var(--w2-accent-rgb) / .38); }
 
 html.web2 #app .graph-panel .links text,
 html.web2 #app .graph-panel .nodes text { font-family: 'DM Mono', monospace !important; }
 
 html.web2 #app .graph-panel .links text { fill: var(--w2-text-dim); }
 
-html.web2 #app .graph-panel .nodes text { fill: #F5F7FA; }
+html.web2 #app .graph-panel .nodes text { fill: var(--w2-text); }
 
 /* ------------------------------------------ 10. Botones de acción */
 html.web2 #app .workbench-panel .action-btn,
@@ -517,7 +677,7 @@ html.web2 #app .report-panel .next-step-btn,
 html.web2 #app .interaction-panel .next-step-btn,
 html.web2 #app .interaction-panel .send-btn:not(:disabled),
 html.web2 #app .interaction-panel .survey-submit-btn:not(:disabled) {
-  border: 1px solid #7FC4FF;
+  border: 1px solid var(--w2-accent-soft);
   box-shadow: 4px 4px 0 var(--purple);
 }
 
@@ -528,42 +688,43 @@ html.web2 #app .report-panel .next-step-btn:hover,
 html.web2 #app .interaction-panel .next-step-btn:hover,
 html.web2 #app .interaction-panel .send-btn:hover:not(:disabled),
 html.web2 #app .interaction-panel .survey-submit-btn:hover:not(:disabled) {
-  border-color: #fff;
+  border-color: var(--w2-strong);
   background: var(--purple);
+  /* Sobre el morado del hover, el texto va siempre en blanco. */
+  color: #FFFFFF;
   box-shadow: 0 0 0 var(--purple);
   transform: translate(3px, 3px);
 }
 
-html.web2 #app .env-setup-panel .action-btn.secondary:not(:disabled) { border: 1px solid rgba(245, 247, 250, .45); }
+html.web2 #app .env-setup-panel .action-btn.secondary:not(:disabled) { border: 1px solid rgb(var(--w2-text-rgb) / .45); }
 
-html.web2 #app .env-setup-panel .action-btn.secondary:hover:not(:disabled) { border-color: #fff; background: #F5F7FA; color: var(--ink); }
+html.web2 #app .env-setup-panel .action-btn.secondary:hover:not(:disabled) { border-color: var(--w2-invert-bg); background: var(--w2-invert-bg); color: var(--w2-invert-text); }
 
-/* --------------------------- 11. Superficies que deben seguir oscuras */
-/* La traducción automática vuelve azules los fondos oscuros; estas no son
-   botones sino consolas, código y avisos. */
+/* --------------------------- 11. Superficies que siguen oscuras */
+/* Consolas, código y avisos: en el modo claro conservan el fondo oscuro. */
 html.web2 #app .system-logs,
 html.web2 #app .console-logs,
-html.web2 #app .code-block { background-color: var(--ink); }
+html.web2 #app .code-block { background-color: var(--w2-console-bg); }
 
 html.web2 #app .system-logs ::-webkit-scrollbar-thumb,
-html.web2 #app .console-logs ::-webkit-scrollbar-thumb { background: rgba(245, 247, 250, .25); }
+html.web2 #app .console-logs ::-webkit-scrollbar-thumb { background: rgb(var(--w2-text-rgb) / .25); }
 
-html.web2 #app .actions-tooltip { border: 1px solid #7FC4FF; background-color: var(--ink); box-shadow: 4px 4px 0 var(--lime); }
+html.web2 #app .actions-tooltip { border: 1px solid var(--w2-accent-soft); background-color: var(--w2-console-bg); box-shadow: 4px 4px 0 var(--lime); }
 
 /* Burbuja del usuario en el chat: acento con texto claro no da contraste suficiente */
-html.web2 #app .interaction-panel .chat-message.user .message-text { background-color: #252E5A; }
+html.web2 #app .interaction-panel .chat-message.user .message-text { background-color: var(--w2-hover); }
 
 /* Campos de texto: el del chat no define fondo y usa el blanco del navegador */
 html.web2 #app .interaction-panel .chat-input {
   border-radius: 0;
-  background: var(--ink);
-  color: #F5F7FA;
-  caret-color: #7FC4FF;
+  background: var(--w2-field);
+  color: var(--w2-text);
+  caret-color: var(--w2-accent-soft);
 }
 
-html.web2 #app .interaction-panel .chat-input::placeholder { color: rgba(245, 247, 250, .45); }
+html.web2 #app .interaction-panel .chat-input::placeholder { color: rgb(var(--w2-text-rgb) / max(.45, var(--w2-min-text-a))); }
 
-html.web2 #app .interaction-panel .chat-input:focus { border-color: #7FC4FF; box-shadow: 4px 4px 0 var(--lime); }
+html.web2 #app .interaction-panel .chat-input:focus { border-color: var(--w2-accent-soft); box-shadow: 4px 4px 0 var(--lime); }
 
 /* ------------------------------------------------- 12. Movimiento */
 html.web2 #app .home-container .tag-row { animation: detail-in .5s .05s backwards; }
@@ -593,15 +754,59 @@ html.web2 #app .home-container .console-box { animation: card-in .6s cubic-bezie
 }
 
 /* Pantallas angostas: el titular se reduce antes que desbordar */
-@media (max-width: 640px) {
-  html.web2 #app .home-container .main-title { font-size: clamp(34px, 10vw, 46px); }
-
-  /* La barra de la portada no cabe entera en un celular (marca, idioma, usuario y
-     GitHub): menos aire, nombre más pequeño y sin el enlace a GitHub. */
+/* La barra de la portada deja de caber antes que el resto (marca, idioma, modo,
+   usuario y el enlace a GitHub): a este ancho se compacta y se va el enlace. */
+@media (max-width: 700px) {
   html.web2 #app .home-container .navbar { padding: 0 16px; }
   html.web2 #app .home-container .nav-brand { font-size: 16px; }
   html.web2 #app .home-container .nav-links { gap: 8px; }
   html.web2 #app .home-container .github-link { display: none; }
+}
+
+@media (max-width: 640px) {
+  html.web2 #app .home-container .main-title { font-size: clamp(34px, 10vw, 46px); }
+
+  html.web2 #app .main-view .app-header { gap: 8px 10px; padding: 8px 12px; }
+  html.web2 #app .main-view .brand { font-size: 16px; }
+}
+
+@media (max-width: 380px) {
+  /* Muy angosto: la marca queda solo con el hexágono. */
+  html.web2 .brand-lockup > span { display: none; }
+}
+
+/* ------------------------------------------ 13. Cabecera de las pantallas de trabajo
+   Cuanto más angosta la pantalla, menos cabe: primero se va el estado, después el
+   paso, y en una tableta o un celular el selector de vista pasa a su propia fila. */
+@media (max-width: 1365px) {
+  html.web2 #app .main-view .header-right .status-indicator,
+  html.web2 #app .main-view .header-right .step-divider:last-of-type { display: none; }
+}
+
+/* En una portátil pequeña el nombre del usuario va sin su nivel. */
+@media (max-width: 1279px) {
+  html.web2 #app .main-view .header-right .user-role { display: none; }
+}
+
+@media (max-width: 1180px) {
+  html.web2 #app .main-view .header-right .workflow-step,
+  html.web2 #app .main-view .header-right .step-divider { display: none; }
+}
+
+@media (max-width: 860px) {
+  html.web2 #app .main-view .app-header {
+    height: auto;
+    min-height: 60px;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    padding: 10px 24px;
+  }
+
+  html.web2 #app .main-view .header-center { flex: 1 0 100%; order: 3; justify-content: stretch; }
+
+  html.web2 #app .main-view .header-right { margin-left: auto; gap: 8px; }
+
+  html.web2 #app .main-view .switch-btn { flex: 1; padding: 8px 6px; text-align: center; }
 }
 
 /* Al apilarse las columnas (ancho de tableta), los paneles ocupan todo el ancho.

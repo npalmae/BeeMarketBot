@@ -3,6 +3,7 @@
     <header class="login-header">
       <BrandMark class="login-brand" />
       <LanguageSwitcher />
+      <ThemeSwitch />
     </header>
 
     <main class="authkit-page full">
@@ -50,6 +51,7 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import ThemeSwitch from '../components/ThemeSwitch.vue'
 import BrandMark from '../components/BrandMark.vue'
 import { auth, login } from '../auth'
 
@@ -85,8 +87,8 @@ const submit = async () => {
 <style scoped>
 .login-page {
   min-height: 100vh;
-  background: #050713;
-  color: #F5F7FA;
+  background: var(--w2-bg);
+  color: var(--w2-text);
   font-family: 'DM Mono', monospace;
 }
 
@@ -97,7 +99,7 @@ const submit = async () => {
   height: 60px;
   padding: 0 24px;
   border-bottom: var(--line);
-  background: rgba(5, 7, 19, .9);
+  background: rgb(var(--w2-bg-rgb) / .9);
 }
 
 .login-brand {
