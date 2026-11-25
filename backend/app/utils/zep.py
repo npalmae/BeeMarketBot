@@ -10,6 +10,7 @@ variables ``GRAPH_LLM_*`` y ``EMBEDDING_*``.
 
 from __future__ import annotations
 
+import os
 import time
 from typing import Callable, TypeVar
 
@@ -22,7 +23,9 @@ logger = get_logger("mirofish.graph_client")
 T = TypeVar("T")
 
 # Espera máxima, en segundos, de una ingesta (un documento grande puede tardar).
-ZEP_INGESTION_WAIT_TIMEOUT_SECONDS = 600
+ZEP_INGESTION_WAIT_TIMEOUT_SECONDS = int(
+    os.environ.get("GRAPH_INGESTION_TIMEOUT", "1800")
+)
 MAX_ZEP_SEARCH_QUERY_CHARS = 400
 MAX_ZEP_SEARCH_RESULTS = 50
 # Se conserva por compatibilidad: el cliente ya no fija un tiempo por petición HTTP.
