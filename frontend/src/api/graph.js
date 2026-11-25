@@ -13,6 +13,9 @@ export function generateOntology(formData, options = {}) {
     headers: {
       'Content-Type': 'multipart/form-data'
     },
+    // Los modelos locales pueden tardar varios minutos en generar la
+    // ontología; el usuario conserva el botón de cancelación en la interfaz.
+    timeout: 900000,
     ...options
   })
 }
