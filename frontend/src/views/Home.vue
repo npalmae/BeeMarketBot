@@ -624,6 +624,10 @@ const startSimulation = () => {
   min-width: 150px;
 }
 
+.metric-card:first-child {
+  background: #626975;
+}
+
 .metric-value {
   font-family: var(--font-mono);
   font-size: 1.8rem;
@@ -662,6 +666,10 @@ const startSimulation = () => {
 
 :global(html.web2.light #app) .sixmanager-signature {
   color: #4a4a4a;
+}
+
+:global(html.web2.light #app .home-container .metric-card:first-child) {
+  background: #d5d8de;
 }
 
 :global(html.web2 #app .home-container .metric-card:last-child) {
