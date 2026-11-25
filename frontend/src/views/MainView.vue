@@ -57,8 +57,9 @@
           :ontologyProgress="ontologyProgress"
           :buildProgress="buildProgress"
           :graphData="graphData"
-          :systemLogs="systemLogs"
-          @next-step="handleNextStep"
+           :systemLogs="systemLogs"
+           @next-step="handleNextStep"
+           @cancel-generation="cancelOntologyGeneration"
         />
         <!-- Step 2: 环境搭建 -->
         <Step2EnvSetup
@@ -113,6 +114,7 @@ const currentPhase = ref(-1) // -1: Upload, 0: Ontology, 1: Build, 2: Complete
 const ontologyProgress = ref(null)
 const buildProgress = ref(null)
 const systemLogs = ref([])
+const ontologyRequestController = ref(null)
 
 // Polling timers
 let pollTimer = null
@@ -219,7 +221,10 @@ const handleNewProject = async () => {
     pending.files.forEach(f => formData.append('files', f))
     formData.append('simulation_requirement', pending.simulationRequirement)
     
-    const res = await generateOntology(formData)
+    ontologyRequestController.value = new AbortController()
+    const res = await generateOntology(formData, {
+      signal: ontologyRequestController.value.signal
+    })
     if (res.success) {
       clearPendingUpload()
       currentProjectId.value = res.data.project_id
@@ -234,11 +239,25 @@ const handleNewProject = async () => {
       addLog(`Error generating ontology: ${error.value}`)
     }
   } catch (err) {
+    if (err.code === 'ERR_CANCELED' || err.name === 'CanceledError') {
+      error.value = 'Ontology generation cancelled.'
+      addLog('Ontology generation cancelled by user.')
+      return
+    }
     error.value = err.message
     addLog(`Exception in handleNewProject: ${err.message}`)
   } finally {
+    ontologyRequestController.value = null
     loading.value = false
   }
+}
+
+const cancelOntologyGeneration = () => {
+  if (!ontologyRequestController.value) return
+  ontologyRequestController.value.abort()
+  ontologyProgress.value = null
+  currentPhase.value = -1
+  addLog('Cancelling ontology generation...')
 }
 
 const loadProject = async () => {

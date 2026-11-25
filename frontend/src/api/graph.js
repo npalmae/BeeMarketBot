@@ -5,14 +5,15 @@ import service from './index'
  * @param {Object} data - 包含files, simulation_requirement, project_name等
  * @returns {Promise}
  */
-export function generateOntology(formData) {
+export function generateOntology(formData, options = {}) {
   return service({
     url: '/api/graph/ontology/generate',
     method: 'post',
     data: formData,
     headers: {
       'Content-Type': 'multipart/form-data'
-    }
+    },
+    ...options
   })
 }
 

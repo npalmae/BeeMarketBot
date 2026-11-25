@@ -102,7 +102,8 @@
     "creating": "创建中...",
     "enterEnvSetup": "进入环境搭建",
     "createSimulationFailed": "创建模拟失败: {error}",
-    "createSimulationException": "创建模拟异常: {error}"
+    "createSimulationException": "创建模拟异常: {error}",
+    "cancelGeneration": "取消生成"
   },
   "step2": {
     "simInstanceInit": "模拟实例初始化",

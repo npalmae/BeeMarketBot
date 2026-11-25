@@ -26,6 +26,14 @@
             <div class="spinner-sm"></div>
             <span>{{ ontologyProgress.message || $t('step1.analyzingDocs') }}</span>
           </div>
+          <button
+            v-if="currentPhase === 0 && ontologyProgress"
+            class="cancel-generation-btn"
+            type="button"
+            @click="$emit('cancel-generation')"
+          >
+            {{ $t('step1.cancelGeneration') }}
+          </button>
 
           <!-- Detail Overlay -->
           <div v-if="selectedOntologyItem" class="ontology-detail-overlay">
@@ -206,7 +214,7 @@ const props = defineProps({
   systemLogs: { type: Array, default: () => [] }
 })
 
-defineEmits(['next-step'])
+defineEmits(['next-step', 'cancel-generation'])
 
 const selectedOntologyItem = ref(null)
 const logContent = ref(null)
@@ -632,6 +640,22 @@ watch(() => props.systemLogs.length, () => {
   font-size: 12px;
   color: #FF5722;
   margin-bottom: 12px;
+}
+
+.cancel-generation-btn {
+  margin-top: 14px;
+  padding: 9px 14px;
+  color: #b42318;
+  background: transparent;
+  border: 2px solid #b42318;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cancel-generation-btn:hover {
+  color: #fff;
+  background: #b42318;
 }
 
 .spinner-sm {
