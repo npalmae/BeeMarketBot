@@ -617,7 +617,7 @@ const startSimulation = () => {
 .metric-card {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: center !important;
   align-items: flex-start;
   border: 1px solid var(--border);
   padding: 20px 30px;
@@ -628,7 +628,7 @@ const startSimulation = () => {
   font-family: var(--font-mono);
   font-size: 1.8rem;
   font-weight: 520;
-  margin-bottom: 5px;
+  margin-bottom: 2px !important;
 }
 
 .metric-label {
@@ -660,8 +660,16 @@ const startSimulation = () => {
   object-fit: contain;
 }
 
-:global(html.web2.light) .sixmanager-signature {
+:global(html.web2.light #app) .sixmanager-signature {
   color: #26345f;
+}
+
+:global(html.web2 #app .home-container .metric-card:last-child) {
+  justify-content: center !important;
+}
+
+:global(html.web2 #app .home-container .metric-card:last-child .metric-value) {
+  margin-bottom: 2px !important;
 }
 
 /* 项目模拟步骤介绍 */
