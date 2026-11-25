@@ -615,6 +615,10 @@ const startSimulation = () => {
 }
 
 .metric-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
   border: 1px solid var(--border);
   padding: 20px 30px;
   min-width: 150px;
