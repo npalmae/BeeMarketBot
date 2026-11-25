@@ -261,7 +261,6 @@ onMounted(async () => {
 @page {
   margin: 18mm 14mm;
 }
-
 @media print {
   .print-page { background: #fff; padding: 0; }
   .no-print { display: none !important; }
@@ -278,6 +277,52 @@ onMounted(async () => {
     border: 1.5px solid #1a2e4a;
     background: #f2f4f8;
     color: #1a2e4a;
+  }
+
+  /* Paginación: ningún párrafo se corta entre páginas; si no cabe entero,
+     pasa completo a la página siguiente. */
+  .doc-body :deep(p),
+  .doc-body :deep(.md-p),
+  .doc-body :deep(li) {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Los títulos nunca quedan solos al pie de página: van con su contenido. */
+  .doc-body :deep(h2),
+  .doc-body :deep(h3),
+  .doc-body :deep(h4),
+  .doc-body :deep(h5) {
+    break-after: avoid;
+    page-break-after: avoid;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Citas, código y separadores tampoco se parten. */
+  .doc-body :deep(blockquote),
+  .doc-body :deep(.md-quote),
+  .doc-body :deep(pre),
+  .doc-body :deep(.code-block),
+  .doc-body :deep(.md-hr),
+  .doc-header,
+  .doc-footer {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+</style>
+
+<style>
+/* El fondo de la página impresa (los márgenes del PDF) lo toman el elemento
+   raíz y el esquema de color: en modo oscuro quedarían azul marino. Global a
+   propósito. */
+@media print {
+  html, body {
+    background: #fff !important;
+    color-scheme: light !important;
   }
 }
 </style>
