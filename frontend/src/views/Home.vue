@@ -624,10 +624,6 @@ const startSimulation = () => {
   min-width: 150px;
 }
 
-.metric-card:first-child {
-  background: #626975;
-}
-
 .metric-value {
   font-family: var(--font-mono);
   font-size: 1.8rem;
