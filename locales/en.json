@@ -30,7 +30,8 @@
     "description": "BeeMarketBot - Social Media Opinion Simulation System"
   },
   "nav": {
-    "visitGithub": "Visit our Github page"
+    "visitGithub": "Visit our Github page",
+    "steps": "Workflow steps"
   },
   "home": {
     "tagline": "Concise & Universal Swarm Intelligence Engine",

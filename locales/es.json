@@ -30,7 +30,8 @@
     "description": "BeeMarketBot - Sistema de simulación de opinión en redes sociales"
   },
   "nav": {
-    "visitGithub": "Visita nuestra página de GitHub"
+    "visitGithub": "Visita nuestra página de GitHub",
+    "steps": "Pasos del flujo"
   },
   "home": {
     "tagline": "Motor de inteligencia de enjambre, conciso y universal",

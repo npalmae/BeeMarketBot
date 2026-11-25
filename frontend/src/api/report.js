@@ -43,6 +43,14 @@ export const getReport = (reportId) => {
 }
 
 /**
+ * El informe de una simulación (si ya existe)
+ * @param {string} simulationId
+ */
+export const getReportBySimulation = (simulationId) => {
+  return service.get(`/api/report/by-simulation/${simulationId}`)
+}
+
+/**
  * 与 Report Agent 对话
  * @param {Object} data - { simulation_id, message, chat_history? }
  */

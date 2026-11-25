@@ -25,10 +25,7 @@
         <ThemeSwitch />
         <UserMenu />
         <div class="step-divider"></div>
-        <div class="workflow-step">
-          <span class="step-num">Step 3/5</span>
-          <span class="step-name">{{ $tm('main.stepNames')[2] }}</span>
-        </div>
+        <StepNavigator :current="3" :simulation-id="currentSimulationId" />
         <div class="step-divider"></div>
         <span class="status-indicator" :class="statusClass">
           <span class="dot"></span>
@@ -79,6 +76,7 @@ import { getProject, getGraphData } from '../api/graph'
 import { getSimulation, getSimulationConfig, stopSimulation, closeSimulationEnv, getEnvStatus } from '../api/simulation'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import ThemeSwitch from '../components/ThemeSwitch.vue'
+import StepNavigator from '../components/StepNavigator.vue'
 import BrandMark from '../components/BrandMark.vue'
 import UserMenu from '../components/UserMenu.vue'
 import { useI18n } from 'vue-i18n'

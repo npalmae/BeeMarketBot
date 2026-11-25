@@ -25,10 +25,7 @@
         <ThemeSwitch />
         <UserMenu />
         <div class="step-divider"></div>
-        <div class="workflow-step">
-          <span class="step-num">Step {{ currentStep }}/5</span>
-          <span class="step-name">{{ $tm('main.stepNames')[currentStep - 1] }}</span>
-        </div>
+        <StepNavigator :current="currentStep" :project-id="currentProjectId" />
         <div class="step-divider"></div>
         <span class="status-indicator" :class="statusClass">
           <span class="dot"></span>
@@ -89,6 +86,7 @@ import { generateOntology, getProject, buildGraph, getTaskStatus, getGraphData }
 import { getPendingUpload, clearPendingUpload } from '../store/pendingUpload'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import ThemeSwitch from '../components/ThemeSwitch.vue'
+import StepNavigator from '../components/StepNavigator.vue'
 import BrandMark from '../components/BrandMark.vue'
 import UserMenu from '../components/UserMenu.vue'
 import { canEdit } from '../auth'
