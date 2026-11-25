@@ -73,6 +73,11 @@
             <div class="metric-card">
               <div class="metric-value">{{ $t('home.metricLowCost') }}</div>
               <div class="metric-label">{{ $t('home.metricLowCostDesc') }}</div>
+              <div class="sixmanager-signature" aria-label="Powered by Sixmanager">
+                <span>Powered by</span>
+                <img src="/logo-sixmanager.svg" alt="" />
+                <strong>Sixmanager</strong>
+              </div>
             </div>
             <div class="metric-card">
               <div class="metric-value">{{ $t('home.metricHighAvail') }}</div>
@@ -623,6 +628,33 @@ const startSimulation = () => {
 .metric-label {
   font-size: 0.85rem;
   color: #999;
+}
+
+.sixmanager-signature {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.sixmanager-signature img {
+  width: 15px;
+  height: 15px;
+  object-fit: contain;
+  filter: grayscale(1) brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+.sixmanager-signature strong {
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
 }
 
 /* 项目模拟步骤介绍 */
