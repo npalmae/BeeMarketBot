@@ -73,8 +73,10 @@
             <div class="metric-card">
               <div class="sixmanager-signature" aria-label="Powered by Sixmanager">
                 <span>Powered by</span>
-                <img src="/logo-sixmanager.svg" alt="" />
-                <strong>Sixmanager</strong>
+                <div class="sixmanager-brand">
+                  <img src="/logo-sixmanager.svg" alt="" />
+                  <strong>Sixmanager</strong>
+                </div>
               </div>
             </div>
             <div class="metric-card">
@@ -630,9 +632,10 @@ const startSimulation = () => {
 
 .sixmanager-signature {
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  gap: 5px;
-  margin-top: 12px;
+  gap: 4px;
+  margin: 2px auto 0;
   color: rgba(255, 255, 255, 0.78);
   font-size: 9px;
   font-weight: 600;
@@ -640,19 +643,25 @@ const startSimulation = () => {
   white-space: nowrap;
 }
 
-.sixmanager-signature img {
-  width: 15px;
-  height: 15px;
+.sixmanager-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sixmanager-brand img {
+  width: 22px;
+  height: 22px;
   object-fit: contain;
   filter: grayscale(1) brightness(0) invert(1);
   opacity: 0.9;
 }
 
-.sixmanager-signature strong {
+.sixmanager-brand strong {
   color: #fff;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
 }
 
 /* 项目模拟步骤介绍 */
