@@ -136,6 +136,16 @@
             </svg>
           </button>
 
+          <!-- Descargar el informe en Markdown -->
+          <button v-if="isComplete" class="download-report-btn" @click="downloadReport">
+            <span>{{ $t('step4.downloadReport') }}</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </button>
+
           <div class="workflow-divider"></div>
         </div>
 
@@ -411,6 +421,18 @@ const goToInteraction = () => {
   if (props.reportId) {
     router.push({ name: 'Interaction', params: { reportId: props.reportId } })
   }
+}
+
+// Descarga el informe como .md: GET con la cookie de sesión, el navegador
+// guarda el adjunto directamente.
+const downloadReport = () => {
+  if (!props.reportId) return
+  const link = document.createElement('a')
+  link.href = `/api/report/${props.reportId}/download`
+  link.download = `${props.reportId}.md`
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
 }
 
 // State
@@ -3430,6 +3452,29 @@ watch(() => props.reportId, (newId) => {
 
 .next-step-btn:hover svg {
   transform: translateX(4px);
+}
+
+.download-report-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 40px);
+  margin: 10px 20px 0 20px;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1F2937;
+  background: transparent;
+  border: 1.5px solid #1F2937;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.download-report-btn:hover {
+  background: #1F2937;
+  color: #FFFFFF;
 }
 
 /* Workflow Empty */

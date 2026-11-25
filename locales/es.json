@@ -255,7 +255,8 @@
     "panelRelatedEdges": "Aristas relacionadas",
     "panelRelatedNodes": "Nodos relacionados",
     "world1": "Mundo 1",
-    "world2": "Mundo 2"
+    "world2": "Mundo 2",
+    "downloadReport": "Descargar informe (.md)"
   },
   "step5": {
     "interactiveTools": "Herramientas interactivas",
