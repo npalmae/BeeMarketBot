@@ -75,7 +75,10 @@ class Config:
     SESSION_COOKIE_SAMESITE = 'Lax'
     # Activa COOKIE_SECURE cuando la interfaz se sirva por HTTPS.
     SESSION_COOKIE_SECURE = os.environ.get('COOKIE_SECURE', 'false').lower() == 'true'
-    PERMANENT_SESSION_LIFETIME = timedelta(hours=_int_env('SESSION_HOURS', 24))
+    # La sesión se renueva en cada petición mientras el usuario está activo.
+    # Siete días evita expulsiones frecuentes por pausas o pestañas abiertas;
+    # puede reducirse mediante SESSION_HOURS si una instalación lo necesita.
+    PERMANENT_SESSION_LIFETIME = timedelta(hours=_int_env('SESSION_HOURS', 168))
     # Orígenes (esquema, host y puerto) desde cuyas páginas se puede llamar a la
     # API. Vacío: solo desde la propia interfaz.
     CORS_ORIGINS = [value.strip() for value in os.environ.get('CORS_ORIGINS', '').split(',') if value.strip()]

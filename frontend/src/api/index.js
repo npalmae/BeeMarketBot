@@ -56,16 +56,31 @@ service.interceptors.response.use(
   },
   error => {
     console.error('Response error:', error)
-    // Sin sesión, o caducada: se anuncia para que la interfaz pida entrar de nuevo.
-    // Un intento de entrada rechazado no cuenta: ahí simplemente se muestra el error.
+    // Antes de expulsar al usuario, revalidamos la cookie. Esto evita que una
+    // respuesta 401 aislada (proxy, pestaña antigua o token CSRF desfasado)
+    // cierre la sesión visualmente cuando el servidor todavía la reconoce.
     const url = error.config?.url || ''
     if (
       error.response?.status === 401 &&
-      sessionToken.value &&
+      !error.config?._authRetry &&
       !url.includes('/api/auth/login') &&
       !url.includes('/api/auth/session')
     ) {
-      window.dispatchEvent(new CustomEvent('beemarketbot:session-expired'))
+      error.config._authRetry = true
+      service.get('/api/auth/session')
+        .then(sessionResponse => {
+          const data = sessionResponse.data
+          if (data?.user && data?.csrf) {
+            sessionToken.value = data.csrf
+            error.config.headers = error.config.headers || {}
+            error.config.headers['X-CSRF-Token'] = data.csrf
+            return service.request(error.config)
+          }
+          window.dispatchEvent(new CustomEvent('beemarketbot:session-expired'))
+          return Promise.reject(error)
+        })
+        .catch(retryError => Promise.reject(retryError))
+      return
     }
     const apiError = error.response?.data?.error || error.response?.data?.message
     
