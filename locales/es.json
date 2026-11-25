@@ -38,7 +38,7 @@
     "version": "/ v0.1-Preview",
     "heroTitle1": "Sube tus informes,",
     "heroTitle2": "predice el futuro",
-    "heroDesc": "A partir de un solo documento, {brand} extrae semillas de realidad y genera automáticamente un mundo paralelo con hasta {agentScale}. Inyecta variables desde la vista de Dios para encontrar {optimalSolution} en la dinámica compleja de los grupos.",
+    "heroDesc": "A partir de un solo documento, {brand} extrae semillas de realidad y genera automáticamente un mundo paralelo con hasta {agentScale}. Inyecta variables desde una perspectiva global para encontrar {optimalSolution} en la dinámica compleja de los grupos.",
     "heroDescBrand": "BeeMarketBot",
     "heroDescAgentScale": "millones de agentes",
     "heroDescOptimalSolution": "el \"óptimo local\"",
