@@ -47,7 +47,7 @@ Los diagramas se muestran directamente en esta página:
 
 ### Contenedores y componentes
 
-<img src="./docs/diagrama-contenedores.svg" alt="Arquitectura de BeeMarketBot con API, worker GraphRAG, cola durable y FalkorDB" width="100%">
+<img src="./docs/diagrama-contenedores-graphrag.svg" alt="Arquitectura de BeeMarketBot con API, worker GraphRAG, cola durable y FalkorDB" width="100%">
 
 La ejecución está separada en tres servicios: `beemarketbot-api` atiende la
 interfaz, las simulaciones y los informes; `beemarketbot-graphrag-worker`
