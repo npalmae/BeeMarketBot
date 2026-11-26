@@ -49,13 +49,6 @@ Los diagramas se muestran directamente en esta página:
 
 <img src="./docs/diagrama-contenedores.svg" alt="Diagrama de contenedores y componentes de BeeMarketBot" width="100%">
 
-También puedes consultar las versiones interactivas:
-
-- [Flujo de una predicción](./docs/beemarketbot-arquitectura.html#flujo-vivo-de-una-prediccion): desde la semilla hasta el informe.
-- [Contenedores y componentes](./docs/beemarketbot-arquitectura.html#contenedores-y-componentes): servicios Docker, componentes internos y conexiones con FalkorDB y los proveedores externos.
-
-También puedes [abrir la vista completa de arquitectura](./docs/beemarketbot-arquitectura.html).
-
 La interfaz tiene dos modos de color, oscuro (el predeterminado) y claro. Se
 cambia con el botón de la cabecera, al lado del idioma, y cada equipo recuerda su
 elección.
