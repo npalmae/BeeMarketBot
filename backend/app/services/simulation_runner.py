@@ -148,6 +148,9 @@ class SimulationRunState:
     
     # 错误信息
     error: Optional[str] = None
+    # Advertencia no bloqueante: la simulación puede terminar aunque la
+    # sincronización secundaria con la memoria del grafo no lo haga.
+    warning: Optional[str] = None
     
     # 进程ID（用于停止）
     process_pid: Optional[int] = None
@@ -190,6 +193,7 @@ class SimulationRunState:
             "updated_at": self.updated_at,
             "completed_at": self.completed_at,
             "error": self.error,
+            "warning": self.warning,
             "process_pid": self.process_pid,
         }
     
@@ -725,9 +729,16 @@ class SimulationRunner:
                                 simulation_id,
                             )
                         except Exception as error:
-                            logger.error(f"停止图谱记忆更新器失败: {error}")
-                            desired_status = RunnerStatus.FAILED
-                            error_message = f"图谱记忆写入未完整完成: {error}"
+                            # La simulación principal ya terminó. La escritura
+                            # de memoria es secundaria y no debe convertir un
+                            # resultado válido en FAILED ni bloquear el informe.
+                            warning = f"图谱记忆写入未完整完成: {error}"
+                            logger.warning(
+                                "La simulación terminó, pero la actualización "
+                                "de memoria del grafo quedó incompleta: %s",
+                                error,
+                            )
+                            state.warning = warning
 
                     state.runner_status = desired_status
                     state.error = error_message
@@ -1048,18 +1059,12 @@ class SimulationRunner:
                         ZepGraphMemoryManager.stop_updater(simulation_id)
                         cls._graph_memory_enabled.pop(simulation_id, None)
                     except Exception as error:
-                        state.runner_status = RunnerStatus.FAILED
-                        state.twitter_running = False
-                        state.reddit_running = False
-                        state.completed_at = datetime.now().isoformat()
-                        state.error = f"图谱记忆写入未完整完成: {error}"
-                        cls._save_run_state(state)
-                        cls._sync_simulation_status(
-                            simulation_id,
-                            RunnerStatus.FAILED,
-                            state.error,
+                        state.warning = f"图谱记忆写入未完整完成: {error}"
+                        logger.warning(
+                            "La simulación se detuvo, pero la actualización "
+                            "de memoria del grafo quedó incompleta: %s",
+                            error,
                         )
-                        raise RuntimeError(state.error) from error
                 state.runner_status = RunnerStatus.STOPPED
                 state.twitter_running = False
                 state.reddit_running = False
