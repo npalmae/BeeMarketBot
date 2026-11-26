@@ -586,7 +586,12 @@ PLAN_SYSTEM_PROMPT = """\
     ]
 }
 
-注意：sections数组最少2个，最多5个元素！"""
+注意：sections数组最少2个，最多5个元素！
+
+【语言硬性要求】
+Cuando el idioma solicitado sea español, redacta exclusivamente en español el título,
+el resumen, las descripciones y todos los títulos de sección. No uses chino ni mezcles
+idiomas en ningún campo del JSON."""
 
 PLAN_USER_PROMPT_TEMPLATE = """\
 【预测场景设定】
@@ -770,7 +775,11 @@ SECTION_SYSTEM_PROMPT_TEMPLATE = """\
    ```
 5. 保持与其他章节的逻辑连贯性
 6. 【避免重复】仔细阅读下方已完成的章节内容，不要重复描述相同的信息
-7. 【再次强调】不要添加任何标题！用**粗体**代替小节标题"""
+   7. 【再次强调】不要添加任何标题！用**粗体**代替小节标题
+
+【语言硬性要求】
+Cuando el idioma solicitado sea español, redacta exclusivamente en español las citas,
+los encabezados, los párrafos y todo el contenido. No uses chino ni mezcles idiomas."""
 
 SECTION_USER_PROMPT_TEMPLATE = """\
 已完成的章节内容（请仔细阅读，避免重复）：
@@ -1246,14 +1255,15 @@ class ReportAgent:
             
         except Exception as e:
             logger.error(t('report.outlinePlanFailed', error=str(e)))
-            # 返回默认大纲（3个章节，作为fallback）
+            # Esquema de respaldo en español para que un fallo del proveedor
+            # no vuelva a contaminar los pasos 4 y 5 con títulos en chino.
             return ReportOutline(
-                title="未来预测报告",
-                summary="基于模拟预测的未来趋势与风险分析",
+                title="Informe de predicción",
+                summary="Análisis de tendencias, oportunidades y riesgos basado en la simulación",
                 sections=[
-                    ReportSection(title="预测场景与核心发现"),
-                    ReportSection(title="人群行为预测分析"),
-                    ReportSection(title="趋势展望与风险提示")
+                    ReportSection(title="Escenarios y hallazgos principales"),
+                    ReportSection(title="Análisis de comportamiento de los agentes"),
+                    ReportSection(title="Tendencias, oportunidades y riesgos")
                 ]
             )
     
