@@ -27,9 +27,15 @@ def set_locale(locale: str):
 
 def get_locale() -> str:
     if has_request_context():
-        raw = request.headers.get('Accept-Language', 'zh')
-        return raw if raw in _translations else 'zh'
-    return getattr(_thread_local, 'locale', 'zh')
+        raw = request.headers.get('Accept-Language', '').lower()
+        # Acepta tanto el código que envía el frontend ("es") como los
+        # encabezados estándar del navegador ("es-ES,es;q=0.9,en;q=0.8").
+        for candidate in raw.split(','):
+            language = candidate.split(';', 1)[0].strip().split('-', 1)[0]
+            if language in _translations:
+                return language
+        return os.environ.get('APP_LANG', 'es')
+    return getattr(_thread_local, 'locale', os.environ.get('APP_LANG', 'es'))
 
 
 def t(key: str, **kwargs) -> str:
