@@ -39,7 +39,17 @@ responde en el idioma elegido.
 
 ## Diagramas de arquitectura
 
-Consulta los dos diagramas interactivos del proyecto:
+Los diagramas se muestran directamente en esta página:
+
+### Flujo de una predicción
+
+<img src="./docs/diagrama-flujo.svg" alt="Diagrama del flujo de una predicción de BeeMarketBot" width="100%">
+
+### Contenedores y componentes
+
+<img src="./docs/diagrama-contenedores.svg" alt="Diagrama de contenedores y componentes de BeeMarketBot" width="100%">
+
+También puedes consultar las versiones interactivas:
 
 - [Flujo de una predicción](./docs/beemarketbot-arquitectura.html#flujo-vivo-de-una-prediccion): desde la semilla hasta el informe.
 - [Contenedores y componentes](./docs/beemarketbot-arquitectura.html#contenedores-y-componentes): servicios Docker, componentes internos y conexiones con FalkorDB y los proveedores externos.
