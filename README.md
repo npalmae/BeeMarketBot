@@ -37,6 +37,15 @@ devuelve un informe y el mundo simulado, abierto para seguir preguntando.
 La interfaz está en español (predeterminado), inglés y chino, y el modelo
 responde en el idioma elegido.
 
+## Diagramas de arquitectura
+
+Consulta los dos diagramas interactivos del proyecto:
+
+- [Flujo de una predicción](./docs/beemarketbot-arquitectura.html#flujo-vivo-de-una-prediccion): desde la semilla hasta el informe.
+- [Contenedores y componentes](./docs/beemarketbot-arquitectura.html#contenedores-y-componentes): servicios Docker, componentes internos y conexiones con FalkorDB y los proveedores externos.
+
+También puedes [abrir la vista completa de arquitectura](./docs/beemarketbot-arquitectura.html).
+
 La interfaz tiene dos modos de color, oscuro (el predeterminado) y claro. Se
 cambia con el botón de la cabecera, al lado del idioma, y cada equipo recuerda su
 elección.
