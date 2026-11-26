@@ -59,7 +59,7 @@ The first administrator is created once, from the project folder:
 
 ```bash
 # With Docker: prints the initial password once
-docker compose exec -T beemarketbot sh -c "cd backend && uv run --frozen python -m app.auth create-user --username <name> --role admin --generate-password"
+docker compose exec -T beemarketbot-api sh -c "cd backend && uv run --frozen python -m app.auth create-user --username <name> --role admin --generate-password"
 
 # Without Docker: asks for the password
 cd backend && uv run python -m app.auth create-user --username <name> --role admin
@@ -75,8 +75,8 @@ screen never triggers an action either.
 
 ## Deploy with Docker
 
-You need Docker and Docker Compose v2. Two containers start: the application and
-the graph database.
+You need Docker and Docker Compose v2. Three containers start: the API and
+simulation application, the GraphRAG worker, and FalkorDB.
 
 ```bash
 git clone https://github.com/npalmae/BeeMarketBot.git
@@ -86,13 +86,13 @@ cd BeeMarketBot
 cp .env.example .env
 #    Edit .env: model, embeddings and SECRET_KEY (openssl rand -hex 32)
 
-# 2. Build and start (application + FalkorDB)
+# 2. Build and start (API + GraphRAG worker + FalkorDB)
 docker compose up -d --build
 
 # 3. Create the first administrator (see «Access»)
 
 # 4. Check the graph memory against your real configuration
-docker compose exec beemarketbot sh -c "cd backend && uv run --frozen python scripts/validate_graph_memory.py"
+docker compose exec beemarketbot-graphrag-worker sh -c "cd backend && uv run --frozen python scripts/validate_graph_memory.py"
 ```
 
 The application reads `.env` from the root folder and exposes port `3000`
@@ -101,8 +101,13 @@ The application reads `.env` from the root folder and exposes port `3000`
 the port with `FALKORDB_PORT`).
 
 Data is kept outside the container: `./backend/uploads` (projects, simulations,
-reports, memory state and accounts) and the `falkordb-data` volume (the graph).
+reports, the durable GraphRAG queue, memory state and accounts) and the
+`falkordb-data` volume (the graph).
 To update, run `docker compose up -d --build` again.
+
+The API and worker communicate through `backend/uploads/graphrag_queue`. Pending
+jobs survive restarts; a GraphRAG failure does not invalidate a completed
+simulation or block its report.
 
 ## Deploy from the source code
 
@@ -120,8 +125,11 @@ npm run setup:all
 # Graph database (first time only)
 docker run -d --name falkordb -p 127.0.0.1:6379:6379 -v falkordb-data:/data falkordb/falkordb:6.0.4
 
-# Interface and backend
+# Terminal 1: interface and backend
 npm run dev
+
+# Terminal 2: GraphRAG worker
+npm run graphrag-worker
 ```
 
 The interface is at `http://localhost:3000` and the API at
@@ -139,6 +147,7 @@ All variables are set in `.env`; `.env.example` explains them one by one.
 | `SECRET_KEY` | on a server | Signs the sessions. Without it one is generated at start, and everyone signs in again after every restart. |
 | `EMBEDDING_API_KEY`, `EMBEDDING_BASE_URL` | no | Only if the embeddings come from a provider other than the model. |
 | `GRAPH_LLM_*` | no | Another model for graph extraction, and other memory settings. |
+| `GRAPHRAG_POLL_INTERVAL` | no | Seconds between durable queue checks (1 by default). |
 | `LLM_TEMPERATURE`, `LLM_EXTRA_BODY` | no | Providers that only accept a fixed temperature or ask for their own parameters. |
 | `LLM_BOOST_*` | no | A second provider for the parallel simulation, to get more simultaneous calls. |
 | `ADMIN_USERNAME`, `ADMIN_PASSWORD` | no | Creates the first administrator at start, only when no account exists yet. |
@@ -160,7 +169,7 @@ Commands run from `backend/` as `uv run python -m app.auth <command>`.
 With Docker they run inside the container:
 
 ```bash
-docker compose exec -T beemarketbot sh -c "cd backend && uv run --frozen python -m app.auth list-users"
+docker compose exec -T beemarketbot-api sh -c "cd backend && uv run --frozen python -m app.auth list-users"
 ```
 
 The password is never passed as an argument: it is typed in the terminal, read

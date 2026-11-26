@@ -15,7 +15,7 @@ from app.services.simulation_runner import (
 )
 
 
-def test_manual_stop_surfaces_graph_ingestion_failure(monkeypatch):
+def test_manual_stop_keeps_graph_ingestion_failure_as_warning(monkeypatch):
     state = SimulationRunState(
         simulation_id="sim-1",
         runner_status=RunnerStatus.RUNNING,
@@ -44,12 +44,12 @@ def test_manual_stop_surfaces_graph_ingestion_failure(monkeypatch):
     SimulationRunner._graph_memory_enabled["sim-1"] = True
 
     try:
-        with pytest.raises(RuntimeError, match="ingestion incomplete"):
-            SimulationRunner.stop_simulation("sim-1")
+        result = SimulationRunner.stop_simulation("sim-1")
 
-        assert state.runner_status == RunnerStatus.FAILED
-        assert "ingestion incomplete" in state.error
-        assert saved[-1] == RunnerStatus.FAILED
+        assert result.runner_status == RunnerStatus.STOPPED
+        assert result.error is None
+        assert "ingestion incomplete" in result.warning
+        assert saved[-1] == RunnerStatus.STOPPED
     finally:
         SimulationRunner._graph_memory_enabled.pop("sim-1", None)
         SimulationRunner._manual_stop_requests.discard("sim-1")
@@ -425,7 +425,7 @@ def test_shutdown_terminates_producer_before_tail_read_and_updater_drain(
         SimulationRunner._manual_stop_requests.discard(simulation_id)
 
 
-def test_shutdown_drain_failure_remains_failed_and_retryable(monkeypatch):
+def test_shutdown_graph_failure_does_not_invalidate_simulation(monkeypatch):
     simulation_id = "sim-shutdown-failure"
     state = SimulationRunState(
         simulation_id=simulation_id,
@@ -474,10 +474,11 @@ def test_shutdown_drain_failure_remains_failed_and_retryable(monkeypatch):
     SimulationRunner._processes.pop(simulation_id, None)
     try:
         SimulationRunner.cleanup_all_simulations()
-        assert state.runner_status == RunnerStatus.FAILED
-        assert "drain incomplete" in state.error
-        assert SimulationRunner._graph_memory_enabled[simulation_id] is True
-        assert SimulationRunner._cleanup_done is False
+        assert state.runner_status == RunnerStatus.STOPPED
+        assert state.error is None
+        assert "drain incomplete" in state.warning
+        assert simulation_id not in SimulationRunner._graph_memory_enabled
+        assert SimulationRunner._cleanup_done is True
     finally:
         SimulationRunner._cleanup_done = False
         SimulationRunner._graph_memory_enabled.pop(simulation_id, None)

@@ -720,7 +720,7 @@
       "submit": "Entrar",
       "submitting": "Entrando...",
       "noUsers": "Todavía no hay cuentas. Desde la carpeta del proyecto, crea el primer administrador con:",
-      "noUsersCommand": "docker compose exec -T beemarketbot sh -c 'cd backend && uv run --frozen python -m app.auth create-user --username <nombre> --role admin --generate-password'\n# sin Docker:\ncd backend && python -m app.auth create-user --username <nombre> --role admin"
+      "noUsersCommand": "docker compose exec -T beemarketbot-api sh -c 'cd backend && uv run --frozen python -m app.auth create-user --username <nombre> --role admin --generate-password'\n# sin Docker:\ncd backend && python -m app.auth create-user --username <nombre> --role admin"
     },
     "menu": {
       "account": "Mi cuenta",

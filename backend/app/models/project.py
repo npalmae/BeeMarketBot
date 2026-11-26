@@ -7,6 +7,7 @@ import os
 import json
 import uuid
 import shutil
+import tempfile
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 from enum import Enum
@@ -172,12 +173,25 @@ class ProjectManager:
     
     @classmethod
     def save_project(cls, project: Project) -> None:
-        """保存项目元数据"""
+        """Persist metadata atomically for shared API/worker access."""
         project.updated_at = datetime.now().isoformat()
         meta_path = cls._get_project_meta_path(project.project_id)
-        
-        with open(meta_path, 'w', encoding='utf-8') as f:
-            json.dump(project.to_dict(), f, ensure_ascii=False, indent=2)
+        os.makedirs(os.path.dirname(meta_path), exist_ok=True)
+        fd, temporary = tempfile.mkstemp(
+            dir=os.path.dirname(meta_path),
+            prefix=".project.",
+            suffix=".tmp",
+        )
+        try:
+            with os.fdopen(fd, 'w', encoding='utf-8') as f:
+                json.dump(project.to_dict(), f, ensure_ascii=False, indent=2)
+                f.write("\n")
+                f.flush()
+                os.fsync(f.fileno())
+            os.replace(temporary, meta_path)
+        finally:
+            if os.path.exists(temporary):
+                os.unlink(temporary)
     
     @classmethod
     def get_project(cls, project_id: str) -> Optional[Project]:

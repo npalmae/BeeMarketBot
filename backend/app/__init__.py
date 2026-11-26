@@ -91,10 +91,30 @@ def create_app(config_class=Config):
     # 健康检查
     @app.route('/health')
     def health():
-        return {'status': 'ok', 'service': 'BeeMarketBot Backend'}
+        from .services.graphrag_queue import GraphRAGQueue
+
+        try:
+            worker_age = GraphRAGQueue.heartbeat_age_seconds()
+            worker_status = (
+                "healthy"
+                if worker_age is not None and worker_age <= 45
+                else "unavailable"
+            )
+        except Exception:
+            worker_age = None
+            worker_status = "unknown"
+        return {
+            'status': 'ok',
+            'service': 'BeeMarketBot Backend',
+            'graphrag_worker': {
+                'status': worker_status,
+                'heartbeat_age_seconds': (
+                    round(worker_age, 1) if worker_age is not None else None
+                ),
+            },
+        }
     
     if should_log_startup:
         logger.info("BeeMarketBot Backend 启动完成")
     
     return app
-

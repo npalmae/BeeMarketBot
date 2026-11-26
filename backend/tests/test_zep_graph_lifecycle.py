@@ -189,35 +189,26 @@ def test_stale_build_after_restart_is_recoverable_instead_of_reused(monkeypatch)
 
 def test_stale_build_resumes_a_persisted_processing_batch(monkeypatch):
     project = _project(ProjectStatus.GRAPH_BUILDING)
-    created_threads = []
+    queued = []
 
     class Tasks:
         def get_task(self, _task_id):
             return None
 
-        def create_task(self, _description):
+        def create_task(self, **kwargs):
+            assert kwargs["task_type"] == "graph_build"
             return "task-resumed"
-
-    class Builder:
-        def __init__(self, **_kwargs):
-            pass
-
-        def get_batch_summary(self, batch_id):
-            assert batch_id == "batch-1"
-            return SimpleNamespace(status="processing")
-
-    class Thread:
-        def __init__(self, *, target, daemon):
-            created_threads.append((target, daemon))
-
-        def start(self):
-            pass
 
     # El motor de grafos se configura con el entorno; la prueba no depende de él.
     monkeypatch.setattr(graph_api.Config, "graph_memory_errors", classmethod(lambda _cls: []))
     monkeypatch.setattr(graph_api, "TaskManager", Tasks)
-    monkeypatch.setattr(graph_api, "GraphBuilderService", Builder)
-    monkeypatch.setattr(graph_api.threading, "Thread", Thread)
+    monkeypatch.setattr(
+        graph_api.GraphRAGQueue,
+        "enqueue_build",
+        classmethod(
+            lambda _cls, **kwargs: queued.append(kwargs) or kwargs["task_id"]
+        ),
+    )
     monkeypatch.setattr(
         graph_api.ProjectManager,
         "get_project",
@@ -246,7 +237,9 @@ def test_stale_build_resumes_a_persisted_processing_batch(monkeypatch):
     assert body["data"]["resumed"] is True
     assert body["data"]["task_id"] == "task-resumed"
     assert project.graph_build_task_id == "task-resumed"
-    assert len(created_threads) == 1
+    assert len(queued) == 1
+    assert queued[0]["task_id"] == "task-resumed"
+    assert queued[0]["project_id"] == "proj-1"
 
 
 def test_project_delete_removes_cloud_graph_before_local_files(monkeypatch):

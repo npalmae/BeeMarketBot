@@ -255,7 +255,8 @@
 
     <h2 id="contenedores-y-componentes">2 · Contenedores y componentes</h2>
     <div class="diagram">
-      <svg viewBox="0 0 1120 620" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono,monospace">
+      <img src="./diagrama-contenedores.svg" alt="API, worker GraphRAG y FalkorDB" style="display:block;width:100%;height:auto">
+      <svg style="display:none" viewBox="0 0 1120 620" xmlns="http://www.w3.org/2000/svg" font-family="DM Mono,monospace">
         <defs>
           <linearGradient id="containerBlue" x1="0" x2="1"><stop stop-color="#4689C8"/><stop offset="1" stop-color="#7FC4FF"/></linearGradient>
           <linearGradient id="containerPurple" x1="0" x2="1"><stop stop-color="#761472"/><stop offset="1" stop-color="#C05AB8"/></linearGradient>
@@ -347,7 +348,7 @@
         <text x="560" y="584" fill="#E2B5DF" font-size="10" text-anchor="middle">SERVICIOS EXTERNOS: proveedor LLM · proveedor de embeddings · acceso vía HTTPS</text>
         <path class="flow slow" d="M560 548V570" stroke="#C05AB8" stroke-width="2" marker-end="url(#containerArrow)"/>
       </svg>
-      <p class="caption">Vista conceptual de los contenedores y de los componentes que viven dentro de cada servicio.</p>
+      <p class="caption">La API y el worker comparten una cola durable; GraphRAG puede recuperarse sin bloquear simulaciones ni informes.</p>
     </div>
 
     <h2>3 · Capas de la solución</h2>

@@ -720,7 +720,7 @@
       "submit": "登录",
       "submitting": "正在登录...",
       "noUsers": "还没有账户。在项目目录下创建第一个管理员：",
-      "noUsersCommand": "docker compose exec -T beemarketbot sh -c 'cd backend && uv run --frozen python -m app.auth create-user --username <name> --role admin --generate-password'\n# 不使用 Docker：\ncd backend && python -m app.auth create-user --username <name> --role admin"
+      "noUsersCommand": "docker compose exec -T beemarketbot-api sh -c 'cd backend && uv run --frozen python -m app.auth create-user --username <name> --role admin --generate-password'\n# 不使用 Docker：\ncd backend && python -m app.auth create-user --username <name> --role admin"
     },
     "menu": {
       "account": "我的账号",

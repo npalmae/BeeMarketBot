@@ -1522,10 +1522,10 @@ def start_simulation():
         - 适用于需要重新运行模拟的场景
 
     关于 enable_graph_memory_update：
-        - 启用后，模拟中所有Agent的活动（发帖、评论、点赞等）都会实时更新到Zep图谱
+        - 启用后，模拟中所有Agent的活动会写入持久队列，由 GraphRAG worker 更新图谱
         - 这可以让图谱"记住"模拟过程，用于后续分析或AI对话
         - 需要模拟关联的项目有有效的 graph_id
-        - 采用批量更新机制，减少API调用次数
+        - 采用批量异步更新；worker 故障不会阻止模拟或报告
 
     返回：
         {
@@ -1763,7 +1763,9 @@ def start_simulation():
         response_data = run_state.to_dict()
         if max_rounds:
             response_data['max_rounds_applied'] = max_rounds
-        response_data['graph_memory_update_enabled'] = enable_graph_memory_update
+        response_data['graph_memory_update_enabled'] = bool(
+            run_state.graph_memory_session_id
+        )
         response_data['force_restarted'] = force_restarted
         if enable_graph_memory_update:
             response_data['graph_id'] = graph_id

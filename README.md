@@ -71,7 +71,7 @@ El primer administrador se crea una sola vez, desde la carpeta del proyecto:
 
 ```bash
 # Con Docker: muestra la contraseña inicial una sola vez
-docker compose exec -T beemarketbot sh -c "cd backend && uv run --frozen python -m app.auth create-user --username <nombre> --role admin --generate-password"
+docker compose exec -T beemarketbot-api sh -c "cd backend && uv run --frozen python -m app.auth create-user --username <nombre> --role admin --generate-password"
 
 # Sin Docker: pide la contraseña
 cd backend && uv run python -m app.auth create-user --username <nombre> --role admin
@@ -87,8 +87,11 @@ agentes). Abrir una pantalla tampoco dispara ninguna acción.
 
 ## Despliegue con Docker
 
-Necesitas Docker y Docker Compose v2. Se levantan dos contenedores: la
-aplicación y la base de grafos.
+Necesitas Docker y Docker Compose v2. Se levantan tres contenedores:
+
+- `beemarketbot-api`: interfaz, API, simulaciones e informes.
+- `beemarketbot-graphrag-worker`: construcción e ingesta GraphRAG.
+- `falkordb`: memoria persistente del grafo.
 
 ```bash
 git clone https://github.com/npalmae/BeeMarketBot.git
@@ -98,13 +101,13 @@ cd BeeMarketBot
 cp .env.example .env
 #    Edita .env: modelo, embeddings y SECRET_KEY (openssl rand -hex 32)
 
-# 2. Construir y arrancar (aplicación + FalkorDB)
+# 2. Construir y arrancar (API + worker GraphRAG + FalkorDB)
 docker compose up -d --build
 
 # 3. Crear el primer administrador (ver «Acceso»)
 
 # 4. Comprobar la memoria en grafos con tu configuración real
-docker compose exec beemarketbot sh -c "cd backend && uv run --frozen python scripts/validate_graph_memory.py"
+docker compose exec beemarketbot-graphrag-worker sh -c "cd backend && uv run --frozen python scripts/validate_graph_memory.py"
 ```
 
 La aplicación lee `.env` de la carpeta raíz y expone el puerto `3000` (interfaz) y
@@ -113,9 +116,14 @@ FalkorDB queda accesible solo desde el equipo, en `127.0.0.1:6379` (cambia el
 puerto con `FALKORDB_PORT`).
 
 Los datos se conservan fuera del contenedor: `./backend/uploads` (proyectos,
-simulaciones, informes, estado de la memoria y cuentas) y el volumen
+simulaciones, informes, cola GraphRAG, estado de la memoria y cuentas) y el volumen
 `falkordb-data` (el grafo). Para actualizar, vuelve a ejecutar
 `docker compose up -d --build`.
+
+La API y el worker se comunican mediante una cola durable dentro de
+`backend/uploads/graphrag_queue`. Si el worker se reinicia, recupera los trabajos
+pendientes. Una actualización GraphRAG fallida queda registrada, pero no cambia
+una simulación válida a fallida ni impide generar su informe.
 
 ## Despliegue desde el código
 
@@ -133,8 +141,11 @@ npm run setup:all
 # Base de grafos (solo la primera vez)
 docker run -d --name falkordb -p 127.0.0.1:6379:6379 -v falkordb-data:/data falkordb/falkordb:6.0.4
 
-# Interfaz y backend
+# Terminal 1: interfaz y backend
 npm run dev
+
+# Terminal 2: worker GraphRAG
+npm run graphrag-worker
 ```
 
 La interfaz queda en `http://localhost:3000` y la API en `http://localhost:5001`.
@@ -152,6 +163,7 @@ Todas las variables se definen en `.env`; `.env.example` las explica una por una
 | `SECRET_KEY` | en un servidor | Firma las sesiones. Sin ella se genera una al arrancar y todos deben volver a entrar tras cada reinicio. |
 | `EMBEDDING_API_KEY`, `EMBEDDING_BASE_URL` | no | Solo si los embeddings los da un proveedor distinto del modelo. |
 | `GRAPH_LLM_*` | no | Otro modelo para la extracción del grafo, y otros ajustes de la memoria. |
+| `GRAPHRAG_POLL_INTERVAL` | no | Segundos entre revisiones de la cola durable del worker (1 por defecto). |
 | `LLM_TEMPERATURE`, `LLM_EXTRA_BODY` | no | Proveedores que solo aceptan una temperatura fija o piden parámetros propios. |
 | `LLM_BOOST_*` | no | Un segundo proveedor para la simulación en paralelo, y así disponer de más llamadas simultáneas. |
 | `ADMIN_USERNAME`, `ADMIN_PASSWORD` | no | Crea el primer administrador al arrancar, solo si todavía no hay cuentas. |
@@ -173,7 +185,7 @@ Los comandos se ejecutan desde `backend/` como `uv run python -m app.auth <coman
 Con Docker se ejecutan dentro del contenedor:
 
 ```bash
-docker compose exec -T beemarketbot sh -c "cd backend && uv run --frozen python -m app.auth list-users"
+docker compose exec -T beemarketbot-api sh -c "cd backend && uv run --frozen python -m app.auth list-users"
 ```
 
 La contraseña nunca se pasa como argumento: se pide en el terminal, se lee de la

@@ -21,10 +21,6 @@ from queue import Queue
 from ..config import Config
 from ..utils.logger import get_logger
 from ..utils.locale import get_locale, set_locale
-from ..utils.zep import (
-    ZEP_HTTP_REQUEST_TIMEOUT_SECONDS,
-    ZEP_INGESTION_WAIT_TIMEOUT_SECONDS,
-)
 from .zep_graph_memory_updater import ZepGraphMemoryManager
 from .simulation_ipc import SimulationIPCClient, CommandType, IPCResponse
 
@@ -50,7 +46,7 @@ class RunnerStatus(str, Enum):
 
 
 class SimulationStopPending(TimeoutError):
-    """The monitor still owns a bounded graph-ingestion finalization."""
+    """The monitor still owns process termination and final action-log reading."""
 
 
 @dataclass
@@ -151,6 +147,8 @@ class SimulationRunState:
     # Advertencia no bloqueante: la simulación puede terminar aunque la
     # sincronización secundaria con la memoria del grafo no lo haga.
     warning: Optional[str] = None
+    # Identidad durable del outbox procesado por el contenedor GraphRAG.
+    graph_memory_session_id: Optional[str] = None
     
     # 进程ID（用于停止）
     process_pid: Optional[int] = None
@@ -169,7 +167,7 @@ class SimulationRunState:
         self.updated_at = datetime.now().isoformat()
     
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        data = {
             "simulation_id": self.simulation_id,
             "runner_status": self.runner_status.value,
             "current_round": self.current_round,
@@ -194,8 +192,30 @@ class SimulationRunState:
             "completed_at": self.completed_at,
             "error": self.error,
             "warning": self.warning,
+            "graph_memory_session_id": self.graph_memory_session_id,
             "process_pid": self.process_pid,
         }
+        if self.graph_memory_session_id:
+            try:
+                from .graphrag_queue import GraphRAGQueue
+
+                snapshot = GraphRAGQueue.session_snapshot(
+                    self.graph_memory_session_id
+                )
+                data["graph_memory"] = {
+                    "session_id": self.graph_memory_session_id,
+                    "status": snapshot.get("status"),
+                    "closed": snapshot.get("closed"),
+                    "event_counts": snapshot.get("event_counts"),
+                    "error": snapshot.get("error"),
+                }
+            except Exception as graph_error:
+                data["graph_memory"] = {
+                    "session_id": self.graph_memory_session_id,
+                    "status": "unknown",
+                    "error": str(graph_error),
+                }
+        return data
     
     def to_detail_dict(self) -> Dict[str, Any]:
         """包含最近动作的详细信息"""
@@ -248,6 +268,30 @@ class SimulationRunner:
             return cls._finalization_locks.setdefault(
                 simulation_id, threading.Lock()
             )
+
+    @staticmethod
+    def _close_persisted_graph_session(
+        state: SimulationRunState,
+    ) -> Optional[str]:
+        """Close an outbox after API restart, when its in-memory proxy is gone."""
+
+        if not state.graph_memory_session_id:
+            return None
+        try:
+            from .graphrag_queue import GraphRAGQueue
+
+            snapshot = GraphRAGQueue.session_snapshot(
+                state.graph_memory_session_id
+            )
+            if (
+                not snapshot.get("closed")
+                and snapshot.get("status")
+                not in {"completed", "failed", "cancelled"}
+            ):
+                GraphRAGQueue.close_session(state.graph_memory_session_id)
+            return None
+        except Exception as error:
+            return str(error)
 
     @classmethod
     def _sync_simulation_status(
@@ -334,6 +378,8 @@ class SimulationRunner:
                 updated_at=data.get("updated_at", datetime.now().isoformat()),
                 completed_at=data.get("completed_at"),
                 error=data.get("error"),
+                warning=data.get("warning"),
+                graph_memory_session_id=data.get("graph_memory_session_id"),
                 process_pid=data.get("process_pid"),
             )
             
@@ -447,22 +493,24 @@ class SimulationRunner:
                 raise ValueError("启用图谱记忆更新时必须提供 graph_id")
             
             try:
-                ZepGraphMemoryManager.create_updater(simulation_id, graph_id)
+                graph_updater = ZepGraphMemoryManager.create_updater(
+                    simulation_id,
+                    graph_id,
+                )
+                state.graph_memory_session_id = graph_updater.session_id
                 cls._graph_memory_enabled[simulation_id] = True
                 logger.info(f"已启用图谱记忆更新: simulation_id={simulation_id}, graph_id={graph_id}")
             except Exception as e:
-                logger.error(f"创建图谱记忆更新器失败: {e}")
+                logger.warning(
+                    "No se pudo crear el outbox GraphRAG; la simulación "
+                    "continuará sin esa proyección: %s",
+                    e,
+                )
                 cls._graph_memory_enabled[simulation_id] = False
-                state.runner_status = RunnerStatus.FAILED
-                state.error = f"图谱记忆更新器初始化失败: {e}"
-                with cls._finalization_lock(simulation_id):
-                    cls._save_run_state(state)
-                    cls._sync_simulation_status(
-                        simulation_id,
-                        RunnerStatus.FAILED,
-                        state.error,
-                    )
-                raise RuntimeError(state.error) from e
+                state.warning = (
+                    "No se pudo iniciar la actualización GraphRAG: "
+                    f"{e}"
+                )
         else:
             cls._graph_memory_enabled[simulation_id] = False
         
@@ -485,9 +533,10 @@ class SimulationRunner:
             if cls._graph_memory_enabled.get(simulation_id, False):
                 try:
                     ZepGraphMemoryManager.stop_updater(simulation_id)
-                    cls._graph_memory_enabled.pop(simulation_id, None)
                 except Exception as error:
                     cleanup_error = error
+                finally:
+                    cls._graph_memory_enabled.pop(simulation_id, None)
             state.runner_status = RunnerStatus.FAILED
             state.twitter_running = False
             state.reddit_running = False
@@ -600,9 +649,10 @@ class SimulationRunner:
             if cls._graph_memory_enabled.get(simulation_id, False):
                 try:
                     ZepGraphMemoryManager.stop_updater(simulation_id)
-                    cls._graph_memory_enabled.pop(simulation_id, None)
                 except Exception as error:
                     cleanup_errors.append(f"图谱记忆写入清理失败: {error}")
+                finally:
+                    cls._graph_memory_enabled.pop(simulation_id, None)
             state.runner_status = RunnerStatus.FAILED
             state.twitter_running = False
             state.reddit_running = False
@@ -673,8 +723,8 @@ class SimulationRunner:
         
         finally:
             # Manual stop and natural completion can observe the same process
-            # exit. Serialize terminal state and updater drain so only one path
-            # owns the final result.
+            # exit. Serialize terminal state and outbox closure so only one
+            # path owns the final result.
             with cls._finalization_lock(simulation_id):
                 latest_state = cls.get_run_state(simulation_id)
                 if latest_state is not None:
@@ -712,9 +762,9 @@ class SimulationRunner:
                     state.reddit_running = False
 
                     if cls._graph_memory_enabled.get(simulation_id, False):
-                        # STOPPING is a non-terminal ingestion barrier. The UI
-                        # and report API must not observe COMPLETED until every
-                        # accepted episode is processed by Zep Cloud.
+                        # STOPPING only protects the final action-log tail and
+                        # close-marker publication. Remote GraphRAG processing
+                        # continues asynchronously in the worker afterwards.
                         state.runner_status = RunnerStatus.STOPPING
                         cls._save_run_state(state)
                         cls._sync_simulation_status(
@@ -723,9 +773,8 @@ class SimulationRunner:
                         )
                         try:
                             ZepGraphMemoryManager.stop_updater(simulation_id)
-                            cls._graph_memory_enabled.pop(simulation_id, None)
                             logger.info(
-                                "已停止图谱记忆更新: simulation_id=%s",
+                                "GraphRAG quedó encolado: simulation_id=%s",
                                 simulation_id,
                             )
                         except Exception as error:
@@ -739,6 +788,8 @@ class SimulationRunner:
                                 error,
                             )
                             state.warning = warning
+                        finally:
+                            cls._graph_memory_enabled.pop(simulation_id, None)
 
                     state.runner_status = desired_status
                     state.error = error_message
@@ -803,7 +854,11 @@ class SimulationRunner:
         try:
             with open(log_path, 'r', encoding='utf-8') as f:
                 f.seek(position)
-                for line in f:
+                while True:
+                    line_position = f.tell()
+                    line = f.readline()
+                    if not line:
+                        break
                     line = line.strip()
                     if line:
                         try:
@@ -832,9 +887,9 @@ class SimulationRunner:
                                         # Platform completion is only an input
                                         # signal. The monitor publishes the
                                         # terminal status after the process has
-                                        # exited and Zep ingestion has drained.
+                                        # exited and the durable outbox closes.
                                         logger.info(
-                                            f"所有平台已结束，等待进程与图谱写入完成: "
+                                            f"所有平台已结束，等待进程与日志收尾: "
                                             f"{state.simulation_id}"
                                         )
                                 
@@ -880,7 +935,32 @@ class SimulationRunner:
                             
                             # 如果启用了图谱记忆更新，将活动发送到Zep
                             if graph_updater:
-                                graph_updater.add_activity_from_dict(action_data, platform)
+                                try:
+                                    graph_updater.add_activity_from_dict(
+                                        action_data,
+                                        platform,
+                                        source_event_id=(
+                                            f"{platform}:{line_position}"
+                                        ),
+                                    )
+                                except Exception as graph_error:
+                                    # GraphRAG is a secondary durable projection.
+                                    # Never stop action-log monitoring or the
+                                    # simulation merely because its outbox is
+                                    # temporarily unavailable.
+                                    state.warning = (
+                                        "No se pudo encolar una actividad "
+                                        f"GraphRAG: {graph_error}"
+                                    )
+                                    logger.warning(
+                                        "No se pudo encolar GraphRAG: "
+                                        "simulation_id=%s platform=%s "
+                                        "position=%s error=%s",
+                                        state.simulation_id,
+                                        platform,
+                                        line_position,
+                                        graph_error,
+                                    )
                             
                         except json.JSONDecodeError:
                             pass
@@ -1023,9 +1103,9 @@ class SimulationRunner:
                     except Exception:
                         process.kill()
 
-        # Let the monitor consume the final action-log tail and own the single
-        # updater drain. It will publish STOPPED (rather than COMPLETED) because
-        # the manual-stop marker is set above.
+        # Let the monitor consume the final action-log tail and close the
+        # durable GraphRAG outbox. It publishes STOPPED rather than COMPLETED
+        # because the manual-stop marker is set above.
         monitor = cls._monitor_threads.get(simulation_id)
         if (
             not retrying_finalization
@@ -1034,12 +1114,7 @@ class SimulationRunner:
             and monitor is not threading.current_thread()
             and monitor.is_alive()
         ):
-            wait_timeout = max(
-                30.0,
-                ZEP_INGESTION_WAIT_TIMEOUT_SECONDS
-                + ZEP_HTTP_REQUEST_TIMEOUT_SECONDS
-                + 5,
-            )
+            wait_timeout = 30.0
             monitor.join(timeout=wait_timeout)
             if monitor.is_alive():
                 # The monitor still owns finalization and may be inside one
@@ -1047,7 +1122,7 @@ class SimulationRunner:
                 # leave the observable state as STOPPING and let polling expose
                 # the eventual STOPPED/FAILED result.
                 raise SimulationStopPending(
-                    f"模拟仍在停止中，图谱写入未在 {wait_timeout:.0f}s 内完成"
+                    f"模拟仍在停止中，日志收尾未在 {wait_timeout:.0f}s 内完成"
                 )
         else:
             # Restart recovery or tests may have no monitor thread. Complete
@@ -1057,7 +1132,6 @@ class SimulationRunner:
                 if cls._graph_memory_enabled.get(simulation_id, False):
                     try:
                         ZepGraphMemoryManager.stop_updater(simulation_id)
-                        cls._graph_memory_enabled.pop(simulation_id, None)
                     except Exception as error:
                         state.warning = f"图谱记忆写入未完整完成: {error}"
                         logger.warning(
@@ -1065,6 +1139,14 @@ class SimulationRunner:
                             "de memoria del grafo quedó incompleta: %s",
                             error,
                         )
+                    finally:
+                        cls._graph_memory_enabled.pop(simulation_id, None)
+                persisted_close_error = cls._close_persisted_graph_session(state)
+                if persisted_close_error:
+                    state.warning = (
+                        "No se pudo cerrar la cola GraphRAG: "
+                        f"{persisted_close_error}"
+                    )
                 state.runner_status = RunnerStatus.STOPPED
                 state.twitter_running = False
                 state.reddit_running = False

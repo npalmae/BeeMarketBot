@@ -1,10 +1,10 @@
 name: beemarketbot
 
 services:
-  beemarketbot:
+  beemarketbot-api:
     build: .
     image: beemarketbot:local
-    container_name: beemarketbot
+    container_name: beemarketbot-api
     env_file:
       - .env
     environment:
@@ -12,6 +12,7 @@ services:
       # (p. ej. neo4j://usuario:clave@host:7687), define GRAPH_DB_URL en .env:
       # ese valor tiene prioridad sobre el predeterminado de aquí.
       GRAPH_DB_URL: ${GRAPH_DB_URL:-falkordb://falkordb:6379}
+      GRAPHRAG_QUEUE_DIR: /app/backend/uploads/graphrag_queue
     ports:
       - "${WEB_PORT:-3000}:3000"
       - "${API_PORT:-5001}:5001"
@@ -21,6 +22,39 @@ services:
         condition: service_healthy
     volumes:
       - ./backend/uploads:/app/backend/uploads
+
+  # Worker de escritura GraphRAG. Comparte únicamente la cola/estado durable de
+  # uploads con la API; si se reinicia, recupera los trabajos sin detener las
+  # simulaciones ni la generación de informes.
+  beemarketbot-graphrag-worker:
+    image: beemarketbot:local
+    container_name: beemarketbot-graphrag-worker
+    command:
+      - sh
+      - -c
+      - cd /app/backend && uv run --frozen python -m app.graphrag_worker
+    env_file:
+      - .env
+    environment:
+      GRAPH_DB_URL: ${GRAPH_DB_URL:-falkordb://falkordb:6379}
+      GRAPHRAG_QUEUE_DIR: /app/backend/uploads/graphrag_queue
+    restart: unless-stopped
+    stop_grace_period: 2m
+    depends_on:
+      falkordb:
+        condition: service_healthy
+    volumes:
+      - ./backend/uploads:/app/backend/uploads
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import json,time; d=json.load(open('/app/backend/uploads/graphrag_queue/worker-heartbeat.json')); raise SystemExit(0 if time.time()-float(d['epoch']) <= 45 else 1)"
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   # Base de grafos de la memoria. Versión fijada: las versiones nuevas pueden
   # cambiar comportamiento que el motor de grafos ya tiene probado.

@@ -5,12 +5,16 @@
 
 import uuid
 import threading
+import json
+import os
+import tempfile
 from datetime import datetime
 from enum import Enum
 from typing import Dict, Any, Optional
 from dataclasses import dataclass, field
 
 from ..utils.locale import t
+from ..config import Config
 
 
 class TaskStatus(str, Enum):
@@ -52,6 +56,22 @@ class Task:
             "metadata": self.metadata,
         }
 
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Task":
+        return cls(
+            task_id=data["task_id"],
+            task_type=data.get("task_type", "unknown"),
+            status=TaskStatus(data.get("status", TaskStatus.PENDING.value)),
+            created_at=datetime.fromisoformat(data["created_at"]),
+            updated_at=datetime.fromisoformat(data["updated_at"]),
+            progress=int(data.get("progress", 0)),
+            message=data.get("message", ""),
+            result=data.get("result"),
+            error=data.get("error"),
+            metadata=data.get("metadata") or {},
+            progress_detail=data.get("progress_detail") or {},
+        )
+
 
 class TaskManager:
     """
@@ -61,6 +81,44 @@ class TaskManager:
     
     _instance = None
     _lock = threading.Lock()
+
+    @staticmethod
+    def _tasks_dir() -> str:
+        return os.path.join(Config.UPLOAD_FOLDER, "tasks")
+
+    @classmethod
+    def _task_path(cls, task_id: str) -> str:
+        return os.path.join(cls._tasks_dir(), f"{task_id}.json")
+
+    @classmethod
+    def _load_task_file(cls, task_id: str) -> Optional[Task]:
+        try:
+            with open(cls._task_path(task_id), encoding="utf-8") as handle:
+                return Task.from_dict(json.load(handle))
+        except (OSError, ValueError, KeyError, json.JSONDecodeError):
+            return None
+
+    @classmethod
+    def _save_task_file(cls, task: Task) -> None:
+        """Persist atomically so another container never reads partial JSON."""
+
+        directory = cls._tasks_dir()
+        os.makedirs(directory, exist_ok=True)
+        fd, temporary = tempfile.mkstemp(
+            dir=directory,
+            prefix=f".{task.task_id}.",
+            suffix=".tmp",
+        )
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                json.dump(task.to_dict(), handle, ensure_ascii=False, indent=2)
+                handle.write("\n")
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(temporary, cls._task_path(task.task_id))
+        finally:
+            if os.path.exists(temporary):
+                os.unlink(temporary)
     
     def __new__(cls):
         """单例模式"""
@@ -97,12 +155,17 @@ class TaskManager:
         
         with self._task_lock:
             self._tasks[task_id] = task
+            self._save_task_file(task)
         
         return task_id
     
     def get_task(self, task_id: str) -> Optional[Task]:
         """获取任务"""
         with self._task_lock:
+            persisted = self._load_task_file(task_id)
+            if persisted is not None:
+                self._tasks[task_id] = persisted
+                return persisted
             return self._tasks.get(task_id)
     
     def update_task(
@@ -128,7 +191,7 @@ class TaskManager:
             progress_detail: 详细进度信息
         """
         with self._task_lock:
-            task = self._tasks.get(task_id)
+            task = self._load_task_file(task_id) or self._tasks.get(task_id)
             if task:
                 task.updated_at = datetime.now()
                 if status is not None:
@@ -143,6 +206,8 @@ class TaskManager:
                     task.error = error
                 if progress_detail is not None:
                     task.progress_detail = progress_detail
+                self._tasks[task_id] = task
+                self._save_task_file(task)
     
     def complete_task(self, task_id: str, result: Dict):
         """标记任务完成"""
@@ -166,6 +231,13 @@ class TaskManager:
     def list_tasks(self, task_type: Optional[str] = None) -> list:
         """列出任务"""
         with self._task_lock:
+            os.makedirs(self._tasks_dir(), exist_ok=True)
+            for filename in os.listdir(self._tasks_dir()):
+                if not filename.endswith(".json"):
+                    continue
+                task = self._load_task_file(filename[:-5])
+                if task is not None:
+                    self._tasks[task.task_id] = task
             tasks = list(self._tasks.values())
             if task_type:
                 tasks = [t for t in tasks if t.task_type == task_type]
@@ -183,4 +255,7 @@ class TaskManager:
             ]
             for tid in old_ids:
                 del self._tasks[tid]
-
+                try:
+                    os.remove(self._task_path(tid))
+                except FileNotFoundError:
+                    pass

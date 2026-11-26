@@ -49,7 +49,7 @@ BeeMarketBot 根据一份文档构建一个模拟世界，并让这个世界自�
 
 ```bash
 # 使用 Docker：仅显示一次初始密码
-docker compose exec -T beemarketbot sh -c "cd backend && uv run --frozen python -m app.auth create-user --username <用户名> --role admin --generate-password"
+docker compose exec -T beemarketbot-api sh -c "cd backend && uv run --frozen python -m app.auth create-user --username <用户名> --role admin --generate-password"
 
 # 不使用 Docker：在终端中输入密码
 cd backend && uv run python -m app.auth create-user --username <用户名> --role admin
@@ -63,7 +63,7 @@ cd backend && uv run python -m app.auth create-user --username <用户名> --rol
 
 ## 使用 Docker 部署
 
-需要 Docker 和 Docker Compose v2。会启动两个容器：应用和图数据库。
+需要 Docker 和 Docker Compose v2。会启动三个容器：API 与模拟应用、GraphRAG worker 和 FalkorDB。
 
 ```bash
 git clone https://github.com/npalmae/BeeMarketBot.git
@@ -73,21 +73,24 @@ cd BeeMarketBot
 cp .env.example .env
 #    编辑 .env：模型、embeddings 以及 SECRET_KEY（openssl rand -hex 32）
 
-# 2. 构建并启动（应用 + FalkorDB）
+# 2. 构建并启动（API + GraphRAG worker + FalkorDB）
 docker compose up -d --build
 
 # 3. 创建首个管理员（见「访问」）
 
 # 4. 用你的真实配置检查图谱记忆
-docker compose exec beemarketbot sh -c "cd backend && uv run --frozen python scripts/validate_graph_memory.py"
+docker compose exec beemarketbot-graphrag-worker sh -c "cd backend && uv run --frozen python scripts/validate_graph_memory.py"
 ```
 
 应用读取项目根目录下的 `.env`，开放端口 `3000`（界面）和 `5001`（API）。如果
 端口被占用，可在 `.env` 中设置 `WEB_PORT` 和 `API_PORT`。FalkorDB 只能从本机
 访问，地址为 `127.0.0.1:6379`（可用 `FALKORDB_PORT` 更改端口）。
 
-数据保存在容器之外：`./backend/uploads`（项目、模拟、报告、记忆状态和账户）以及
+数据保存在容器之外：`./backend/uploads`（项目、模拟、报告、GraphRAG 持久队列、记忆状态和账户）以及
 `falkordb-data` 数据卷（图谱）。更新时再次执行 `docker compose up -d --build`。
+
+API 与 worker 通过 `backend/uploads/graphrag_queue` 通信。待处理任务可在重启后恢复；
+GraphRAG 失败不会使已完成的模拟失效，也不会阻止生成报告。
 
 ## 从源码部署
 
@@ -105,8 +108,11 @@ npm run setup:all
 # 图数据库（仅首次）
 docker run -d --name falkordb -p 127.0.0.1:6379:6379 -v falkordb-data:/data falkordb/falkordb:6.0.4
 
-# 界面和后端
+# 终端 1：界面和后端
 npm run dev
+
+# 终端 2：GraphRAG worker
+npm run graphrag-worker
 ```
 
 界面位于 `http://localhost:3000`，API 位于 `http://localhost:5001`。配置同样
@@ -124,6 +130,7 @@ npm run dev
 | `SECRET_KEY` | 服务器上必需 | 为会话签名。不设置时会在启动时生成一个，每次重启后所有人都需要重新登录。 |
 | `EMBEDDING_API_KEY`、`EMBEDDING_BASE_URL` | 否 | 仅当 embeddings 由与模型不同的提供商提供时使用。 |
 | `GRAPH_LLM_*` | 否 | 图谱抽取使用的另一个模型，以及记忆的其他设置。 |
+| `GRAPHRAG_POLL_INTERVAL` | 否 | worker 检查持久队列的秒数间隔（默认 1）。 |
 | `LLM_TEMPERATURE`、`LLM_EXTRA_BODY` | 否 | 只接受固定温度、或需要自有参数的提供商。 |
 | `LLM_BOOST_*` | 否 | 为并行模拟再配置一个提供商，以获得更多并发调用。 |
 | `ADMIN_USERNAME`、`ADMIN_PASSWORD` | 否 | 启动时创建首个管理员，仅在还没有任何账户时生效。 |
@@ -145,7 +152,7 @@ npm run dev
 使用 Docker 时在容器内执行：
 
 ```bash
-docker compose exec -T beemarketbot sh -c "cd backend && uv run --frozen python -m app.auth list-users"
+docker compose exec -T beemarketbot-api sh -c "cd backend && uv run --frozen python -m app.auth list-users"
 ```
 
 密码永远不会作为参数传递：在终端中输入、从标准输入读取（`--password-stdin`），

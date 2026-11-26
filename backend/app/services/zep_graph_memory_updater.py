@@ -5,6 +5,7 @@ Zep图谱记忆更新服务
 
 import time
 import threading
+import uuid
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from datetime import datetime
@@ -18,6 +19,7 @@ from ..utils.zep import (
     call_zep_read_with_retry,
     get_zep_client,
 )
+from .graphrag_queue import GraphRAGQueue
 
 logger = get_logger('mirofish.zep_graph_memory_updater')
 
@@ -624,6 +626,36 @@ class ZepGraphMemoryUpdater:
             if pending:
                 time.sleep(3)
         self._pending_episode_uuids = []
+
+    def ingest_batch(
+        self,
+        activities: List[AgentActivity],
+        platform: str,
+    ) -> Dict[str, Any]:
+        """Synchronously ingest one durable-worker batch.
+
+        The API-side manager does not call this method.  It is the narrow
+        execution entry point used by the separate GraphRAG worker after it has
+        journaled the batch as ``sending``.
+        """
+
+        if not activities:
+            return {"activity_count": 0, "episode_count": 0}
+        failed_before = len(self._failed_batches)
+        episodes_before = len(self._pending_episode_uuids)
+        self._send_batch_activities(activities, platform)
+        if len(self._failed_batches) > failed_before:
+            first = self._failed_batches[failed_before]
+            raise RuntimeError(
+                "GraphRAG activity batch failed: "
+                f"{first.get('error') or 'unknown error'}"
+            )
+        episode_count = len(self._pending_episode_uuids) - episodes_before
+        self._wait_for_pending_episodes()
+        return {
+            "activity_count": len(activities),
+            "episode_count": max(episode_count, 0),
+        }
     
     def get_stats(self) -> Dict[str, Any]:
         """获取统计信息"""
@@ -645,18 +677,112 @@ class ZepGraphMemoryUpdater:
         }
 
 
+class QueuedGraphMemoryUpdater:
+    """API-side producer that writes activities to the durable worker outbox.
+
+    It deliberately never creates a GraphMemory client.  The separate GraphRAG
+    container owns every LLM/embedding write and can process this session after
+    the simulation process has already reached a terminal state.
+    """
+
+    def __init__(
+        self,
+        graph_id: str,
+        *,
+        simulation_id: str,
+        locale: Optional[str] = None,
+    ):
+        self.graph_id = graph_id
+        self.simulation_id = simulation_id
+        self.locale = locale or get_locale()
+        self.session_id: Optional[str] = None
+        self._running = False
+        self._worker_thread = None
+        self._accepted = 0
+        self._skipped = 0
+
+    def start(self) -> None:
+        if self._running:
+            return
+        self.session_id = GraphRAGQueue.create_session(
+            simulation_id=self.simulation_id,
+            graph_id=self.graph_id,
+            locale=self.locale,
+        )
+        self._running = True
+        logger.info(
+            "Sesión GraphRAG encolada: simulation_id=%s, graph_id=%s, session_id=%s",
+            self.simulation_id,
+            self.graph_id,
+            self.session_id,
+        )
+
+    def add_activity_from_dict(
+        self,
+        data: Dict[str, Any],
+        platform: str,
+        *,
+        source_event_id: Optional[str] = None,
+    ) -> None:
+        if not self._running or not self.session_id:
+            raise RuntimeError("GraphRAG activity outbox is not running")
+        enqueued = GraphRAGQueue.enqueue_activity(
+            session_id=self.session_id,
+            platform=platform,
+            data=data,
+            source_event_id=source_event_id or uuid.uuid4().hex,
+        )
+        if enqueued:
+            self._accepted += 1
+        else:
+            self._skipped += 1
+
+    def stop(self) -> None:
+        if not self.session_id:
+            self._running = False
+            return
+        GraphRAGQueue.close_session(self.session_id)
+        self._running = False
+        logger.info(
+            "Sesión GraphRAG cerrada para el worker: simulation_id=%s, session_id=%s",
+            self.simulation_id,
+            self.session_id,
+        )
+
+    def get_stats(self) -> Dict[str, Any]:
+        snapshot: Dict[str, Any] = {}
+        if self.session_id:
+            try:
+                snapshot = GraphRAGQueue.session_snapshot(self.session_id)
+            except Exception as error:
+                snapshot = {"status": "unknown", "error": str(error)}
+        return {
+            "graph_id": self.graph_id,
+            "simulation_id": self.simulation_id,
+            "session_id": self.session_id,
+            "accepted": self._accepted,
+            "skipped_count": self._skipped,
+            "running": self._running,
+            "worker": snapshot,
+        }
+
+
 class ZepGraphMemoryManager:
     """
-    管理多个模拟的Zep图谱记忆更新器
-    
-    每个模拟可以有自己的更新器实例
+    Manage API-side durable GraphRAG outbox producers.
+
+    Actual graph writes happen only in ``app.graphrag_worker``.
     """
     
-    _updaters: Dict[str, ZepGraphMemoryUpdater] = {}
+    _updaters: Dict[str, QueuedGraphMemoryUpdater] = {}
     _lock = threading.Lock()
     
     @classmethod
-    def create_updater(cls, simulation_id: str, graph_id: str) -> ZepGraphMemoryUpdater:
+    def create_updater(
+        cls,
+        simulation_id: str,
+        graph_id: str,
+    ) -> QueuedGraphMemoryUpdater:
         """
         为模拟创建图谱记忆更新器
         
@@ -665,14 +791,14 @@ class ZepGraphMemoryManager:
             graph_id: Zep图谱ID
             
         Returns:
-            ZepGraphMemoryUpdater实例
+            Durable outbox producer.
         """
         with cls._lock:
             # 如果已存在，先停止旧的
             if simulation_id in cls._updaters:
                 cls._updaters[simulation_id].stop()
             
-            updater = ZepGraphMemoryUpdater(
+            updater = QueuedGraphMemoryUpdater(
                 graph_id,
                 simulation_id=simulation_id,
             )
@@ -684,7 +810,10 @@ class ZepGraphMemoryManager:
             return updater
     
     @classmethod
-    def get_updater(cls, simulation_id: str) -> Optional[ZepGraphMemoryUpdater]:
+    def get_updater(
+        cls,
+        simulation_id: str,
+    ) -> Optional[QueuedGraphMemoryUpdater]:
         """获取模拟的更新器"""
         with cls._lock:
             return cls._updaters.get(simulation_id)
@@ -716,7 +845,8 @@ class ZepGraphMemoryManager:
             if updater is None:
                 return False
             worker_alive = bool(
-                updater._worker_thread and updater._worker_thread.is_alive()
+                updater._worker_thread
+                and updater._worker_thread.is_alive()
             )
             if updater._running or worker_alive:
                 raise RuntimeError(
@@ -739,14 +869,15 @@ class ZepGraphMemoryManager:
         if updater is None:
             return
 
-        # Do not hold the manager lock through up to several minutes of Cloud
-        # polling. Crucially, only remove the updater after a successful drain;
-        # on failure it remains visible to report/deletion barriers and can be
-        # stopped again.
-        updater.stop()
-        with cls._lock:
-            if cls._updaters.get(simulation_id) is updater:
-                cls._updaters.pop(simulation_id, None)
+        try:
+            updater.stop()
+        finally:
+            # The queued producer performs no graph write itself. Even if the
+            # close marker cannot be persisted, retaining an in-memory object
+            # must not block a completed simulation or its report forever.
+            with cls._lock:
+                if cls._updaters.get(simulation_id) is updater:
+                    cls._updaters.pop(simulation_id, None)
         logger.info(f"已停止图谱记忆更新器: simulation_id={simulation_id}")
     
     # 防止 stop_all 重复调用的标志
