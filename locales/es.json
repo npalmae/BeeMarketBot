@@ -328,7 +328,12 @@
     "notStarted": "No iniciado",
     "roundsProgress": "{current}/{total} rondas",
     "untitledSimulation": "Simulación sin título",
-    "unknownFile": "Archivo desconocido"
+    "unknownFile": "Archivo desconocido",
+    "searchPlaceholder": "Buscar por nombre, requisito, archivo o ID...",
+    "searchLabel": "Buscar simulaciones",
+    "clearSearch": "Limpiar búsqueda",
+    "searchCount": "{count} resultados",
+    "noSearchResults": "No se encontraron simulaciones"
   },
   "api": {
     "projectNotFound": "Proyecto no encontrado: {id}",

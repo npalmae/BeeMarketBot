@@ -328,7 +328,12 @@
     "notStarted": "Not started",
     "roundsProgress": "{current}/{total} rounds",
     "untitledSimulation": "Untitled simulation",
-    "unknownFile": "Unknown file"
+    "unknownFile": "Unknown file",
+    "searchPlaceholder": "Search by name, requirement, file or ID...",
+    "searchLabel": "Search simulations",
+    "clearSearch": "Clear search",
+    "searchCount": "{count} results",
+    "noSearchResults": "No simulations found"
   },
   "api": {
     "projectNotFound": "Project not found: {id}",

@@ -328,7 +328,12 @@
     "notStarted": "未开始",
     "roundsProgress": "{current}/{total} 轮",
     "untitledSimulation": "未命名模拟",
-    "unknownFile": "未知文件"
+    "unknownFile": "未知文件",
+    "searchPlaceholder": "按名称、需求、文件或 ID 搜索...",
+    "searchLabel": "搜索模拟",
+    "clearSearch": "清除搜索",
+    "searchCount": "{count} 个结果",
+    "noSearchResults": "未找到模拟"
   },
   "api": {
     "projectNotFound": "项目不存在: {id}",

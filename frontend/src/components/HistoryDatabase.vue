@@ -17,10 +17,30 @@
       <div class="section-line"></div>
     </div>
 
+    <div v-if="projects.length > 0" class="history-search">
+      <span class="search-icon">⌕</span>
+      <input
+        v-model="searchQuery"
+        type="search"
+        :placeholder="$t('history.searchPlaceholder')"
+        :aria-label="$t('history.searchLabel')"
+      >
+      <button
+        v-if="searchQuery"
+        class="search-clear"
+        type="button"
+        :aria-label="$t('history.clearSearch')"
+        @click="searchQuery = ''"
+      >×</button>
+      <span class="search-count">
+        {{ $t('history.searchCount', { count: filteredProjects.length }) }}
+      </span>
+    </div>
+
     <!-- 卡片容器（只在有项目时显示） -->
-    <div v-if="projects.length > 0" class="cards-container" :class="{ expanded: isExpanded }" :style="containerStyle">
+    <div v-if="filteredProjects.length > 0" class="cards-container" :class="{ expanded: isExpanded }" :style="containerStyle">
       <div 
-        v-for="(project, index) in projects" 
+        v-for="(project, index) in filteredProjects" 
         :key="project.simulation_id"
         class="project-card"
         :class="{ expanded: isExpanded, hovering: hoveringCard === index }"
@@ -97,6 +117,11 @@
         <!-- 底部装饰线 (hover时展开) -->
         <div class="card-bottom-line"></div>
       </div>
+    </div>
+
+    <div v-if="!loading && projects.length > 0 && filteredProjects.length === 0" class="search-empty">
+      <span class="empty-file-icon">⌕</span>
+      <span>{{ $t('history.noSearchResults') }}</span>
     </div>
 
     <!-- 加载状态 -->
@@ -202,6 +227,7 @@ const { t } = useI18n()
 
 // 状态
 const projects = ref([])
+const searchQuery = ref('')
 const loading = ref(true)
 const isExpanded = ref(false)
 const hoveringCard = ref(null)
@@ -211,6 +237,26 @@ let observer = null
 let isAnimating = false  // 动画锁，防止闪烁
 let expandDebounceTimer = null  // 防抖定时器
 let pendingState = null  // 记录待执行的目标状态
+
+const filteredProjects = computed(() => {
+  const query = searchQuery.value.trim().toLocaleLowerCase()
+  if (!query) return projects.value
+
+  return projects.value.filter((project) => {
+    const searchable = [
+      project.simulation_id,
+      project.project_id,
+      project.status,
+      project.simulation_requirement,
+      ...(project.files || []).map(file => file.filename),
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLocaleLowerCase()
+
+    return searchable.includes(query)
+  })
+})
 
 // 卡片布局配置 - 调整为更宽的比例
 const CARDS_PER_ROW = 4
@@ -226,7 +272,7 @@ const containerStyle = computed(() => {
   }
   
   // 展开态：根据卡片数量动态计算高度
-  const total = projects.value.length
+  const total = filteredProjects.value.length
   if (total === 0) {
     return { minHeight: '280px' }
   }
@@ -240,7 +286,7 @@ const containerStyle = computed(() => {
 
 // 获取卡片样式
 const getCardStyle = (index) => {
-  const total = projects.value.length
+  const total = filteredProjects.value.length
   
   if (isExpanded.value) {
     // 展开态：网格布局
@@ -659,6 +705,74 @@ onUnmounted(() => {
   text-transform: uppercase;
 }
 
+/* Buscador */
+.history-search {
+  position: relative;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  width: min(680px, calc(100% - 80px));
+  height: 42px;
+  margin: 0 auto 22px;
+  border: 2px solid #111827;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 4px 4px 0 #111827;
+}
+
+.search-icon {
+  padding: 0 10px 0 14px;
+  color: #6B7280;
+  font-size: 1.2rem;
+}
+
+.history-search input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #111827;
+  font-family: inherit;
+  font-size: 0.82rem;
+}
+
+.history-search input::placeholder {
+  color: #9CA3AF;
+}
+
+.search-clear {
+  border: 0;
+  background: transparent;
+  color: #6B7280;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 4px 8px;
+}
+
+.search-count {
+  padding: 0 12px;
+  border-left: 1px solid #D1D5DB;
+  color: #6B7280;
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-size: 0.68rem;
+  white-space: nowrap;
+}
+
+.search-empty {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 180px;
+  color: #6B7280;
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-size: 0.8rem;
+}
+
 /* 卡片容器 */
 .cards-container {
   position: relative;
@@ -1011,6 +1125,14 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
+  .history-search {
+    width: calc(100% - 32px);
+  }
+
+  .search-count {
+    display: none;
+  }
+
   .cards-container {
     padding: 0 20px;
   }
