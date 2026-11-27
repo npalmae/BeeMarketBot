@@ -131,6 +131,7 @@ npm run graphrag-worker
 | `EMBEDDING_API_KEY`、`EMBEDDING_BASE_URL` | 否 | 仅当 embeddings 由与模型不同的提供商提供时使用。 |
 | `GRAPH_LLM_*` | 否 | 图谱抽取使用的另一个模型，以及记忆的其他设置。 |
 | `GRAPHRAG_POLL_INTERVAL` | 否 | worker 检查持久队列的秒数间隔（默认 1）。 |
+| `GRAPHRAG_STALL_TIMEOUT` | 否 | worker 主循环停滞多少秒后自动重启（默认 1200）。 |
 | `LLM_TEMPERATURE`、`LLM_EXTRA_BODY` | 否 | 只接受固定温度、或需要自有参数的提供商。 |
 | `LLM_BOOST_*` | 否 | 为并行模拟再配置一个提供商，以获得更多并发调用。 |
 | `ADMIN_USERNAME`、`ADMIN_PASSWORD` | 否 | 启动时创建首个管理员，仅在还没有任何账户时生效。 |

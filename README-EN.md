@@ -148,6 +148,7 @@ All variables are set in `.env`; `.env.example` explains them one by one.
 | `EMBEDDING_API_KEY`, `EMBEDDING_BASE_URL` | no | Only if the embeddings come from a provider other than the model. |
 | `GRAPH_LLM_*` | no | Another model for graph extraction, and other memory settings. |
 | `GRAPHRAG_POLL_INTERVAL` | no | Seconds between durable queue checks (1 by default). |
+| `GRAPHRAG_STALL_TIMEOUT` | no | Seconds without loop progress before the worker restarts itself (1200 by default). |
 | `LLM_TEMPERATURE`, `LLM_EXTRA_BODY` | no | Providers that only accept a fixed temperature or ask for their own parameters. |
 | `LLM_BOOST_*` | no | A second provider for the parallel simulation, to get more simultaneous calls. |
 | `ADMIN_USERNAME`, `ADMIN_PASSWORD` | no | Creates the first administrator at start, only when no account exists yet. |

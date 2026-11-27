@@ -172,6 +172,7 @@ Todas las variables se definen en `.env`; `.env.example` las explica una por una
 | `EMBEDDING_API_KEY`, `EMBEDDING_BASE_URL` | no | Solo si los embeddings los da un proveedor distinto del modelo. |
 | `GRAPH_LLM_*` | no | Otro modelo para la extracción del grafo, y otros ajustes de la memoria. |
 | `GRAPHRAG_POLL_INTERVAL` | no | Segundos entre revisiones de la cola durable del worker (1 por defecto). |
+| `GRAPHRAG_STALL_TIMEOUT` | no | Segundos sin avance del bucle del worker antes de que se reinicie solo (1200 por defecto). |
 | `LLM_TEMPERATURE`, `LLM_EXTRA_BODY` | no | Proveedores que solo aceptan una temperatura fija o piden parámetros propios. |
 | `LLM_BOOST_*` | no | Un segundo proveedor para la simulación en paralelo, y así disponer de más llamadas simultáneas. |
 | `ADMIN_USERNAME`, `ADMIN_PASSWORD` | no | Crea el primer administrador al arrancar, solo si todavía no hay cuentas. |

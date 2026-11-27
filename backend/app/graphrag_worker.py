@@ -412,6 +412,46 @@ class GraphRAGWorker:
             )
         except ValueError:
             self.poll_interval = 1.0
+        try:
+            self.stall_timeout = max(
+                300.0,
+                float(os.environ.get("GRAPHRAG_STALL_TIMEOUT", "1200")),
+            )
+        except ValueError:
+            self.stall_timeout = 1200.0
+        self.last_progress = time.monotonic()
+
+    def _is_stalled(self, now: Optional[float] = None) -> bool:
+        """True cuando el bucle principal lleva demasiado sin avanzar."""
+
+        if now is None:
+            now = time.monotonic()
+        return (now - self.last_progress) > self.stall_timeout
+
+    def _watchdog_loop(self) -> None:
+        """Reinicia el proceso si el bucle principal queda estancado.
+
+        Docker vuelve a levantar el contenedor (restart: unless-stopped) y la
+        cola durable recupera builds y sesiones al arrancar.
+        """
+
+        while not self.stop_event.is_set():
+            self.stop_event.wait(60)
+            if self.stop_event.is_set():
+                break
+            try:
+                if self._is_stalled():
+                    stalled_minutes = (
+                        time.monotonic() - self.last_progress
+                    ) / 60
+                    logger.error(
+                        "Bucle GraphRAG estancado %.0f minutos: el worker se "
+                        "reinicia para recuperarse",
+                        stalled_minutes,
+                    )
+                    os._exit(1)
+            except Exception:
+                logger.exception("Error del watchdog GraphRAG")
 
     def _heartbeat_loop(self) -> None:
         while not self.stop_event.is_set():
@@ -501,8 +541,16 @@ class GraphRAGWorker:
         )
         heartbeat.start()
 
+        watchdog = threading.Thread(
+            target=self._watchdog_loop,
+            daemon=True,
+            name="GraphRAGWatchdog",
+        )
+        watchdog.start()
+
         while not self.stop_event.is_set():
             did_work = False
+            self.last_progress = time.monotonic()
             try:
                 self.model_config.refresh()
                 batch = GraphRAGQueue.claim_activity_batch(
