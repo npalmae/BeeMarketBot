@@ -34,6 +34,11 @@ resto en cinco pasos:
 Tú solo tienes que subir los materiales y describir la pregunta. BeeMarketBot
 devuelve un informe y el mundo simulado, abierto para seguir preguntando.
 
+Para preparar el material de partida existe la
+[plantilla de semilla](./docs/plantilla-semilla.md): contexto, pregunta
+principal, segmentos de público y dimensiones del análisis. También se
+descarga desde la pantalla de inicio de la aplicación.
+
 La interfaz está en español (predeterminado), inglés y chino, y el modelo
 responde en el idioma elegido.
 

@@ -34,6 +34,11 @@ five steps:
 You only have to upload the material and describe the question. BeeMarketBot
 returns a report and the simulated world, open for further questions.
 
+To prepare the starting material there is a
+[seed template](./docs/plantilla-semilla.md) (in Spanish): context, main
+question, audience segments and analysis dimensions. It can also be
+downloaded from the app's start screen.
+
 The interface is in Spanish (default), English and Chinese, and the model
 answers in the chosen language.
 

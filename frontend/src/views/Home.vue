@@ -143,7 +143,10 @@
             <div class="console-section">
               <div class="console-header">
                 <span class="console-label">{{ $t('home.realitySeed') }}</span>
-                <span class="console-meta">{{ $t('home.supportedFormats') }}</span>
+                <span class="console-meta">
+                  {{ $t('home.supportedFormats') }} ·
+                  <a href="/plantilla-semilla.md" download class="template-link">{{ $t('home.seedTemplate') }}</a>
+                </span>
               </div>
               
               <div 
@@ -1014,5 +1017,16 @@ html:is([lang="en"], [lang="es"]) .workflow-list .step-desc {
 
 html:is([lang="en"], [lang="es"]) .workflow-list {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.template-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.template-link:hover {
+  opacity: 0.8;
 }
 </style>
