@@ -137,6 +137,14 @@ def extract_chat_completion_text(response: Any) -> str:
 
     content = getattr(message, "content", "")
 
+    # Modelos de razonamiento (qwen3, deepseek-r1 y similares) entregan la
+    # respuesta en reasoning_content y dejan content vacío: usarla como
+    # respaldo evita que toda la cadena vea respuestas en blanco.
+    if not content or (isinstance(content, str) and not content.strip()):
+        reasoning = getattr(message, "reasoning_content", None)
+        if isinstance(reasoning, str) and reasoning.strip():
+            content = reasoning
+
     if isinstance(content, str):
         return content
 

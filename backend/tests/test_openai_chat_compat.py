@@ -123,6 +123,38 @@ def test_extracts_text_from_supported_content_shapes():
     assert extract_chat_completion_text(SimpleNamespace(choices=[])) == ""
 
 
+def test_reasoning_content_is_used_when_content_is_empty():
+    response = SimpleNamespace(
+        choices=[
+            SimpleNamespace(
+                message=SimpleNamespace(content="", reasoning_content="respuesta real")
+            )
+        ]
+    )
+
+    assert extract_chat_completion_text(response) == "respuesta real"
+
+
+def test_reasoning_content_is_ignored_when_content_exists():
+    response = SimpleNamespace(
+        choices=[
+            SimpleNamespace(
+                message=SimpleNamespace(content="respuesta", reasoning_content="razonamiento")
+            )
+        ]
+    )
+
+    assert extract_chat_completion_text(response) == "respuesta"
+
+
+def test_blank_content_with_blank_reasoning_stays_empty():
+    response = SimpleNamespace(
+        choices=[SimpleNamespace(message=SimpleNamespace(content="", reasoning_content="   "))]
+    )
+
+    assert extract_chat_completion_text(response) == ""
+
+
 # ---------------------------------------------------------------- provider compatibility settings
 
 MESSAGES = [{"role": "user", "content": "hello"}]
