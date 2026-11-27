@@ -804,7 +804,13 @@ SECTION_USER_PROMPT_TEMPLATE = """\
 请开始：
 1. 首先思考（Thought）这个章节需要什么信息
 2. 然后调用工具（Action）获取模拟数据
-3. 收集足够信息后输出 Final Answer（纯正文，无任何标题）"""
+3. 收集足够信息后输出 Final Answer（纯正文，无任何标题）
+
+【调用工具的确切格式 - 逐字符模仿，参数换成真实内容】
+<tool_call>
+{{"name": "panorama_search", "parameters": {{"query": "写下你要查询的内容"}}}}
+</tool_call>
+"""
 
 # ── ReACT 循环内消息模板 ──
 
@@ -828,6 +834,20 @@ REACT_INSUFFICIENT_TOOLS_MSG = (
 REACT_INSUFFICIENT_TOOLS_MSG_ALT = (
     "当前只调用了 {tool_calls_count} 次工具，至少需要 {min_tool_calls} 次。"
     "请调用工具获取模拟数据。{unused_hint}"
+)
+
+REACT_NO_TOOL_CALL_MSG = (
+    "【关键纠正 - 上一条回复没有调用任何工具】\n"
+    "你刚才只是描述了\"打算检索\"的意图，但没有实际发出工具调用："
+    "只描述意图不会产生任何数据。\n"
+    "调用工具的唯一方式，是在回复中原样输出下面的格式"
+    "（不要加 markdown 代码块围栏，不要修改标签，参数换成真实内容）：\n"
+    "<tool_call>\n"
+    '{"name": "quick_search", "parameters": {"query": "这里写你的查询内容"}}\n'
+    "</tool_call>\n"
+    "\n"
+    "可用工具: insight_forge, panorama_search, quick_search, interview_agents\n"
+    "现在请立即按上述格式调用一个工具：只输出一个 tool_call> 块，不要解释。"
 )
 
 REACT_TOOL_LIMIT_MSG = (
@@ -1094,12 +1114,23 @@ class ReportAgent:
         for match in re.finditer(xml_pattern, response, re.DOTALL):
             try:
                 call_data = json.loads(match.group(1))
-                tool_calls.append(call_data)
+                if self._is_valid_tool_call(call_data):
+                    tool_calls.append(call_data)
             except json.JSONDecodeError:
                 pass
 
         if tool_calls:
             return tool_calls
+
+        # 格式1b: 代码块围栏（模型常自发加 ```json 围栏）
+        fenced_pattern = r'```(?:json)?\s*(\{.*?\})\s*```'
+        for match in re.finditer(fenced_pattern, response, re.DOTALL):
+            try:
+                call_data = json.loads(match.group(1))
+                if self._is_valid_tool_call(call_data):
+                    tool_calls.append(call_data)
+            except json.JSONDecodeError:
+                pass
 
         # 格式2: 兜底 - LLM 直接输出裸 JSON（没包 <tool_call> 标签）
         # 只在格式1未匹配时尝试，避免误匹配正文中的 JSON
@@ -1123,6 +1154,18 @@ class ReportAgent:
                     tool_calls.append(call_data)
             except json.JSONDecodeError:
                 pass
+
+        # 格式4: 行内独立 JSON（模型省略标签，只在整行是一个 JSON 对象时）
+        if not tool_calls:
+            for raw_line in stripped.splitlines():
+                candidate = raw_line.strip().strip('`').strip()
+                if candidate.startswith('{') and candidate.endswith('}'):
+                    try:
+                        call_data = json.loads(candidate)
+                        if self._is_valid_tool_call(call_data):
+                            tool_calls.append(call_data)
+                    except json.JSONDecodeError:
+                        pass
 
         return tool_calls
 
@@ -1531,11 +1574,7 @@ class ReportAgent:
 
                 messages.append({
                     "role": "user",
-                    "content": REACT_INSUFFICIENT_TOOLS_MSG_ALT.format(
-                        tool_calls_count=tool_calls_count,
-                        min_tool_calls=min_tool_calls,
-                        unused_hint=unused_hint,
-                    ),
+                    "content": REACT_NO_TOOL_CALL_MSG,
                 })
                 continue
 
