@@ -155,6 +155,57 @@ class LLMClient:
         )
         content = extract_chat_completion_text(response)
         return _clean_chat_text(content)
+
+    def chat_with_tools(
+        self,
+        messages: List[Dict[str, Any]],
+        tools: List[Dict[str, Any]],
+        temperature: float = 0.5,
+        max_tokens: Optional[int] = 4096,
+    ) -> Dict[str, Any]:
+        """Chat request with native function calling.
+
+        Returns {"content": str, "tool_calls": [{"id", "name", "arguments"}]}.
+        Raises for providers without tool support: callers should fall back
+        to plain text chat.
+        """
+
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            tools=tools,
+            tool_choice="auto",
+        )
+        choices = getattr(response, "choices", None) or []
+        message = getattr(choices[0], "message", None) if choices else None
+        if message is None:
+            return {"content": "", "tool_calls": []}
+
+        native_calls: List[Dict[str, Any]] = []
+        for call in getattr(message, "tool_calls", None) or []:
+            function = getattr(call, "function", None)
+            if function is None:
+                continue
+            try:
+                arguments = json.loads(getattr(function, "arguments", "") or "{}")
+            except (json.JSONDecodeError, TypeError):
+                arguments = {}
+            native_calls.append(
+                {
+                    "id": getattr(call, "id", "") or "",
+                    "name": getattr(function, "name", "") or "",
+                    "arguments": arguments,
+                }
+            )
+
+        content = str(getattr(message, "content", "") or "")
+        reasoning = str(getattr(message, "reasoning_content", "") or "")
+        if not content.strip() and reasoning.strip():
+            content = reasoning
+        return {"content": content.strip(), "tool_calls": native_calls}
+
     
     def chat_json(
         self,

@@ -988,6 +988,30 @@ class ReportAgent:
             }
         }
     
+    def _get_tool_schemas(self) -> List[Dict[str, Any]]:
+        """Esquemas OpenAI function-calling para las herramientas del informe."""
+        schemas: List[Dict[str, Any]] = []
+        for name, spec in self._define_tools().items():
+            properties: Dict[str, Any] = {}
+            required: List[str] = []
+            for param_name, param_desc in spec.get("parameters", {}).items():
+                properties[param_name] = {"type": "string", "description": param_desc}
+                if "可选" not in param_desc and param_name in ("query", "interview_topic"):
+                    required.append(param_name)
+            schemas.append({
+                "type": "function",
+                "function": {
+                    "name": name,
+                    "description": spec.get("description", ""),
+                    "parameters": {
+                        "type": "object",
+                        "properties": properties,
+                        "required": required,
+                    },
+                },
+            })
+        return schemas
+
     def _execute_tool(self, tool_name: str, parameters: Dict[str, Any], report_context: str = "") -> str:
         """
         执行工具调用
@@ -1384,6 +1408,7 @@ class ReportAgent:
 
         # 报告上下文，用于InsightForge的子问题生成
         report_context = f"章节标题: {section.title}\n模拟需求: {self.simulation_requirement}"
+        tool_schemas = self._get_tool_schemas()
         
         for iteration in range(max_iterations):
             if progress_callback:
@@ -1393,15 +1418,27 @@ class ReportAgent:
                     t('progress.deepSearchAndWrite', current=tool_calls_count, max=self.MAX_TOOL_CALLS_PER_SECTION)
                 )
             
-            # 调用LLM
-            response = self.llm.chat(
-                messages=messages,
-                temperature=0.5,
-                max_tokens=4096
-            )
+            # 调用LLM：优先原生 function calling，失败时退回纯文本
+            native_calls: List[Dict[str, Any]] = []
+            response = None
+            try:
+                step = self.llm.chat_with_tools(
+                    messages=messages,
+                    tools=tool_schemas,
+                    temperature=0.5,
+                    max_tokens=4096,
+                )
+                response = step["content"] or None
+                native_calls = step["tool_calls"]
+            except Exception:
+                response = self.llm.chat(
+                    messages=messages,
+                    temperature=0.5,
+                    max_tokens=4096
+                )
 
             # 检查 LLM 返回是否为 None（API 异常或内容为空）
-            if response is None:
+            if response is None and not native_calls:
                 logger.warning(t('report.sectionIterNone', title=section.title, iteration=iteration + 1))
                 # 如果还有迭代次数，添加消息并重试
                 if iteration < max_iterations - 1:
@@ -1411,10 +1448,86 @@ class ReportAgent:
                 # 最后一次迭代也返回 None，跳出循环进入强制收尾
                 break
 
-            logger.debug(f"LLM响应: {response[:200]}...")
+            logger.debug(f"LLM响应: {str(response)[:200]}...")
 
-            # 解析一次，复用结果
-            tool_calls = self._parse_tool_calls(response)
+            # ── 情况0：原生 function calling 的工具调用 ──
+            if native_calls:
+                call = native_calls[0]
+                if tool_calls_count >= self.MAX_TOOL_CALLS_PER_SECTION:
+                    messages.append({
+                        "role": "user",
+                        "content": REACT_TOOL_LIMIT_MSG.format(
+                            tool_calls_count=tool_calls_count,
+                            max_tool_calls=self.MAX_TOOL_CALLS_PER_SECTION,
+                        ),
+                    })
+                    continue
+
+                if self.report_logger:
+                    self.report_logger.log_tool_call(
+                        section_title=section.title,
+                        section_index=section_index,
+                        tool_name=call["name"],
+                        parameters=call.get("arguments", {}),
+                        iteration=iteration + 1
+                    )
+
+                result = self._execute_tool(
+                    call["name"],
+                    call.get("arguments", {}),
+                    report_context=report_context
+                )
+
+                if self.report_logger:
+                    self.report_logger.log_tool_result(
+                        section_title=section.title,
+                        section_index=section_index,
+                        tool_name=call["name"],
+                        result=result,
+                        iteration=iteration + 1
+                    )
+
+                tool_calls_count += 1
+                used_tools.add(call["name"])
+
+                unused_tools = all_tools - used_tools
+                unused_hint = ""
+                if unused_tools and tool_calls_count < self.MAX_TOOL_CALLS_PER_SECTION:
+                    unused_hint = REACT_UNUSED_TOOLS_HINT.format(
+                        unused_list="、".join(unused_tools)
+                    )
+
+                call_id = call.get("id") or f"call_{section_index}_{iteration}_{tool_calls_count}"
+                messages.append({
+                    "role": "assistant",
+                    "content": response or None,
+                    "tool_calls": [{
+                        "id": call_id,
+                        "type": "function",
+                        "function": {
+                            "name": call["name"],
+                            "arguments": json.dumps(
+                                call.get("arguments", {}), ensure_ascii=False
+                            ),
+                        },
+                    }],
+                })
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": call_id,
+                    "content": REACT_OBSERVATION_TEMPLATE.format(
+                        tool_name=call["name"],
+                        result=result,
+                        tool_calls_count=tool_calls_count,
+                        max_tool_calls=self.MAX_TOOL_CALLS_PER_SECTION,
+                        used_tools_str=", ".join(used_tools),
+                        unused_hint=unused_hint,
+                    ),
+                })
+                continue
+
+            # 解析一次，复用结果（文本回退）
+            tool_calls = self._parse_tool_calls(response or "")
             has_tool_calls = bool(tool_calls)
             has_final_answer = "Final Answer:" in response
 
