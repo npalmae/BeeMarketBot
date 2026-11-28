@@ -584,7 +584,8 @@
     "getReportInfoFailed": "No se pudo obtener la información del informe: {error}",
     "enterStep": "Entrando al Paso {step}: {name}",
     "returnToStep": "Volviendo al Paso {step}: {name}",
-    "customSimRounds": "Rondas de simulación personalizadas: {rounds} rondas"
+    "customSimRounds": "Rondas de simulación personalizadas: {rounds} rondas",
+    "simAlreadyRunning": "La simulación ya está en ejecución: reanudando el seguimiento sin reiniciar"
   },
   "report": {
     "taskStarted": "Tarea de generación del informe iniciada",

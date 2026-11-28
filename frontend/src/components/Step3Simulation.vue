@@ -720,6 +720,35 @@ onMounted(async () => {
     }
     return
   }
+  // No reiniciar lo que ya corre o ya terminó: el arranque con force borra
+  // las acciones registradas y relanza la simulación desde cero, así que
+  // recargar la página (F5) destruía corridas completas. Primero miramos el
+  // estado y solo arrancamos cuando no hay nada en curso ni terminado.
+  try {
+    const res = await getRunStatus(props.simulationId)
+    const status = res?.data?.runner_status
+    if (status === 'completed' || status === 'stopped' || status === 'failed') {
+      runStatus.value = res.data
+      phase.value = 2
+      addLog(t('log.simCompleted'))
+      return
+    }
+    if (
+      status === 'running' ||
+      status === 'starting' ||
+      status === 'paused' ||
+      status === 'stopping'
+    ) {
+      runStatus.value = res.data
+      phase.value = 1
+      addLog(t('log.simAlreadyRunning'))
+      startStatusPolling()
+      startDetailPolling()
+      return
+    }
+  } catch {
+    // Sin estado previo legible: arranque normal.
+  }
   doStartSimulation()
 })
 
