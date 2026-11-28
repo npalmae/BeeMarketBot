@@ -110,6 +110,9 @@
             <span class="card-time">{{ formatTime(project.created_at) }}</span>
           </div>
           <span class="card-progress" :class="getProgressClass(project)">
+            <span v-if="project.world_alive" class="world-badge" :title="$t('history.worldAliveHint')">
+              <span class="world-dot"></span>{{ $t('history.worldAlive') }}
+            </span>
             <span class="status-dot">●</span> {{ formatRounds(project) }}
           </span>
         </div>
@@ -140,6 +143,9 @@
               <div class="modal-title-section">
                 <span class="modal-id">{{ formatSimulationId(selectedProject.simulation_id) }}</span>
                 <span class="modal-progress" :class="getProgressClass(selectedProject)">
+                  <span v-if="selectedProject.world_alive" class="world-badge" :title="$t('history.worldAliveHint')">
+                    <span class="world-dot"></span>{{ $t('history.worldAlive') }}
+                  </span>
                   <span class="status-dot">●</span> {{ formatRounds(selectedProject) }}
                 </span>
                 <span class="modal-create-time">{{ formatDate(selectedProject.created_at) }} {{ formatTime(selectedProject.created_at) }}</span>
@@ -860,6 +866,31 @@ onUnmounted(() => {
   letter-spacing: 0.5px;
   font-weight: 600;
   font-size: 0.65rem;
+}
+
+.world-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: rgba(34, 197, 94, 0.16);
+  color: #22C55E;
+  font-size: 0.6rem;
+  letter-spacing: 0.5px;
+}
+
+.world-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22C55E;
+  animation: world-pulse 2s ease-in-out infinite;
+}
+
+@keyframes world-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
 }
 
 .status-dot {

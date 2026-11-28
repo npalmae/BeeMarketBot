@@ -334,7 +334,9 @@
     "searchLabel": "Buscar simulaciones",
     "clearSearch": "Limpiar búsqueda",
     "searchCount": "{count} resultados",
-    "noSearchResults": "No se encontraron simulaciones"
+    "noSearchResults": "No se encontraron simulaciones",
+    "worldAlive": "Mundo vivo",
+    "worldAliveHint": "El entorno de los agentes sigue activo: se pueden hacer entrevistas"
   },
   "api": {
     "projectNotFound": "Proyecto no encontrado: {id}",
@@ -585,7 +587,8 @@
     "enterStep": "Entrando al Paso {step}: {name}",
     "returnToStep": "Volviendo al Paso {step}: {name}",
     "customSimRounds": "Rondas de simulación personalizadas: {rounds} rondas",
-    "simAlreadyRunning": "La simulación ya está en ejecución: reanudando el seguimiento sin reiniciar"
+    "simAlreadyRunning": "La simulación ya está en ejecución: reanudando el seguimiento sin reiniciar",
+    "roundsDoneWorldAlive": "✓ Rondas completadas: puedes generar el informe con el mundo aún vivo"
   },
   "report": {
     "taskStarted": "Tarea de generación del informe iniciada",

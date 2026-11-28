@@ -334,7 +334,9 @@
     "searchLabel": "Search simulations",
     "clearSearch": "Clear search",
     "searchCount": "{count} results",
-    "noSearchResults": "No simulations found"
+    "noSearchResults": "No simulations found",
+    "worldAlive": "World alive",
+    "worldAliveHint": "The agent environment is still active: interviews are possible"
   },
   "api": {
     "projectNotFound": "Project not found: {id}",
@@ -585,7 +587,8 @@
     "enterStep": "Entering Step {step}: {name}",
     "returnToStep": "Returning to Step {step}: {name}",
     "customSimRounds": "Custom simulation rounds: {rounds} rounds",
-    "simAlreadyRunning": "The simulation is already running: resuming tracking without restarting"
+    "simAlreadyRunning": "The simulation is already running: resuming tracking without restarting",
+    "roundsDoneWorldAlive": "✓ Rounds completed: you can generate the report with the world still alive"
   },
   "report": {
     "taskStarted": "Report generation task started",

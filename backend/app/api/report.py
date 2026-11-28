@@ -89,32 +89,39 @@ def generate_report():
             RunnerStatus.PAUSED,
             RunnerStatus.STOPPING,
         }
-        if updater is not None or (
-            run_state is not None and run_state.runner_status in active_statuses
-        ):
-            return jsonify({
-                "success": False,
-                "error": (
-                    "Simulation or graph ingestion is still active; "
-                    "wait for a terminal run status before generating a report"
-                ),
-                "ingestion_pending": updater is not None,
-            }), 409
-        successful_terminal_statuses = {
-            RunnerStatus.COMPLETED,
-            RunnerStatus.STOPPED,
-        }
-        if (
-            run_state is None
-            or run_state.runner_status not in successful_terminal_statuses
-        ):
-            return jsonify({
-                "success": False,
-                "error": (
-                    "A successfully completed or stopped simulation is required "
-                    "before generating a report"
-                ),
-            }), 409
+        # Rondas completadas: el motor mantiene el mundo vivo tras la última
+        # ronda, así que el informe se genera en paralelo con el entorno y
+        # puede entrevistar a los agentes activos.
+        rounds_completed = run_state is not None and (
+            SimulationRunner._check_all_platforms_completed(run_state)
+        )
+        if not rounds_completed:
+            if updater is not None or (
+                run_state is not None and run_state.runner_status in active_statuses
+            ):
+                return jsonify({
+                    "success": False,
+                    "error": (
+                        "Simulation or graph ingestion is still active; "
+                        "wait for a terminal run status before generating a report"
+                    ),
+                    "ingestion_pending": updater is not None,
+                }), 409
+            successful_terminal_statuses = {
+                RunnerStatus.COMPLETED,
+                RunnerStatus.STOPPED,
+            }
+            if (
+                run_state is None
+                or run_state.runner_status not in successful_terminal_statuses
+            ):
+                return jsonify({
+                    "success": False,
+                    "error": (
+                        "A successfully completed or stopped simulation is required "
+                        "before generating a report"
+                    ),
+                }), 409
 
         # 获取项目信息
         project = ProjectManager.get_project(state.project_id)
@@ -183,30 +190,37 @@ def generate_report():
                     "success": False,
                     "error": "The project graph changed while reporting was starting",
                 }), 409
-            if refreshed_updater is not None or (
+            refreshed_rounds_completed = (
                 refreshed_run_state is not None
-                and refreshed_run_state.runner_status in active_statuses
-            ):
-                return jsonify({
-                    "success": False,
-                    "error": (
-                        "Simulation or graph ingestion became active; "
-                        "retry after it reaches a terminal state"
-                    ),
-                    "ingestion_pending": refreshed_updater is not None,
-                }), 409
-            if (
-                refreshed_run_state is None
-                or refreshed_run_state.runner_status
-                not in successful_terminal_statuses
-            ):
-                return jsonify({
-                    "success": False,
-                    "error": (
-                        "A successfully completed or stopped simulation is "
-                        "required before generating a report"
-                    ),
-                }), 409
+                and SimulationRunner._check_all_platforms_completed(
+                    refreshed_run_state
+                )
+            )
+            if not refreshed_rounds_completed:
+                if refreshed_updater is not None or (
+                    refreshed_run_state is not None
+                    and refreshed_run_state.runner_status in active_statuses
+                ):
+                    return jsonify({
+                        "success": False,
+                        "error": (
+                            "Simulation or graph ingestion became active; "
+                            "retry after it reaches a terminal state"
+                        ),
+                        "ingestion_pending": refreshed_updater is not None,
+                    }), 409
+                if (
+                    refreshed_run_state is None
+                    or refreshed_run_state.runner_status
+                    not in successful_terminal_statuses
+                ):
+                    return jsonify({
+                        "success": False,
+                        "error": (
+                            "A successfully completed or stopped simulation is "
+                            "required before generating a report"
+                        ),
+                    }), 409
 
             # Cached-report reuse is now part of the same atomic barrier, so a
             # concurrent rerun cannot make the returned report stale between

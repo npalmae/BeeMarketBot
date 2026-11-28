@@ -334,7 +334,9 @@
     "searchLabel": "搜索模拟",
     "clearSearch": "清除搜索",
     "searchCount": "{count} 个结果",
-    "noSearchResults": "未找到模拟"
+    "noSearchResults": "未找到模拟",
+    "worldAlive": "世界运行中",
+    "worldAliveHint": "智能体环境仍在运行：可进行访谈"
   },
   "api": {
     "projectNotFound": "项目不存在: {id}",
@@ -585,7 +587,8 @@
     "enterStep": "进入 Step {step}: {name}",
     "returnToStep": "返回 Step {step}: {name}",
     "customSimRounds": "自定义模拟轮数: {rounds} 轮",
-    "simAlreadyRunning": "模拟已在运行：继续跟踪，不重新启动"
+    "simAlreadyRunning": "模拟已在运行：继续跟踪，不重新启动",
+    "roundsDoneWorldAlive": "✓ 所有轮次已完成：世界仍在运行，可以直接生成报告"
   },
   "report": {
     "taskStarted": "报告生成任务开始",

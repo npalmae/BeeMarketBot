@@ -102,7 +102,7 @@
         </button>
         <button 
           class="action-btn primary"
-          :disabled="!canEdit() || phase !== 2 || isGeneratingReport"
+          :disabled="!canEdit() || (phase !== 2 && !roundsCompleted) || isGeneratingReport"
           :title="writeHint"
           @click="handleNextStep"
         >
@@ -329,6 +329,8 @@ const router = useRouter()
 // State
 const isGeneratingReport = ref(false)
 const phase = ref(0) // 0: 未开始, 1: 运行中, 2: 已完成
+const roundsCompleted = ref(false) // rondas listas: el informe puede generarse con el mundo vivo
+const roundsDoneAnnounced = ref(false)
 const isStarting = ref(false)
 const isStopping = ref(false)
 const startError = ref(null)
@@ -379,6 +381,8 @@ const addLog = (msg) => {
 // 重置所有状态（用于重新启动模拟）
 const resetAllState = () => {
   phase.value = 0
+  roundsCompleted.value = false
+  roundsDoneAnnounced.value = false
   runStatus.value = {}
   allActions.value = []
   actionIds.value = new Set()
@@ -517,6 +521,11 @@ const fetchRunStatus = async () => {
       const data = res.data
       
       runStatus.value = data
+      roundsCompleted.value = checkPlatformsCompleted(data)
+      if (roundsCompleted.value && !roundsDoneAnnounced.value) {
+        roundsDoneAnnounced.value = true
+        addLog(t('log.roundsDoneWorldAlive'))
+      }
       
       // 分别检测各平台的轮次变化并输出日志
       if (data.twitter_current_round > prevTwitterRound.value) {

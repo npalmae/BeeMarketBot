@@ -984,6 +984,15 @@ def get_simulation_history():
                 sim_dict["current_round"] = 0
                 sim_dict["runner_status"] = "idle"
                 sim_dict["total_rounds"] = recommended_rounds
+
+            # ¿Sigue vivo el mundo? El motor mantiene el entorno de los
+            # agentes activo tras completar las rondas hasta que se cierra.
+            try:
+                sim_dict["world_alive"] = SimulationRunner.check_env_alive(
+                    sim.simulation_id
+                )
+            except Exception:
+                sim_dict["world_alive"] = False
             
             # 获取关联项目的文件列表（最多3个）
             project = ProjectManager.get_project(sim.project_id)

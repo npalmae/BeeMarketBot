@@ -979,18 +979,24 @@ class SimulationRunner:
         Returns:
             True 如果所有启用的平台都已完成
         """
-        sim_dir = os.path.join(cls.RUN_STATE_DIR, state.simulation_id)
+        sim_dir = os.path.join(
+            cls.RUN_STATE_DIR, getattr(state, "simulation_id", "")
+        )
         twitter_log = os.path.join(sim_dir, "twitter", "actions.jsonl")
         reddit_log = os.path.join(sim_dir, "reddit", "actions.jsonl")
         
         # 检查哪些平台被启用（通过文件是否存在判断）
         twitter_enabled = os.path.exists(twitter_log)
         reddit_enabled = os.path.exists(reddit_log)
+
+        # getattr: los estados simulados de pruebas pueden omitir las banderas.
+        twitter_completed = getattr(state, "twitter_completed", False)
+        reddit_completed = getattr(state, "reddit_completed", False)
         
         # 如果平台被启用但未完成，则返回 False
-        if twitter_enabled and not state.twitter_completed:
+        if twitter_enabled and not twitter_completed:
             return False
-        if reddit_enabled and not state.reddit_completed:
+        if reddit_enabled and not reddit_completed:
             return False
         
         # 至少有一个平台被启用且已完成

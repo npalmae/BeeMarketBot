@@ -295,3 +295,124 @@ def test_report_reader_lease_blocks_graph_start_and_delete(monkeypatch):
     finally:
         if report_id:
             unregister_graph_reader("graph-1", report_id)
+
+
+def test_report_generates_with_world_alive_after_rounds_complete(monkeypatch):
+    """Rondas completas: el informe se genera en paralelo con el mundo vivo.
+
+    El motor mantiene el entorno activo tras la última ronda (runner_status
+    sigue RUNNING y el updater produce eventos): el informe no debe
+    bloquearse, porque puede entrevistar a los agentes del entorno.
+    """
+    simulation = SimpleNamespace(
+        simulation_id="sim-1",
+        project_id="proj-1",
+        graph_id="graph-1",
+        status=SimulationStatus.READY,
+    )
+    project = SimpleNamespace(
+        project_id="proj-1",
+        graph_id="graph-1",
+        status=ProjectStatus.GRAPH_COMPLETED,
+        simulation_requirement="mock requirement",
+    )
+    run_state = SimpleNamespace(
+        runner_status=RunnerStatus.RUNNING,
+        twitter_completed=True,
+        reddit_completed=True,
+    )
+    worker_targets = []
+
+    class Tasks:
+        def create_task(self, **_kwargs):
+            return "task-1"
+
+        def update_task(self, *_args, **_kwargs):
+            pass
+
+        def complete_task(self, *_args, **_kwargs):
+            pass
+
+        def fail_task(self, *_args, **_kwargs):
+            pass
+
+    class ParkedThread:
+        def __init__(self, *, target, daemon):
+            assert daemon is True
+            self.target = target
+
+        def start(self):
+            worker_targets.append(self.target)
+
+    class Agent:
+        def __init__(self, **_kwargs):
+            pass
+
+        def generate_report(self, *, progress_callback, report_id):
+            progress_callback("mock", 100, "done")
+            return SimpleNamespace(
+                report_id=report_id,
+                status=report_api.ReportStatus.COMPLETED,
+                error=None,
+            )
+
+    monkeypatch.setattr(
+        report_api,
+        "SimulationManager",
+        lambda: SimpleNamespace(
+            get_simulation=lambda _simulation_id: simulation
+        ),
+    )
+    monkeypatch.setattr(
+        report_api.ProjectManager,
+        "get_project",
+        classmethod(lambda _cls, _project_id: project),
+    )
+    monkeypatch.setattr(
+        report_api.SimulationRunner,
+        "get_run_state",
+        classmethod(lambda _cls, _simulation_id: run_state),
+    )
+    monkeypatch.setattr(
+        report_api.SimulationRunner,
+        "_check_all_platforms_completed",
+        classmethod(lambda _cls, _state: True),
+    )
+    monkeypatch.setattr(
+        report_api.ZepGraphMemoryManager,
+        "get_updater",
+        classmethod(lambda _cls, _simulation_id: object()),
+    )
+    monkeypatch.setattr(
+        report_api.ReportManager,
+        "get_report_by_simulation",
+        classmethod(lambda _cls, _simulation_id: None),
+    )
+    monkeypatch.setattr(
+        report_api.ReportManager,
+        "save_report",
+        classmethod(lambda _cls, _report: None),
+    )
+    monkeypatch.setattr(report_api, "TaskManager", Tasks)
+    monkeypatch.setattr(report_api, "ReportAgent", Agent)
+    monkeypatch.setattr(report_api.threading, "Thread", ParkedThread)
+
+    app = Flask(__name__)
+    report_id = None
+    try:
+        with app.test_request_context(
+            "/api/report/generate",
+            method="POST",
+            json={"simulation_id": "sim-1"},
+        ):
+            body, status = _json_result(report_api.generate_report())
+        assert status == 200
+        report_id = body["data"]["report_id"]
+        assert len(worker_targets) == 1
+
+        # El informe en segundo plano completa y libera el lease del grafo.
+        worker_targets[0]()
+        assert get_graph_readers("graph-1") == []
+    finally:
+        if report_id:
+            unregister_graph_reader("graph-1", report_id)
